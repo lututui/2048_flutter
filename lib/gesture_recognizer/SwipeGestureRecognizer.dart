@@ -1,4 +1,4 @@
-import 'package:flame/util.dart';
+import 'package:flame/flame.dart';
 import 'package:flutter/gestures.dart';
 
 enum SwipeGestureType { UP, DOWN, LEFT, RIGHT }
@@ -59,19 +59,20 @@ class SwipeGestureRecognizer {
 
   SwipeCallback onSwipe;
 
-  SwipeGestureRecognizer(Util flameUtil, this.onSwipe) {
+  bool _paused;
+
+  SwipeGestureRecognizer(this.onSwipe) {
     this.horizontalDrag = HorizontalDragGestureRecognizer();
     this.verticalDrag = VerticalDragGestureRecognizer();
 
     this.horizontalDrag.onEnd = this._onHorizontalEnd;
     this.verticalDrag.onEnd = this._onVerticalEnd;
 
-    flameUtil.addGestureRecognizer(this.horizontalDrag);
-    flameUtil.addGestureRecognizer(this.verticalDrag);
+    this.unpause();
   }
 
   void _onHorizontalEnd(DragEndDetails d) {
-    if (onSwipe == null) return;
+    if (this.onSwipe == null) return;
 
     SwipeGestureType type = d.velocity.pixelsPerSecond.dx < 0
         ? SwipeGestureType.LEFT
@@ -83,7 +84,7 @@ class SwipeGestureRecognizer {
   }
 
   void _onVerticalEnd(DragEndDetails d) {
-    if (onSwipe == null) return;
+    if (this.onSwipe == null) return;
 
     SwipeGestureType type = d.velocity.pixelsPerSecond.dy < 0
         ? SwipeGestureType.UP
@@ -92,5 +93,23 @@ class SwipeGestureRecognizer {
     print("Swipe ${type.toDirectionString()}");
 
     this.onSwipe(type);
+  }
+
+  void pause() {
+    if (!this._paused) return;
+
+    Flame.util.removeGestureRecognizer(this.verticalDrag);
+    Flame.util.removeGestureRecognizer(this.horizontalDrag);
+
+    this._paused = true;
+  }
+
+  void unpause() {
+    if (this._paused ?? true) return;
+
+    Flame.util.addGestureRecognizer(this.horizontalDrag);
+    Flame.util.addGestureRecognizer(this.verticalDrag);
+
+    this._paused = false;
   }
 }

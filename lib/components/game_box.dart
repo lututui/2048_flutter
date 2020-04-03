@@ -33,11 +33,10 @@ class GameBox extends PositionComponent {
       growable: false,
     );
     this._gridSpace = this.gridSize * this.gridSize;
+    this.gameOver = false;
 
     this._layout();
     this.spawn(amount: 3);
-
-    this.debugMode = true;
   }
 
   void _layout() {

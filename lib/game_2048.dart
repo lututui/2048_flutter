@@ -6,8 +6,13 @@ import 'package:flutter_2048/gesture_recognizer/SwipeGestureRecognizer.dart';
 import 'package:flutter_2048/palette.dart';
 
 class Game2048 extends Game {
+  SwipeGestureRecognizer swipeRecognizer;
   GameBox gameBox;
   Size screenSize;
+
+  Game2048() {
+    this.swipeRecognizer = SwipeGestureRecognizer(this.onSwipe);
+  }
 
   @override
   Color backgroundColor() => Palette.paleLavender.color;
@@ -38,6 +43,4 @@ class Game2048 extends Game {
   void onSwipe(SwipeGestureType type) {
     this.gameBox?.swipe(type);
   }
-
-
 }
