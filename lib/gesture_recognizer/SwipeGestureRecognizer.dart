@@ -68,11 +68,14 @@ class SwipeGestureRecognizer {
     this.horizontalDrag.onEnd = this._onHorizontalEnd;
     this.verticalDrag.onEnd = this._onVerticalEnd;
 
-    this.unpause();
+    Flame.util.addGestureRecognizer(this.horizontalDrag);
+    Flame.util.addGestureRecognizer(this.verticalDrag);
+
+    this._paused = false;
   }
 
   void _onHorizontalEnd(DragEndDetails d) {
-    if (this.onSwipe == null) return;
+    if (this._paused || this.onSwipe == null) return;
 
     SwipeGestureType type = d.velocity.pixelsPerSecond.dx < 0
         ? SwipeGestureType.LEFT
@@ -84,7 +87,7 @@ class SwipeGestureRecognizer {
   }
 
   void _onVerticalEnd(DragEndDetails d) {
-    if (this.onSwipe == null) return;
+    if (this._paused || this.onSwipe == null) return;
 
     SwipeGestureType type = d.velocity.pixelsPerSecond.dy < 0
         ? SwipeGestureType.UP
@@ -96,19 +99,17 @@ class SwipeGestureRecognizer {
   }
 
   void pause() {
-    if (!this._paused) return;
+    if (this._paused) throw Exception("Already paused");
 
-    Flame.util.removeGestureRecognizer(this.verticalDrag);
-    Flame.util.removeGestureRecognizer(this.horizontalDrag);
+    print("Paused gesture recognizer");
 
     this._paused = true;
   }
 
   void unpause() {
-    if (this._paused ?? true) return;
+    if (!this._paused) throw Exception("Not paused");
 
-    Flame.util.addGestureRecognizer(this.horizontalDrag);
-    Flame.util.addGestureRecognizer(this.verticalDrag);
+    print("Resumed gesture recognizer");
 
     this._paused = false;
   }

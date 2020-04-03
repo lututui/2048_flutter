@@ -43,4 +43,9 @@ class Game2048 extends Game {
   void onSwipe(SwipeGestureType type) {
     this.gameBox?.swipe(type);
   }
+
+  void reset() {
+    this.swipeRecognizer.unpause();
+    this.gameBox = GameBox(4, this.screenSize);
+  }
 }

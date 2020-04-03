@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_2048/fonts.dart';
 import 'package:flutter_2048/game_2048.dart';
+import 'package:flutter_2048/widgets/pause.dart';
 
 class MainMenu extends StatelessWidget {
   final Game2048 gameInstance = Game2048();
@@ -26,7 +28,7 @@ class MainMenu extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.lightBlueAccent,
                     fontSize: 16.0,
-                    fontFamily: "Righteous",
+                    fontFamily: Fonts.RIGHTEOUS_FAMILY,
                   ),
                 ),
               )
@@ -37,5 +39,29 @@ class MainMenu extends StatelessWidget {
     );
   }
 
-  Widget buildGame(BuildContext context) => this.gameInstance.widget;
+  Widget buildGame(BuildContext context) {
+    return WillPopScope(
+      child: this.gameInstance.widget,
+      onWillPop: () => this.confirmReturn(context),
+    );
+  }
+
+  Future<bool> confirmReturn(BuildContext context) {
+    this.gameInstance.swipeRecognizer.pause();
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext innerContext) => const PauseMenu(),
+    ).then((String v) {
+      // Dismissed or resumed
+      if (v == null) {
+        this.gameInstance.swipeRecognizer.unpause();
+        return Future.value(false);
+      }
+
+      this.gameInstance.reset();
+
+      return Future.value(v == 'exit');
+    });
+  }
 }
