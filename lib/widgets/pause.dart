@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/fonts.dart';
-import 'package:flutter_2048/palette.dart';
+import 'package:flutter_2048/util/fonts.dart';
+import 'package:flutter_2048/util/palette.dart';
 
 class PauseMenu extends StatelessWidget {
   static const TextStyle _textStyle = const TextStyle(

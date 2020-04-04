@@ -4,19 +4,18 @@ import 'package:flame/components/component.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_2048/palette.dart';
+import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/util/tuple.dart';
 
 class TileSquare extends PositionComponent {
   final Tuple<int, int> _gridPosition;
-  Size gapSize;
-  Offset _offset;
-  int _value;
-
   TextPainter _tPainter;
-  TextSpan _tSpan;
-
   TileSquare _joinedTo;
+  TextSpan _tSpan;
+  Offset _offset;
+  Paint _paint;
+  Size gapSize;
+  int _value;
 
   TileSquare(
     this._gridPosition,
@@ -29,14 +28,14 @@ class TileSquare extends PositionComponent {
   }) {
     this.height = tileSize.height;
     this.width = tileSize.width;
-
     this._offset = offset;
 
     this._layout();
     this._textLayout();
+    this._updatePaint();
 
     if (!silent)
-      print("Spawned tile (${_gridPosition.a}, ${_gridPosition.b}): $_value");
+      print("Spawned tile ${this._gridPosition}: ${2 << this._value}");
 
     this.debugMode = true;
   }
@@ -71,7 +70,7 @@ class TileSquare extends PositionComponent {
 
   void _textLayout() {
     this._tSpan = TextSpan(
-      text: this._value.toString(),
+      text: (2 << this._value).toString(),
       style: TextStyle(
         fontWeight: FontWeight.bold,
         color: BasicPalette.black.color,
@@ -104,7 +103,7 @@ class TileSquare extends PositionComponent {
   void render(Canvas c) {
     c.drawRect(
       this.toRect(),
-      Palette.sunsetOrange.paint,
+      this._paint,
     );
 
     this._tPainter.paint(c, this.textOffset());
@@ -149,6 +148,7 @@ class TileSquare extends PositionComponent {
 
     this._joinedTo = null;
     this._textLayout();
+    this._updatePaint();
   }
 
   void updateGridPosition(int i, int j) {
@@ -168,6 +168,11 @@ class TileSquare extends PositionComponent {
     if (otherTile == null) return;
 
     this._joinedTo = otherTile;
-    this._value += this._joinedTo._value;
+    this._value++;
+  }
+
+  void _updatePaint() {
+    this._paint = Palette
+        .colorProgression[this._value % Palette.colorProgression.length].paint;
   }
 }

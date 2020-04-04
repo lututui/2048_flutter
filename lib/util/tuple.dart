@@ -23,4 +23,6 @@ class Tuple<T, E> {
     this.b = b;
   }
 
+  @override
+  String toString() => "($a, $b)";
 }

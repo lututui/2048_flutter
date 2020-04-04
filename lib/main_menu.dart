@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/fonts.dart';
+import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/game_2048.dart';
 import 'package:flutter_2048/widgets/pause.dart';
 

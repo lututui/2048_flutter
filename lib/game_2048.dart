@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flame/game.dart';
 import 'package:flutter_2048/components/game_box.dart';
 import 'package:flutter_2048/gesture_recognizer/SwipeGestureRecognizer.dart';
-import 'package:flutter_2048/palette.dart';
+import 'package:flutter_2048/util/palette.dart';
 
 class Game2048 extends Game {
   SwipeGestureRecognizer swipeRecognizer;

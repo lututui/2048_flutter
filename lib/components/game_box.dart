@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:flame/components/component.dart';
 import 'package:flutter_2048/components/tile_square.dart';
 import 'package:flutter_2048/gesture_recognizer/SwipeGestureRecognizer.dart';
-import 'package:flutter_2048/palette.dart';
 import 'package:flutter_2048/util/data.dart';
+import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/util/tuple.dart';
 
 class GameBox extends PositionComponent {
@@ -116,8 +116,7 @@ class GameBox extends PositionComponent {
       return;
     }
 
-    if (!gameOver)
-      this._calcGameOver();
+    if (!gameOver) this._calcGameOver();
   }
 
   void spawn({int amount = 1}) {
@@ -243,6 +242,8 @@ class GameBox extends PositionComponent {
   set gridSpace(int value) {
     this._gridSpace = value;
 
+    print("Remaining gridSpace: ${this._gridSpace}");
+
     if (this._gridSpace < 0 || this._gridSpace > this.gridSize * this.gridSize)
       throw Exception("Gridspace exceeded: ${this._gridSpace}");
   }
@@ -252,24 +253,28 @@ class GameBox extends PositionComponent {
 
     for (int i = 0; i < this.gridSize; i++) {
       for (int j = 0; j < this.gridSize; j++) {
-        bool idx1 = i + 1 >= this.gridSize;
-        bool idx2 = j + 1 >= this.gridSize;
+        final bool idx1 = i + 1 >= this.gridSize;
+        final bool idx2 = j + 1 >= this.gridSize;
 
         if (idx1 && idx2) continue;
 
-        if (idx1 && this.grid[i][j].value == this.grid[i][j + 1].value)
-          return;
+        final TileSquare pos1 = this.grid[i][j];
+        final TileSquare pos2 = (idx2) ? null : this.grid[i][j + 1];
+        final TileSquare pos3 = (idx1) ? null : this.grid[i + 1][j];
 
-        if (idx2 && this.grid[i][j].value == this.grid[i + 1][j].value)
+        if (pos2 != null && pos1.value == pos2.value) {
+          print("${pos1.gridPosition} can merge with ${pos2.gridPosition}");
           return;
+        }
 
-        if (!idx1 &&
-            !idx2 &&
-            (this.grid[i][j].value == this.grid[i][j + 1].value ||
-                this.grid[i][j].value == this.grid[i + 1][j].value))
+        if (pos3 != null && pos1.value == pos3.value) {
+          print("${pos1.gridPosition} can merge with ${pos3.gridPosition}");
           return;
+        }
       }
     }
+
+    print("Game over!");
 
     this.gameOver = true;
   }
