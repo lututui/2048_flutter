@@ -2,47 +2,48 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components/component.dart';
+import 'package:flame/components/mixins/has_game_ref.dart';
 import 'package:flutter_2048/components/tile_square.dart';
-import 'package:flutter_2048/gesture_recognizer/SwipeGestureRecognizer.dart';
+import 'package:flutter_2048/extensions/int.dart';
+import 'package:flutter_2048/extensions/list.dart';
+import 'package:flutter_2048/extensions/swipe_gesture_type.dart';
+import 'package:flutter_2048/game_2048.dart';
+import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/util/data.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/util/tuple.dart';
 
-class GameBox extends PositionComponent {
+class GameBox extends PositionComponent with HasGameRef<Game2048> {
   List<List<TileSquare>> grid;
   final int gridSize;
-  Size screenSize;
 
   Size tileSize;
   Size gapSize;
   Size gameSize;
 
-  Set<Tuple<int, int>> living;
-  Set<Tuple<int, int>> moving;
+  final Set<Tuple<int, int>> living = Set<Tuple<int, int>>();
+  final Set<Tuple<int, int>> moving = Set<Tuple<int, int>>();
 
   int _gridSpace;
 
-  bool gameOver;
+  bool _needsRecalc = true;
 
-  GameBox(this.gridSize, this.screenSize) {
-    this.living = Set<Tuple<int, int>>();
-    this.moving = Set<Tuple<int, int>>();
+  @override
+  final Game2048 gameRef;
+
+  GameBox(this.gameRef, this.gridSize) {
     this.grid = List<List<TileSquare>>.generate(
       this.gridSize,
       (_) => List<TileSquare>(this.gridSize),
       growable: false,
     );
     this._gridSpace = this.gridSize * this.gridSize;
-    this.gameOver = false;
-
-    this._layout();
-    this.spawn(amount: 3);
   }
 
   void _layout() {
     this.tileSize = Size.square(min(
-      this.screenSize.width / (this.gridSize + 2),
-      this.screenSize.height / (this.gridSize + 2),
+      this.gameRef.screenSize.width / (this.gridSize + 2),
+      this.gameRef.screenSize.height / (this.gridSize + 2),
     ));
 
     this.gapSize = Size.square(this.tileSize.width / (2 * this.gridSize));
@@ -51,14 +52,15 @@ class GameBox extends PositionComponent {
         (this.tileSize.width + this.gapSize.width) * this.gridSize +
             this.gapSize.width);
 
-    print("Screen size: ${this.screenSize}");
+    print("Screen size: ${this.gameRef.screenSize}");
     print("Grid size: ${this.gridSize}");
     print("Tile size: ${this.tileSize}");
     print("Gap size: ${this.gapSize}");
     print("Game size: ${this.gameSize}");
 
-    this.x = (this.screenSize.width - this.gameSize.width) / 2.0;
-    this.y = (this.screenSize.height - this.gameSize.height) * 2.0 / 3.0;
+    this.x = (this.gameRef.screenSize.width - this.gameSize.width) / 2.0;
+    this.y =
+        (this.gameRef.screenSize.height - this.gameSize.height) * 2.0 / 3.0;
 
     print("Box corner at (${this.x}, ${this.y})");
 
@@ -68,13 +70,11 @@ class GameBox extends PositionComponent {
 
   @override
   void resize(Size size) {
-    this.screenSize = size;
     this._layout();
 
     for (Tuple<int, int> t in this.living) {
       this.grid[t.a][t.b].width = this.tileSize.width;
       this.grid[t.a][t.b].height = this.tileSize.height;
-      this.grid[t.a][t.b].gapSize = this.gapSize;
       this.grid[t.a][t.b].resize(size);
     }
 
@@ -98,12 +98,12 @@ class GameBox extends PositionComponent {
 
   @override
   void update(double t) {
-    if (this.gameOver) return;
+    if (this.gameRef.gameOver) return;
 
     if (this.moving.isNotEmpty) {
-      Set<Tuple<int, int>> doneMoving = Set();
+      final Set<Tuple<int, int>> doneMoving = Set<Tuple<int, int>>();
 
-      for (Tuple<int, int> m in this.moving) {
+      for (final Tuple<int, int> m in this.moving) {
         this.grid[m.a][m.b].update(t);
 
         if (!this.grid[m.a][m.b].isMoving) {
@@ -112,11 +112,10 @@ class GameBox extends PositionComponent {
         }
       }
 
-      this.moving.removeAll(doneMoving);
+      if (doneMoving.isNotEmpty) this.moving.removeAll(doneMoving);
+
       return;
     }
-
-    if (!gameOver) this._calcGameOver();
   }
 
   void spawn({int amount = 1}) {
@@ -134,10 +133,10 @@ class GameBox extends PositionComponent {
       Tuple<int, int> chosen = freeTiles[Data.rand.nextInt(freeTiles.length)];
 
       this.grid[chosen.a][chosen.b] = TileSquare(
+        this,
         chosen,
         Data.spawnValues[Data.rand.nextInt(Data.spawnValues.length)],
         this.tileSize,
-        this.gapSize,
       );
 
       if (!this.living.add(chosen))
@@ -149,6 +148,8 @@ class GameBox extends PositionComponent {
 
   void swipe(SwipeGestureType type) {
     if (this.moving.isNotEmpty) return;
+
+    bool shouldSpawn = false;
 
     List<List<TileSquare>> newGrid = List<List<TileSquare>>.generate(
       this.gridSize,
@@ -167,11 +168,12 @@ class GameBox extends PositionComponent {
             )
           : this.grid[i];
 
-      this._doSwipe(
-        newLineOrColumn,
-        oldLineOrColumn,
-        reversed: type.awayFromOrigin(),
-      );
+      shouldSpawn = !this.swipeLine(
+            newLineOrColumn,
+            oldLineOrColumn,
+            reversed: type.awayFromOrigin(),
+          ) ||
+          shouldSpawn;
 
       for (int j = 0; j < this.gridSize; j++) {
         int idx1 = type.isVertical() ? j : i;
@@ -201,10 +203,10 @@ class GameBox extends PositionComponent {
 
     this.living.addAll(pendingLiving);
     this.grid = newGrid;
-    this.spawn();
+    if (shouldSpawn) this.spawn();
   }
 
-  void _doSwipe(
+  bool swipeLine(
     List<TileSquare> newList,
     List<TileSquare> oldList, {
     bool reversed = false,
@@ -226,7 +228,10 @@ class GameBox extends PositionComponent {
 
       if (merge) {
         previous.merge(oldList[j]);
+        this.gameRef.score += 2.safeLShift(previous.value);
         this.gridSpace++;
+
+        print("New score: ${this.gameRef.score}");
       }
 
       newList[k] = previous;
@@ -235,6 +240,8 @@ class GameBox extends PositionComponent {
     }
 
     if (previous != null) newList[k] = previous;
+
+    return newList.equalContents<TileSquare>(oldList);
   }
 
   int get gridSpace => this._gridSpace;
@@ -244,12 +251,16 @@ class GameBox extends PositionComponent {
 
     print("Remaining gridSpace: ${this._gridSpace}");
 
+    this._needsRecalc = true;
+
     if (this._gridSpace < 0 || this._gridSpace > this.gridSize * this.gridSize)
       throw Exception("Gridspace exceeded: ${this._gridSpace}");
   }
 
-  void _calcGameOver() {
-    if (this._gridSpace > 0 || this.gameOver) return;
+  void calcGameOver() {
+    if (!this._needsRecalc) return;
+    if (this._gridSpace > 0 || this.gameRef.gameOver || this.moving.isNotEmpty)
+      return;
 
     for (int i = 0; i < this.gridSize; i++) {
       for (int j = 0; j < this.gridSize; j++) {
@@ -264,11 +275,13 @@ class GameBox extends PositionComponent {
 
         if (pos2 != null && pos1.value == pos2.value) {
           print("${pos1.gridPosition} can merge with ${pos2.gridPosition}");
+          this._needsRecalc = false;
           return;
         }
 
         if (pos3 != null && pos1.value == pos3.value) {
           print("${pos1.gridPosition} can merge with ${pos3.gridPosition}");
+          this._needsRecalc = false;
           return;
         }
       }
@@ -276,6 +289,6 @@ class GameBox extends PositionComponent {
 
     print("Game over!");
 
-    this.gameOver = true;
+    this.gameRef.gameOver = true;
   }
 }

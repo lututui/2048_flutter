@@ -47,15 +47,15 @@ class MainMenu extends StatelessWidget {
   }
 
   Future<bool> confirmReturn(BuildContext context) {
-    this.gameInstance.swipeRecognizer.pause();
+    this.gameInstance.pause();
 
     return showDialog<String>(
       context: context,
-      builder: (BuildContext innerContext) => const PauseMenu(),
+      builder: (_) => const PauseMenu(),
     ).then((String v) {
       // Dismissed or resumed
       if (v == null) {
-        this.gameInstance.swipeRecognizer.unpause();
+        this.gameInstance.unpause();
         return Future.value(false);
       }
 

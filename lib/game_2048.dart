@@ -1,17 +1,24 @@
 import 'dart:ui';
 
 import 'package:flame/game.dart';
+import 'package:flame/gestures.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_2048/components/game_box.dart';
-import 'package:flutter_2048/gesture_recognizer/SwipeGestureRecognizer.dart';
+import 'package:flutter_2048/extensions/swipe_gesture_type.dart';
+import 'package:flutter_2048/mixins/pausable.dart';
+import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/util/palette.dart';
 
-class Game2048 extends Game {
-  SwipeGestureRecognizer swipeRecognizer;
+class Game2048 extends Game
+    with VerticalDragDetector, HorizontalDragDetector, IPausable {
   GameBox gameBox;
   Size screenSize;
+  bool gameOver = false;
+  bool gameStarted = false;
+  int score = 0;
 
   Game2048() {
-    this.swipeRecognizer = SwipeGestureRecognizer(this.onSwipe);
+    this.gameBox = GameBox(this, 4);
   }
 
   @override
@@ -19,33 +26,63 @@ class Game2048 extends Game {
 
   @override
   void render(Canvas canvas) {
-    gameBox?.render(canvas);
+    this.gameBox.render(canvas);
   }
 
   @override
   void update(double t) {
-    gameBox?.update(t);
+    if (this.gameOver) return;
+
+    this.gameBox.update(t);
+    this.gameBox.calcGameOver();
   }
 
   @override
   void resize(Size size) {
     this.screenSize = size;
+    this.gameBox.resize(size);
 
-    if (this.gameBox == null) {
-      this.gameBox = GameBox(4, size);
-    } else {
-      this.gameBox.resize(size);
+    if (!this.gameStarted) {
+      this.gameBox.spawn(amount: 3);
+      this.gameStarted = true;
     }
 
     super.resize(size);
   }
 
-  void onSwipe(SwipeGestureType type) {
-    this.gameBox?.swipe(type);
+  @override
+  void onHorizontalDragEnd(DragEndDetails d) {
+    if (this.isPaused) return;
+
+    SwipeGestureType type = d.velocity.pixelsPerSecond.dx < 0
+        ? SwipeGestureType.LEFT
+        : SwipeGestureType.RIGHT;
+
+    print("Swipe ${type.toDirectionString()}");
+
+    this.gameBox.swipe(type);
+  }
+
+  @override
+  void onVerticalDragEnd(DragEndDetails d) {
+    if (this.isPaused) return;
+
+    SwipeGestureType type = d.velocity.pixelsPerSecond.dy < 0
+        ? SwipeGestureType.UP
+        : SwipeGestureType.DOWN;
+
+    print("Swipe ${type.toDirectionString()}");
+
+    this.gameBox.swipe(type);
   }
 
   void reset() {
-    this.swipeRecognizer.unpause();
-    this.gameBox = GameBox(4, this.screenSize);
+    this.gameBox = GameBox(this, 4);
+
+    this.unpause();
+    this.gameBox.resize(this.screenSize);
+    this.gameBox.spawn(amount: 3);
+    this.gameOver = false;
+    this.score = 0;
   }
 }

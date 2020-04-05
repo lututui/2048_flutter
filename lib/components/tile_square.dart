@@ -4,24 +4,29 @@ import 'package:flame/components/component.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_2048/components/game_box.dart';
+import 'package:flutter_2048/extensions/int.dart';
+import 'package:flutter_2048/mixins/component_ref_holder.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/util/tuple.dart';
 
-class TileSquare extends PositionComponent {
+class TileSquare extends PositionComponent with IComponentRefHolder<GameBox> {
   final Tuple<int, int> _gridPosition;
   TextPainter _tPainter;
   TileSquare _joinedTo;
   TextSpan _tSpan;
   Offset _offset;
   Paint _paint;
-  Size gapSize;
   int _value;
 
+  @override
+  final GameBox componentRef;
+
   TileSquare(
+    this.componentRef,
     this._gridPosition,
     this._value,
-    Size tileSize,
-    this.gapSize, {
+    Size tileSize, {
     Offset offset = const Offset(0, 0),
     TileSquare companion,
     bool silent = false,
@@ -35,7 +40,7 @@ class TileSquare extends PositionComponent {
     this._updatePaint();
 
     if (!silent)
-      print("Spawned tile ${this._gridPosition}: ${2 << this._value}");
+      print("Spawned tile ${this._gridPosition}: ${2.safeLShift(this._value)}");
 
     this.debugMode = true;
   }
@@ -44,10 +49,10 @@ class TileSquare extends PositionComponent {
     if (source == null) return null;
 
     return TileSquare(
+      source.componentRef,
       Tuple<int, int>.copy(source._gridPosition),
       source._value,
       Size(source.width, source.height),
-      source.gapSize,
       offset: source._offset,
       companion: TileSquare.copy(source._joinedTo),
       silent: true,
@@ -62,15 +67,17 @@ class TileSquare extends PositionComponent {
       this._offset != Offset.zero || (this._joinedTo?.isMoving ?? false);
 
   void _layout() {
-    this.x = this._gridPosition.b * (this.gapSize.width + this.width) +
-        this.gapSize.width;
-    this.y = this._gridPosition.a * (this.gapSize.height + this.height) +
-        this.gapSize.height;
+    this.x =
+        this._gridPosition.b * (this.componentRef.gapSize.width + this.width) +
+            this.componentRef.gapSize.width;
+    this.y = this._gridPosition.a *
+            (this.componentRef.gapSize.height + this.height) +
+        this.componentRef.gapSize.height;
   }
 
   void _textLayout() {
     this._tSpan = TextSpan(
-      text: (2 << this._value).toString(),
+      text: 2.safeLShift(this._value).toString(),
       style: TextStyle(
         fontWeight: FontWeight.bold,
         color: BasicPalette.black.color,
@@ -173,6 +180,7 @@ class TileSquare extends PositionComponent {
 
   void _updatePaint() {
     this._paint = Palette
-        .colorProgression[this._value % Palette.colorProgression.length].paint;
+        .colorProgression[(this._value + 1) % Palette.colorProgression.length]
+        .paint;
   }
 }

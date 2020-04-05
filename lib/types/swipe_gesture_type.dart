@@ -1,0 +1,1 @@
+enum SwipeGestureType { UP, DOWN, LEFT, RIGHT }
