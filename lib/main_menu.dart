@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/game_2048.dart';
+import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/widgets/pause.dart';
+import 'package:flutter_2048/widgets/scoreboard.dart';
 
 class MainMenu extends StatelessWidget {
   final Game2048 gameInstance = Game2048();
@@ -40,9 +42,21 @@ class MainMenu extends StatelessWidget {
   }
 
   Widget buildGame(BuildContext context) {
-    return WillPopScope(
-      child: this.gameInstance.widget,
-      onWillPop: () => this.confirmReturn(context),
+    this.gameInstance.resize(MediaQuery.of(context).size);
+
+    return Scaffold(
+      body: WillPopScope(
+        child: Stack(
+          textDirection: TextDirection.ltr,
+          fit: StackFit.expand,
+          overflow: Overflow.visible,
+          children: <Widget>[
+            this.gameInstance.widget,
+            Scoreboard(this.gameInstance),
+          ],
+        ),
+        onWillPop: () => this.confirmReturn(context),
+      ),
     );
   }
 

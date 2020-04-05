@@ -203,7 +203,7 @@ class GameBox extends PositionComponent with HasGameRef<Game2048> {
 
       if (merge) {
         previous.merge(oldList[j]);
-        this.gameRef.score += 2.safeLShift(previous.value);
+        this.gameRef.score.value += 2.safeLShift(previous.value);
         this.gridSpace++;
 
         print("New score: ${this.gameRef.score}");

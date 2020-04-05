@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_2048/components/game_box.dart';
 import 'package:flutter_2048/extensions/swipe_gesture_type.dart';
@@ -17,7 +18,7 @@ class Game2048 extends Game
   final GameDimensions dimensions = GameDimensions();
   bool gameOver = false;
   bool gameStarted = false;
-  int score = 0;
+  ValueNotifier<int> score = ValueNotifier(0);
 
   Game2048() {
     this.dimensions.gridSize = 4;
@@ -87,6 +88,6 @@ class Game2048 extends Game
     this.gameBox.resize(this.dimensions.size);
     this.gameBox.spawn(amount: 3);
     this.gameOver = false;
-    this.score = 0;
+    this.score.value = 0;
   }
 }
