@@ -25,14 +25,11 @@ class TileSquare extends PositionComponent with IComponentRefHolder<GameBox> {
   TileSquare(
     this.componentRef,
     this._gridPosition,
-    this._value,
-    Size tileSize, {
+    this._value, {
     Offset offset = const Offset(0, 0),
     TileSquare companion,
     bool silent = false,
   }) {
-    this.height = tileSize.height;
-    this.width = tileSize.width;
     this._offset = offset;
 
     this._layout();
@@ -52,7 +49,6 @@ class TileSquare extends PositionComponent with IComponentRefHolder<GameBox> {
       source.componentRef,
       Tuple<int, int>.copy(source._gridPosition),
       source._value,
-      Size(source.width, source.height),
       offset: source._offset,
       companion: TileSquare.copy(source._joinedTo),
       silent: true,
@@ -68,11 +64,9 @@ class TileSquare extends PositionComponent with IComponentRefHolder<GameBox> {
 
   void _layout() {
     this.x =
-        this._gridPosition.b * (this.componentRef.gapSize.width + this.width) +
-            this.componentRef.gapSize.width;
-    this.y = this._gridPosition.a *
-            (this.componentRef.gapSize.height + this.height) +
-        this.componentRef.gapSize.height;
+        this._gridPosition.b * (this.gapWidth + this.width) + this.gapWidth;
+    this.y =
+        this._gridPosition.a * (this.gapHeight + this.height) + this.gapHeight;
   }
 
   void _textLayout() {
@@ -146,8 +140,6 @@ class TileSquare extends PositionComponent with IComponentRefHolder<GameBox> {
   void resize(Size size) {
     this._layout();
     this._textLayout();
-
-    super.resize(size);
   }
 
   void updateValue() {
@@ -183,4 +175,14 @@ class TileSquare extends PositionComponent with IComponentRefHolder<GameBox> {
         .colorProgression[(this._value + 1) % Palette.colorProgression.length]
         .paint;
   }
+
+  @override
+  double get width => this.componentRef.gameRef.dimensions.tileSize.width;
+
+  @override
+  double get height => this.componentRef.gameRef.dimensions.tileSize.height;
+
+  double get gapWidth => this.componentRef.gameRef.dimensions.gapSize.width;
+
+  double get gapHeight => this.componentRef.gameRef.dimensions.gapSize.height;
 }

@@ -7,18 +7,21 @@ import 'package:flutter_2048/components/game_box.dart';
 import 'package:flutter_2048/extensions/swipe_gesture_type.dart';
 import 'package:flutter_2048/mixins/pausable.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
+import 'package:flutter_2048/util/game_dimensions.dart';
 import 'package:flutter_2048/util/palette.dart';
 
 class Game2048 extends Game
     with VerticalDragDetector, HorizontalDragDetector, IPausable {
   GameBox gameBox;
-  Size screenSize;
+
+  final GameDimensions dimensions = GameDimensions();
   bool gameOver = false;
   bool gameStarted = false;
   int score = 0;
 
   Game2048() {
-    this.gameBox = GameBox(this, 4);
+    this.dimensions.gridSize = 4;
+    this.gameBox = GameBox(this);
   }
 
   @override
@@ -39,7 +42,7 @@ class Game2048 extends Game
 
   @override
   void resize(Size size) {
-    this.screenSize = size;
+    this.dimensions.resize(size);
     this.gameBox.resize(size);
 
     if (!this.gameStarted) {
@@ -77,10 +80,11 @@ class Game2048 extends Game
   }
 
   void reset() {
-    this.gameBox = GameBox(this, 4);
+    this.dimensions.gridSize = 4;
+    this.gameBox = GameBox(this);
 
     this.unpause();
-    this.gameBox.resize(this.screenSize);
+    this.gameBox.resize(this.dimensions.size);
     this.gameBox.spawn(amount: 3);
     this.gameOver = false;
     this.score = 0;

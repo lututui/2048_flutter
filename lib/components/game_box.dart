@@ -15,11 +15,6 @@ import 'package:flutter_2048/util/tuple.dart';
 
 class GameBox extends PositionComponent with HasGameRef<Game2048> {
   List<List<TileSquare>> grid;
-  final int gridSize;
-
-  Size tileSize;
-  Size gapSize;
-  Size gameSize;
 
   final Set<Tuple<int, int>> living = Set<Tuple<int, int>>();
   final Set<Tuple<int, int>> moving = Set<Tuple<int, int>>();
@@ -31,54 +26,35 @@ class GameBox extends PositionComponent with HasGameRef<Game2048> {
   @override
   final Game2048 gameRef;
 
-  GameBox(this.gameRef, this.gridSize) {
+  int get gridSize => this.gameRef.dimensions.gridSize;
+
+  double get screenWidth => this.gameRef.dimensions.size.width;
+
+  double get screenHeight => this.gameRef.dimensions.size.height;
+
+  GameBox(this.gameRef) {
     this.grid = List<List<TileSquare>>.generate(
       this.gridSize,
       (_) => List<TileSquare>(this.gridSize),
       growable: false,
     );
-    this._gridSpace = this.gridSize * this.gridSize;
-  }
-
-  void _layout() {
-    this.tileSize = Size.square(min(
-      this.gameRef.screenSize.width / (this.gridSize + 2),
-      this.gameRef.screenSize.height / (this.gridSize + 2),
-    ));
-
-    this.gapSize = Size.square(this.tileSize.width / (2 * this.gridSize));
-
-    this.gameSize = Size.square(
-        (this.tileSize.width + this.gapSize.width) * this.gridSize +
-            this.gapSize.width);
-
-    print("Screen size: ${this.gameRef.screenSize}");
-    print("Grid size: ${this.gridSize}");
-    print("Tile size: ${this.tileSize}");
-    print("Gap size: ${this.gapSize}");
-    print("Game size: ${this.gameSize}");
-
-    this.x = (this.gameRef.screenSize.width - this.gameSize.width) / 2.0;
-    this.y =
-        (this.gameRef.screenSize.height - this.gameSize.height) * 2.0 / 3.0;
-
-    print("Box corner at (${this.x}, ${this.y})");
-
-    this.width = this.gameSize.width;
-    this.height = this.gameSize.height;
+    this._gridSpace = pow(this.gridSize, 2);
   }
 
   @override
+  double get width => this.gameRef.dimensions.gameSize.width;
+
+  @override
+  double get height => this.gameRef.dimensions.gameSize.height;
+
+  @override
   void resize(Size size) {
-    this._layout();
+    this.x = (this.screenWidth - this.width) * Data.GAME_BOX_X;
+    this.y = (this.screenHeight - this.height) * Data.GAME_BOX_Y;
 
-    for (Tuple<int, int> t in this.living) {
-      this.grid[t.a][t.b].width = this.tileSize.width;
-      this.grid[t.a][t.b].height = this.tileSize.height;
-      this.grid[t.a][t.b].resize(size);
-    }
+    print("Box corner at (${this.x}, ${this.y})");
 
-    super.resize(size);
+    for (Tuple<int, int> t in this.living) this.grid[t.a][t.b].resize(size);
   }
 
   @override
@@ -88,7 +64,7 @@ class GameBox extends PositionComponent with HasGameRef<Game2048> {
       this.toRect(),
       Palette.x11Gray.paint
         ..style = PaintingStyle.stroke
-        ..strokeWidth = this.gapSize.width,
+        ..strokeWidth = this.gameRef.dimensions.gapSize.width,
     );
 
     this.prepareCanvas(c);
@@ -135,8 +111,7 @@ class GameBox extends PositionComponent with HasGameRef<Game2048> {
       this.grid[chosen.a][chosen.b] = TileSquare(
         this,
         chosen,
-        Data.spawnValues[Data.rand.nextInt(Data.spawnValues.length)],
-        this.tileSize,
+        Data.SPAWN_VALUES[Data.rand.nextInt(Data.SPAWN_VALUES.length)],
       );
 
       if (!this.living.add(chosen))
