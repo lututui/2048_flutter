@@ -59,10 +59,10 @@ class GameBox extends PositionComponent with HasGameRef<Game2048> {
 
   @override
   void render(Canvas c) {
-    c.drawRect(this.toRect(), Palette.lavenderGray.paint);
+    c.drawRect(this.toRect(), Palette.BOX_BACKGROUND.paint);
     c.drawRect(
       this.toRect(),
-      Palette.x11Gray.paint
+      Palette.BOX_BORDER.paint
         ..style = PaintingStyle.stroke
         ..strokeWidth = this.gameRef.dimensions.gapSize.width,
     );

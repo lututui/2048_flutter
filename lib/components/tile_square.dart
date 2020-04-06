@@ -172,7 +172,7 @@ class TileSquare extends PositionComponent with IComponentRefHolder<GameBox> {
 
   void _updatePaint() {
     this._paint = Palette
-        .colorProgression[(this._value + 1) % Palette.colorProgression.length]
+        .TILE_COLORS[(this._value + 1) % Palette.TILE_COLORS.length]
         .paint;
   }
 

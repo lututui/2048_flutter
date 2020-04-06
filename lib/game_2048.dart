@@ -26,7 +26,7 @@ class Game2048 extends Game
   }
 
   @override
-  Color backgroundColor() => Palette.paleLavender.color;
+  Color backgroundColor() => Palette.BACKGROUND.color;
 
   @override
   void render(Canvas canvas) {

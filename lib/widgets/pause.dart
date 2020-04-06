@@ -13,7 +13,7 @@ class PauseMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: const Text("Paused", style: PauseMenu._textStyle),
-      backgroundColor: Palette.lavenderGrayPause.color,
+      backgroundColor: Palette.PAUSE_BACKGROUND.color,
       children: <Widget>[
         RaisedButton(
           onPressed: () => this._resume(context),
