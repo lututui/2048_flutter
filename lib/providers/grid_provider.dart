@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
@@ -61,7 +63,7 @@ class GridProvider with ChangeNotifier {
         ),
       );
 
-      assert(pos.remove(p));
+      if (!pos.remove(p)) throw Exception("Failed mark position $p as filled");
     }
 
     this._pendingSpawn = false;
@@ -180,7 +182,13 @@ class GridProvider with ChangeNotifier {
   }
 
   void onMoveEnd(TileProvider tp) {
-    assert(_moving > 0);
+    if (_moving <= 0) {
+      throw Exception([
+        "Received message that tile $tp finished moving",
+        "but no tiles should be moving"
+      ].join(" "));
+    }
+
     --_moving;
 
     if (_pendingRemoval.remove(tp)) {
@@ -190,8 +198,8 @@ class GridProvider with ChangeNotifier {
           .where((other) => other == tp || other.gridPos == tp.gridPos)
           .toList();
 
-      assert(matchingTiles.length >= 1);
-      assert(matchingTiles.length <= 2);
+      if (matchingTiles.length < 1 || matchingTiles.length > 2)
+        throw RangeError.range(matchingTiles.length, 1, 2);
 
       for (TileProvider t in matchingTiles) {
         if (t.moving) continue;
@@ -203,8 +211,9 @@ class GridProvider with ChangeNotifier {
           _tiles.where((p) => (p.key as ObjectKey).value == t),
         );
 
-        assert(toRemove.length == 1);
-        assert(_tiles.remove(toRemove.first));
+        if (toRemove.length != 1 || !_tiles.remove(toRemove.first))
+          throw Exception("Failed to remove $tp from moving list");
+
         print("Removed ${(toRemove.first.key as ObjectKey).value}");
       }
 
@@ -212,7 +221,12 @@ class GridProvider with ChangeNotifier {
     }
 
     if (_moving == 0 && _pendingSpawn) {
-      assert(_pendingRemoval.isEmpty);
+      if (_pendingRemoval.isNotEmpty) {
+        throw Exception([
+          "There should be no tiles moving but some are still pending removal:",
+          IterableBase.iterableToFullString(_pendingRemoval),
+        ].join(" "));
+      }
       this.spawn();
     }
   }
