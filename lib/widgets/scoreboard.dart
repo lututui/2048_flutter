@@ -7,7 +7,7 @@ import 'package:flutter_2048/widgets/score_text.dart';
 import 'package:provider/provider.dart';
 
 class Scoreboard extends StatelessWidget {
-  const Scoreboard();
+  const Scoreboard({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class Scoreboard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          BorderedBox(
+          const BorderedBox(
             child: const Text(
               "Score",
               style: const TextStyle(
@@ -30,8 +30,8 @@ class Scoreboard extends StatelessWidget {
             borderColor: Palette.BOX_BORDER,
             alignment: Alignment.centerLeft,
           ),
-          BorderedBox(
-            child: ScoreText(),
+          const BorderedBox(
+            child: const ScoreText(),
             backgroundColor: Palette.BOX_BACKGROUND,
             borderColor: Palette.BOX_BORDER,
           ),

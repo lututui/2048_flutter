@@ -8,6 +8,8 @@ import 'package:flutter_2048/widgets/scoreboard.dart';
 import 'package:provider/provider.dart';
 
 class MainGame extends StatelessWidget {
+  const MainGame({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +39,9 @@ class MainGame extends StatelessWidget {
                 behavior: HitTestBehavior.deferToChild,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Scoreboard(),
-                    GameGrid(),
+                  children: const <Widget>[
+                    const Scoreboard(),
+                    const GameGrid(),
                   ],
                 ),
               ),

@@ -9,7 +9,7 @@ class BorderedBox extends StatelessWidget {
   final Alignment alignment;
   final double height;
 
-  BorderedBox({
+  const BorderedBox({
     @required this.child,
     this.padding = const EdgeInsets.all(2.0),
     this.backgroundColor = const Color(0xffb2ebf2),
@@ -17,7 +17,8 @@ class BorderedBox extends StatelessWidget {
     this.borderWidth = 1.0,
     this.alignment = Alignment.centerRight,
     this.height,
-  });
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

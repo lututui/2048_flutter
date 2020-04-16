@@ -5,6 +5,8 @@ import 'package:flutter_2048/widgets/main_menu.dart';
 import 'package:provider/provider.dart';
 
 class MainApp extends StatelessWidget {
+  const MainApp({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,14 +15,16 @@ class MainApp extends StatelessWidget {
         switch (settings.name) {
           case '/':
             return PageRouteBuilder(
-                pageBuilder: (context, _, __) => MainMenu());
+              pageBuilder: (context, _, __) => const MainMenu(),
+            );
             break;
           case '/game4x4':
             return PageRouteBuilder(
-                pageBuilder: (context, _, __) => ChangeNotifierProvider(
-                      create: (_) => DimensionsProvider.from(context, 4),
-                      child: MainGame(),
-                    ));
+              pageBuilder: (context, _, __) => ChangeNotifierProvider(
+                create: (_) => DimensionsProvider.from(context, 4),
+                child: const MainGame(),
+              ),
+            );
             break;
           default:
             throw Exception("Route not found");
