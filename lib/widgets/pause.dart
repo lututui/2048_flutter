@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/util/palette.dart';
 
+enum PauseMenuResult { RESUME, RESET, EXIT }
+
 class PauseMenu extends StatelessWidget {
   static const TextStyle _textStyle = const TextStyle(
     fontFamily: Fonts.RIGHTEOUS_FAMILY,
@@ -13,7 +15,7 @@ class PauseMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: const Text("Paused", style: PauseMenu._textStyle),
-      backgroundColor: Palette.PAUSE_BACKGROUND.color,
+      backgroundColor: Palette.PAUSE_BACKGROUND,
       children: <Widget>[
         RaisedButton(
           onPressed: () => this._resume(context),
@@ -32,14 +34,14 @@ class PauseMenu extends StatelessWidget {
   }
 
   void _resume(BuildContext context) {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(PauseMenuResult.RESUME);
   }
 
   void _reset(BuildContext context) {
-    Navigator.of(context).pop('reset');
+    Navigator.of(context).pop(PauseMenuResult.RESET);
   }
 
   void _exit(BuildContext context) {
-    Navigator.of(context).pop('exit');
+    Navigator.of(context).pop(PauseMenuResult.EXIT);
   }
 }

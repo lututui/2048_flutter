@@ -1,18 +1,11 @@
-import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_2048/main_menu.dart';
+import 'package:flutter_2048/widgets/main_app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  //await flameUtil.fullScreen();
-  await Flame.util.setOrientation(DeviceOrientation.portraitUp);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MainMenu(),
-    ),
-  );
+  runApp(MainApp());
 }
