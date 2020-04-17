@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/score_provider.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
@@ -80,14 +81,9 @@ class GridProvider with ChangeNotifier {
     this._pendingSpawn = false;
     notifyListeners();
 
-    if (pos.length > 0) {
-      print("Grid is not filled");
-      return;
-    }
+    if (pos.length > 0) return;
 
-    print("Grid is filled");
     gameOver = testGameOver();
-    print("Game over?: $gameOver");
   }
 
   bool testGameOver() {
@@ -98,46 +94,22 @@ class GridProvider with ChangeNotifier {
 
         if (skipI && skipJ) continue;
 
-        if (skipI) {
-          if (_grid[i][j].value == _grid[i][j + 1].value) {
-            print([
-              "${_grid[i][j].gridPos} can merge with",
-              "${_grid[i][j + 1].gridPos}: ${_grid[i][j].value}"
-            ].join(" "));
+        final TileProvider tile = _grid[i][j];
+        final TileProvider iNeighbor = (skipI) ? null : _grid[i + 1][j];
+        final TileProvider jNeighbor = (skipJ) ? null : _grid[i][j + 1];
 
-            return false;
-          }
-
-          continue;
-        }
-
-        if (skipJ) {
-          if (_grid[i][j].value == _grid[i + 1][j].value) {
-            print([
-              "${_grid[i][j].gridPos} can merge with",
-              "${_grid[i + 1][j].gridPos}: ${_grid[i][j].value}"
-            ].join(" "));
-
-            return false;
-          }
-
-          continue;
-        }
-
-        if (_grid[i][j].value == _grid[i + 1][j].value) {
-          print([
-            "${_grid[i][j].gridPos} can merge with",
-            "${_grid[i + 1][j].gridPos}: ${_grid[i][j].value}"
-          ].join(" "));
+        if (tile.compareValue(iNeighbor)) {
+          Logger.log<GridProvider>(
+            "${tile.gridPos} can merge with ${iNeighbor.gridPos}: ${tile.value}",
+          );
 
           return false;
         }
 
-        if (_grid[i][j].value == _grid[i][j + 1].value) {
-          print([
-            "${_grid[i][j].gridPos} can merge with",
-            "${_grid[i][j + 1].gridPos}: ${_grid[i][j].value}"
-          ].join(" "));
+        if (tile.compareValue(jNeighbor)) {
+          Logger.log<GridProvider>(
+            "${tile.gridPos} can merge with ${jNeighbor.gridPos}: ${tile.value}",
+          );
 
           return false;
         }
@@ -175,7 +147,7 @@ class GridProvider with ChangeNotifier {
     int somethingMoved = 0;
     int scoreAdd = 0;
 
-    print("Swipe ${type.toDirectionString()}");
+    Logger.log<GridProvider>("Swipe ${type.toDirectionString()}");
 
     for (int i = 0; i < _grid.length; i++) {
       int newIndex = type.towardsOrigin ? 0 : _grid.length - 1;
@@ -203,14 +175,16 @@ class GridProvider with ChangeNotifier {
 
           scoreAdd += 1 << (tile.value + 1);
 
-          print("Merging ${_grid[previous.a][previous.b]} and $tile");
+          Logger.log<GridProvider>(
+            "Merging ${_grid[previous.a][previous.b]} and $tile",
+          );
 
           _grid[previous.a][previous.b].gridPos = destination;
           tile.gridPos = destination;
 
           _grid[previous.a][previous.b].pendingValueUpdate = true;
 
-          print("Marking $tile for deletion");
+          Logger.log<GridProvider>("Marking $tile for deletion");
           _pendingRemoval.add(tile);
 
           _grid[destination.a][destination.b] = _grid[previous.a][previous.b];
@@ -294,7 +268,7 @@ class GridProvider with ChangeNotifier {
         if (toRemove.length != 1 || !_tiles.remove(toRemove.first))
           throw Exception("Failed to remove $tp from moving list");
 
-        print("Removed ${(toRemove.first.key as ObjectKey).value}");
+        Logger.log<GridProvider>("Removed ${(toRemove.first.key as ObjectKey).value}");
       }
 
       notifyListeners();

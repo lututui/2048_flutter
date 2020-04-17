@@ -58,9 +58,9 @@ class MainGame extends StatelessWidget {
       context: context,
       builder: (_) => const PauseMenu(),
     ).then((result) {
-      print(result);
       // Dismissed or resumed
-      if (result == PauseMenuResult.RESUME) return Future.value(false);
+      if (result == null || result == PauseMenuResult.RESUME)
+        return Future.value(false);
 
       if (result == PauseMenuResult.RESET) {
         Navigator.of(context).pushReplacementNamed('/game4x4');

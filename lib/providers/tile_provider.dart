@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/util/data.dart';
 import 'package:flutter_2048/util/tuple.dart';
 
@@ -31,7 +32,10 @@ class TileProvider extends ChangeNotifier {
   set gridPos(Tuple<int, int> value) {
     if (value == _gridPos) return;
 
-    print("Setting tile $this pos as $value (was $_gridPos)");
+    Logger.log<TileProvider>(
+      "Setting tile pos as $value (was $_gridPos)",
+      instance: this,
+    );
 
     _gridPos = value;
     moving = true;
@@ -39,7 +43,7 @@ class TileProvider extends ChangeNotifier {
   }
 
   void onMoveEnd() {
-    print("$this is done moving");
+    Logger.log<TileProvider>("Done moving", instance: this);
     moving = false;
 
     if (this.pendingValueUpdate) updateValue();
@@ -53,5 +57,9 @@ class TileProvider extends ChangeNotifier {
   @override
   String toString() {
     return "0x${hashCode.toRadixString(16)}";
+  }
+
+  bool compareValue(Object other) {
+    return other is TileProvider && this.value == other.value;
   }
 }
