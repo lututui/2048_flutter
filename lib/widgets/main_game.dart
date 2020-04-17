@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/providers/score_provider.dart';
@@ -36,7 +37,7 @@ class MainGame extends StatelessWidget {
                   context,
                   listen: false,
                 ).onHorizontalDragEnd(details, context),
-                behavior: HitTestBehavior.deferToChild,
+                behavior: HitTestBehavior.opaque,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const <Widget>[

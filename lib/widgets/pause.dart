@@ -9,7 +9,7 @@ class PauseMenu extends StatelessWidget {
     fontFamily: Fonts.RIGHTEOUS_FAMILY,
   );
 
-  const PauseMenu();
+  const PauseMenu({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

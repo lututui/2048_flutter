@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
+import 'package:flutter_2048/providers/score_provider.dart';
 import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/bordered_box.dart';
@@ -30,8 +31,8 @@ class Scoreboard extends StatelessWidget {
             borderColor: Palette.BOX_BORDER,
             alignment: Alignment.centerLeft,
           ),
-          const BorderedBox(
-            child: const ScoreText(),
+          BorderedBox(
+            child: ScoreText(score: Provider.of<ScoreProvider>(context).value),
             backgroundColor: Palette.BOX_BACKGROUND,
             borderColor: Palette.BOX_BORDER,
           ),

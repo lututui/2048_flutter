@@ -14,25 +14,36 @@ import 'package:provider/provider.dart';
 class GridProvider with ChangeNotifier {
   final List<Widget> _tiles = List();
   final List<TileProvider> _pendingRemoval = List();
-  final List<List<TileProvider>> _grid;
+
+  List<List<TileProvider>> _grid;
 
   bool _pendingSpawn = false;
+  bool _gameOver = false;
   int _moving = 0;
 
-  GridProvider._(this._grid) {
-    this.spawn(amount: 3);
-  }
-
-  factory GridProvider(BuildContext context) {
+  GridProvider(BuildContext context) {
     final int gridSize = Provider.of<DimensionsProvider>(
       context,
       listen: false,
     ).gridSize;
 
-    return GridProvider._(
-      List.generate(gridSize, (_) => List(gridSize), growable: false),
+    this._grid = List.generate(
+      gridSize,
+      (_) => List(gridSize),
+      growable: false,
     );
+
+    this.spawn(amount: 3);
   }
+
+  set gameOver(bool gameOver) {
+    if (_gameOver == gameOver) return;
+
+    _gameOver = gameOver;
+    notifyListeners();
+  }
+
+  bool get gameOver => _gameOver;
 
   void spawn({int amount = 1}) {
     final List<Tuple<int, int>> pos = List();
@@ -68,11 +79,79 @@ class GridProvider with ChangeNotifier {
 
     this._pendingSpawn = false;
     notifyListeners();
+
+    if (pos.length > 0) {
+      print("Grid is not filled");
+      return;
+    }
+
+    print("Grid is filled");
+    gameOver = testGameOver();
+    print("Game over?: $gameOver");
+  }
+
+  bool testGameOver() {
+    for (int i = 0; i < _grid.length; i++) {
+      for (int j = 0; j < _grid.length; j++) {
+        final bool skipI = i + 1 >= _grid.length;
+        final bool skipJ = j + 1 >= _grid.length;
+
+        if (skipI && skipJ) continue;
+
+        if (skipI) {
+          if (_grid[i][j].value == _grid[i][j + 1].value) {
+            print([
+              "${_grid[i][j].gridPos} can merge with",
+              "${_grid[i][j + 1].gridPos}: ${_grid[i][j].value}"
+            ].join(" "));
+
+            return false;
+          }
+
+          continue;
+        }
+
+        if (skipJ) {
+          if (_grid[i][j].value == _grid[i + 1][j].value) {
+            print([
+              "${_grid[i][j].gridPos} can merge with",
+              "${_grid[i + 1][j].gridPos}: ${_grid[i][j].value}"
+            ].join(" "));
+
+            return false;
+          }
+
+          continue;
+        }
+
+        if (_grid[i][j].value == _grid[i + 1][j].value) {
+          print([
+            "${_grid[i][j].gridPos} can merge with",
+            "${_grid[i + 1][j].gridPos}: ${_grid[i][j].value}"
+          ].join(" "));
+
+          return false;
+        }
+
+        if (_grid[i][j].value == _grid[i][j + 1].value) {
+          print([
+            "${_grid[i][j].gridPos} can merge with",
+            "${_grid[i][j + 1].gridPos}: ${_grid[i][j].value}"
+          ].join(" "));
+
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   List<Widget> get tiles => _tiles;
 
   void onVerticalDragEnd(DragEndDetails details, BuildContext context) {
+    if (gameOver) return;
+
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dy < 0
         ? SwipeGestureType.UP
         : SwipeGestureType.DOWN;
@@ -81,6 +160,8 @@ class GridProvider with ChangeNotifier {
   }
 
   void onHorizontalDragEnd(DragEndDetails details, BuildContext context) {
+    if (gameOver) return;
+
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dx < 0
         ? SwipeGestureType.LEFT
         : SwipeGestureType.RIGHT;
@@ -101,10 +182,10 @@ class GridProvider with ChangeNotifier {
       Tuple<int, int> previous;
 
       for (int j = 0; j < _grid.length; j++) {
-        int jIndex = type.towardsOrigin ? j : _grid.length - 1 - j;
-        int idx1 = type.isVertical ? jIndex : i;
-        int idx2 = type.isVertical ? i : jIndex;
-        TileProvider tile = _grid[idx1][idx2];
+        final int jIndex = type.towardsOrigin ? j : _grid.length - 1 - j;
+        final int idx1 = type.isVertical ? jIndex : i;
+        final int idx2 = type.isVertical ? i : jIndex;
+        final TileProvider tile = _grid[idx1][idx2];
 
         if (tile == null) continue;
 
@@ -193,8 +274,7 @@ class GridProvider with ChangeNotifier {
 
     if (_pendingRemoval.remove(tp)) {
       final List<TileProvider> matchingTiles = _tiles
-          .map((provider) => (provider.key as ObjectKey).value)
-          .cast<TileProvider>()
+          .map((provider) => (provider.key as ObjectKey).value as TileProvider)
           .where((other) => other == tp || other.gridPos == tp.gridPos)
           .toList();
 
@@ -227,6 +307,7 @@ class GridProvider with ChangeNotifier {
           IterableBase.iterableToFullString(_pendingRemoval),
         ].join(" "));
       }
+
       this.spawn();
     }
   }
