@@ -12,31 +12,40 @@ class Scoreboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: Provider.of<DimensionsProvider>(context).gapSize.width * 2,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          const BorderedBox(
-            child: const Text(
-              "Score",
-              style: const TextStyle(
-                fontFamily: Fonts.RIGHTEOUS_FAMILY,
-                fontSize: 20,
+    final DimensionsProvider dimensions = Provider.of<DimensionsProvider>(
+      context,
+    );
+    final int currentScore = Provider.of<ScoreProvider>(context).value;
+
+    return Container(
+      width: dimensions.gameSize.width + dimensions.gapSize.width,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: dimensions.gapSize.width * 2),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            BorderedBox(
+              child: const Text(
+                "Score",
+                style: const TextStyle(
+                  fontFamily: Fonts.RIGHTEOUS_FAMILY,
+                  fontSize: 20,
+                ),
               ),
+              backgroundColor: Palette.BOX_BACKGROUND,
+              borderColor: Palette.BOX_BORDER,
+              borderWidth: dimensions.gapSize.width / 2,
+              padding: const EdgeInsets.all(2.0),
             ),
-            backgroundColor: Palette.BOX_BACKGROUND,
-            borderColor: Palette.BOX_BORDER,
-            alignment: Alignment.centerLeft,
-          ),
-          BorderedBox(
-            child: ScoreText(score: Provider.of<ScoreProvider>(context).value),
-            backgroundColor: Palette.BOX_BACKGROUND,
-            borderColor: Palette.BOX_BORDER,
-          ),
-        ],
+            BorderedBox(
+              child: ScoreText(score: currentScore),
+              backgroundColor: Palette.BOX_BACKGROUND,
+              borderColor: Palette.BOX_BORDER,
+              borderWidth: dimensions.gapSize.width / 2,
+              padding: const EdgeInsets.all(2.0),
+            ),
+          ],
+        ),
       ),
     );
   }

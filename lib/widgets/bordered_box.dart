@@ -6,17 +6,17 @@ class BorderedBox extends StatelessWidget {
   final Color backgroundColor;
   final Color borderColor;
   final double borderWidth;
-  final Alignment alignment;
   final double height;
+  final double width;
 
   const BorderedBox({
     @required this.child,
-    this.padding = const EdgeInsets.all(2.0),
+    this.padding,
     this.backgroundColor = const Color(0xffb2ebf2),
     this.borderColor = const Color(0xff26c6da),
     this.borderWidth = 1.0,
-    this.alignment = Alignment.centerRight,
     this.height,
+    this.width,
     Key key,
   }) : super(key: key);
 
@@ -24,7 +24,8 @@ class BorderedBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: this.padding,
-      height: this.height,
+      width: (this.width != null) ? this.width + 2 * this.borderWidth : null,
+      height: (this.height != null) ? this.width + 2 * this.borderWidth : null,
       decoration: BoxDecoration(
         color: this.backgroundColor,
         border: Border.fromBorderSide(
@@ -34,10 +35,7 @@ class BorderedBox extends StatelessWidget {
           ),
         ),
       ),
-      child: FittedBox(
-        alignment: this.alignment,
-        child: this.child,
-      ),
+      child: this.child,
     );
   }
 }
