@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
-import 'package:flutter_2048/providers/score_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/bordered_box.dart';
 import 'package:flutter_2048/widgets/game_over_dialog.dart';
@@ -21,7 +20,8 @@ class GameGrid extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) => GameOverDialog.show(
           context,
-          Provider.of<ScoreProvider>(context, listen: false).value,
+          Provider.of<GridProvider>(context, listen: false).score,
+          Provider.of<DimensionsProvider>(context, listen: false).gridSize,
         ),
       );
     }

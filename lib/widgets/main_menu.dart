@@ -20,7 +20,7 @@ class MainMenu extends StatelessWidget {
                 color: Colors.transparent,
                 borderSide: const BorderSide(style: BorderStyle.none),
                 child: const Text(
-                  "New Game",
+                  "Play",
                   style: const TextStyle(
                     color: Colors.lightBlueAccent,
                     fontSize: 16.0,

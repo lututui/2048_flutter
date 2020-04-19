@@ -11,9 +11,9 @@ class TileProvider extends ChangeNotifier {
 
   TileProvider._(this._value, this._gridPos);
 
-  factory TileProvider(Tuple<int, int> pos) {
+  factory TileProvider(Tuple<int, int> pos, {int value}) {
     return TileProvider._(
-      Data.SPAWN_VALUES[Data.rand.nextInt(Data.SPAWN_VALUES.length)],
+      value ?? Data.SPAWN_VALUES[Data.rand.nextInt(Data.SPAWN_VALUES.length)],
       pos,
     );
   }

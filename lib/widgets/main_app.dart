@@ -22,7 +22,7 @@ class MainApp extends StatelessWidget {
             return PageRouteBuilder(
               pageBuilder: (context, _, __) => ChangeNotifierProvider(
                 create: (_) => DimensionsProvider.from(context, 4),
-                child: const MainGame(),
+                child: MainGame(),
               ),
             );
             break;
@@ -30,9 +30,6 @@ class MainApp extends StatelessWidget {
             throw Exception("Route not found");
         }
       },
-      theme: ThemeData(
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
     );
   }
 }

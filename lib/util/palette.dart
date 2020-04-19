@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter_2048/util/data.dart';
+
 class Palette {
   static const Color BOX_BACKGROUND = const Color(0xffcfc8cf);
   static const Color BACKGROUND = const Color(0xffd8d8f6);
@@ -21,6 +23,10 @@ class Palette {
 
   static Color getTileColor(int value) {
     return Palette.TILE_COLORS[value % Palette.TILE_COLORS.length];
+  }
+
+  static Color getRandomTileColor() {
+    return getTileColor(Data.rand.nextInt(TILE_COLORS.length));
   }
 
   Palette._();

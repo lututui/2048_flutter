@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/score_provider.dart';
+import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/bordered_box.dart';
@@ -15,7 +15,7 @@ class Scoreboard extends StatelessWidget {
     final DimensionsProvider dimensions = Provider.of<DimensionsProvider>(
       context,
     );
-    final int currentScore = Provider.of<ScoreProvider>(context).value;
+    final int currentScore = Provider.of<GridProvider>(context).score;
 
     return Container(
       width: dimensions.gameSize.width + dimensions.gapSize.width,

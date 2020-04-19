@@ -4,37 +4,48 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/score_provider.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
+import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
-import 'package:flutter_2048/util/data.dart';
+import 'package:flutter_2048/util/tile_grid.dart';
 import 'package:flutter_2048/util/tuple.dart';
 import 'package:flutter_2048/widgets/tile.dart';
 import 'package:provider/provider.dart';
 
 class GridProvider with ChangeNotifier {
-  final List<Widget> _tiles = List();
   final List<TileProvider> _pendingRemoval = List();
-
-  List<List<TileProvider>> _grid;
+  final List<Widget> _tiles = List();
+  final TileGrid _grid;
 
   bool _pendingSpawn = false;
   bool _gameOver = false;
   int _moving = 0;
+  int _score = 0;
 
-  GridProvider(BuildContext context) {
-    final int gridSize = Provider.of<DimensionsProvider>(
-      context,
-      listen: false,
-    ).gridSize;
+  /*
+  Constructors
+   */
 
-    this._grid = List.generate(
-      gridSize,
-      (_) => List(gridSize),
-      growable: false,
-    );
+  GridProvider._(this._grid);
 
-    this.spawn(amount: 3);
+  /*
+  Getters
+   */
+
+  int get score => _score;
+
+  bool get gameOver => _gameOver;
+
+  List<Widget> get tiles => _tiles;
+
+  /*
+  Setters
+   */
+
+  set score(int value) {
+    if (_score == value) return;
+    _score = value;
+    notifyListeners();
   }
 
   set gameOver(bool gameOver) {
@@ -44,104 +55,61 @@ class GridProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool get gameOver => _gameOver;
+  /*
+  Logic
+   */
 
   void spawn({int amount = 1}) {
-    final List<Tuple<int, int>> pos = List();
-
-    for (int i = 0; i < _grid.length; i++) {
-      for (int j = 0; j < _grid.length; j++) {
-        if (_grid[i][j] != null) continue;
-
-        pos.add(Tuple(i, j));
-      }
-    }
-
-    if (pos.length < amount) {
+    if (_grid.spawnableSpaces < amount) {
       throw Exception(
-        "Tried to spawn $amount but only ${pos.length} spaces are available",
+        "Tried to spawn $amount but only ${_grid.spawnableSpaces} spaces are available",
       );
     }
 
-    for (int i = 0; i < amount; i++) {
-      final Tuple<int, int> p = pos[Data.rand.nextInt(pos.length)];
+    for (int i = 0; i < amount; i++)
+      this.spawnAt(_grid.getRandomSpawnableSpace());
 
-      _grid[p.a][p.b] = TileProvider(p);
-      _tiles.add(
-        ChangeNotifierProvider.value(
-          key: ObjectKey(_grid[p.a][p.b]),
-          value: _grid[p.a][p.b],
-          child: const Tile(),
-        ),
-      );
-
-      if (!pos.remove(p)) throw Exception("Failed mark position $p as filled");
-    }
-
+    SaveManager.save(_grid.sideLength, this);
     this._pendingSpawn = false;
     notifyListeners();
 
-    if (pos.length > 0) return;
+    if (_grid.spawnableSpaces > 0) return;
 
-    gameOver = testGameOver();
+    gameOver = _grid.testGameOver();
   }
 
-  bool testGameOver() {
-    for (int i = 0; i < _grid.length; i++) {
-      for (int j = 0; j < _grid.length; j++) {
-        final bool skipI = i + 1 >= _grid.length;
-        final bool skipJ = j + 1 >= _grid.length;
-
-        if (skipI && skipJ) continue;
-
-        final TileProvider tile = _grid[i][j];
-        final TileProvider iNeighbor = (skipI) ? null : _grid[i + 1][j];
-        final TileProvider jNeighbor = (skipJ) ? null : _grid[i][j + 1];
-
-        if (tile.compareValue(iNeighbor)) {
-          Logger.log<GridProvider>(
-            "${tile.gridPos} can merge with ${iNeighbor.gridPos}: ${tile.value}",
-          );
-
-          return false;
-        }
-
-        if (tile.compareValue(jNeighbor)) {
-          Logger.log<GridProvider>(
-            "${tile.gridPos} can merge with ${jNeighbor.gridPos}: ${tile.value}",
-          );
-
-          return false;
-        }
-      }
-    }
-
-    return true;
+  void spawnAt(Tuple<int, int> pos, {int value}) {
+    _grid.setAtTuple(pos, TileProvider(pos, value: value), allowReplace: false);
+    _tiles.add(
+      ChangeNotifierProvider.value(
+        key: ObjectKey(_grid.getByTuple(pos)),
+        value: _grid.getByTuple(pos),
+        child: const Tile(),
+      ),
+    );
   }
 
-  List<Widget> get tiles => _tiles;
-
-  void onVerticalDragEnd(DragEndDetails details, BuildContext context) {
+  void onVerticalDragEnd(DragEndDetails details) {
     if (gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dy < 0
         ? SwipeGestureType.UP
         : SwipeGestureType.DOWN;
 
-    this.swipe(type, Provider.of<ScoreProvider>(context, listen: false));
+    this.swipe(type);
   }
 
-  void onHorizontalDragEnd(DragEndDetails details, BuildContext context) {
+  void onHorizontalDragEnd(DragEndDetails details) {
     if (gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dx < 0
         ? SwipeGestureType.LEFT
         : SwipeGestureType.RIGHT;
 
-    this.swipe(type, Provider.of<ScoreProvider>(context, listen: false));
+    this.swipe(type);
   }
 
-  void swipe(SwipeGestureType type, ScoreProvider scoreProvider) {
+  void swipe(SwipeGestureType type) {
     if (_pendingSpawn || _moving > 0) return;
 
     int somethingMoved = 0;
@@ -149,15 +117,15 @@ class GridProvider with ChangeNotifier {
 
     Logger.log<GridProvider>("Swipe ${type.toDirectionString()}");
 
-    for (int i = 0; i < _grid.length; i++) {
-      int newIndex = type.towardsOrigin ? 0 : _grid.length - 1;
+    for (int i = 0; i < _grid.sideLength; i++) {
+      int newIndex = type.towardsOrigin ? 0 : _grid.sideLength - 1;
       Tuple<int, int> previous;
 
-      for (int j = 0; j < _grid.length; j++) {
-        final int jIndex = type.towardsOrigin ? j : _grid.length - 1 - j;
+      for (int j = 0; j < _grid.sideLength; j++) {
+        final int jIndex = type.towardsOrigin ? j : _grid.sideLength - 1 - j;
         final int idx1 = type.isVertical ? jIndex : i;
         final int idx2 = type.isVertical ? i : jIndex;
-        final TileProvider tile = _grid[idx1][idx2];
+        final TileProvider tile = _grid.get(idx1, idx2);
 
         if (tile == null) continue;
 
@@ -169,43 +137,43 @@ class GridProvider with ChangeNotifier {
         final Tuple<int, int> destination =
             type.isVertical ? Tuple(newIndex, i) : Tuple(i, newIndex);
 
-        if (_grid[previous.a][previous.b].value == tile.value) {
+        if (_grid.getByTuple(previous).value == tile.value) {
           final Tuple<int, int> oldPosA = Tuple.copy(previous);
           final Tuple<int, int> oldPosB = Tuple.copy(tile.gridPos);
 
           scoreAdd += 1 << (tile.value + 1);
 
           Logger.log<GridProvider>(
-            "Merging ${_grid[previous.a][previous.b]} and $tile",
+            "Merging ${_grid.getByTuple(previous)} and $tile",
           );
 
-          _grid[previous.a][previous.b].gridPos = destination;
+          _grid.getByTuple(previous).gridPos = destination;
           tile.gridPos = destination;
 
-          _grid[previous.a][previous.b].pendingValueUpdate = true;
+          _grid.getByTuple(previous).pendingValueUpdate = true;
 
           Logger.log<GridProvider>("Marking $tile for deletion");
           _pendingRemoval.add(tile);
 
-          _grid[destination.a][destination.b] = _grid[previous.a][previous.b];
+          _grid.setAtTuple(destination, _grid.getByTuple(previous));
 
           if (oldPosA != destination) {
             somethingMoved++;
-            _grid[oldPosA.a][oldPosA.b] = null;
+            _grid.setAtTuple(oldPosA, null);
           }
 
           if (oldPosB != destination) {
             somethingMoved++;
-            _grid[oldPosB.a][oldPosB.b] = null;
+            _grid.setAtTuple(oldPosB, null);
           }
 
           previous = null;
         } else {
           if (previous != destination) {
             somethingMoved++;
-            _grid[destination.a][destination.b] = _grid[previous.a][previous.b];
-            _grid[destination.a][destination.b].gridPos = destination;
-            _grid[previous.a][previous.b] = null;
+            _grid.setAtTuple(destination, _grid.getByTuple(previous));
+            _grid.getByTuple(destination).gridPos = destination;
+            _grid.setAtTuple(previous, null);
           }
 
           previous = Tuple(idx1, idx2);
@@ -220,9 +188,9 @@ class GridProvider with ChangeNotifier {
 
         if (previous != destination) {
           somethingMoved++;
-          _grid[destination.a][destination.b] = _grid[previous.a][previous.b];
-          _grid[destination.a][destination.b].gridPos = destination;
-          _grid[previous.a][previous.b] = null;
+          _grid.setAtTuple(destination, _grid.getByTuple(previous));
+          _grid.getByTuple(destination).gridPos = destination;
+          _grid.setAtTuple(previous, null);
         }
       }
     }
@@ -233,7 +201,7 @@ class GridProvider with ChangeNotifier {
     }
 
     notifyListeners();
-    scoreProvider.value += scoreAdd;
+    score += scoreAdd;
   }
 
   void onMoveEnd(TileProvider tp) {
@@ -268,7 +236,8 @@ class GridProvider with ChangeNotifier {
         if (toRemove.length != 1 || !_tiles.remove(toRemove.first))
           throw Exception("Failed to remove $tp from moving list");
 
-        Logger.log<GridProvider>("Removed ${(toRemove.first.key as ObjectKey).value}");
+        Logger.log<GridProvider>(
+            "Removed ${(toRemove.first.key as ObjectKey).value}");
       }
 
       notifyListeners();
@@ -284,5 +253,47 @@ class GridProvider with ChangeNotifier {
 
       this.spawn();
     }
+  }
+
+  Map<String, dynamic> toJSON() => _grid.toJSON()..["score"] = score;
+
+  static Future<GridProvider> _loadFailed(GridProvider baseGrid) async {
+    baseGrid.spawn(amount: 3);
+
+    return Future.value(baseGrid);
+  }
+
+  static Future<GridProvider> fromJSON(BuildContext context) async {
+    final GridProvider baseGrid = GridProvider._(
+      TileGrid(
+        Provider.of<DimensionsProvider>(
+          context,
+          listen: false,
+        ).gridSize,
+      ),
+    );
+
+    final Tuple<int, List<List<int>>> loadedValues = await SaveManager.load(
+      baseGrid._grid.sideLength,
+    );
+
+    if (loadedValues == null) return _loadFailed(baseGrid);
+
+    final int score = loadedValues.a;
+    final List<List<int>> gridValues = loadedValues.b;
+
+    for (int i = 0; i < baseGrid._grid.sideLength; i++) {
+      for (int j = 0; j < baseGrid._grid.sideLength; j++) {
+        if (gridValues[i][j] == -1) continue;
+
+        baseGrid.spawnAt(Tuple(i, j), value: gridValues[i][j]);
+      }
+    }
+
+    if (baseGrid._grid.spawnableSpaces <= 0)
+      baseGrid._gameOver = baseGrid._grid.testGameOver();
+    baseGrid._score = score;
+
+    return baseGrid;
   }
 }

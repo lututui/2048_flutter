@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/pause.dart';
@@ -6,8 +7,13 @@ import 'package:flutter_2048/widgets/score_text.dart';
 
 class GameOverDialog extends StatelessWidget {
   final int finalScore;
+  final int gridSize;
 
-  const GameOverDialog({Key key, @required this.finalScore}) : super(key: key);
+  const GameOverDialog({
+    Key key,
+    @required this.finalScore,
+    @required this.gridSize,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -94,17 +100,18 @@ class GameOverDialog extends StatelessWidget {
     Navigator.of(context).pop(PauseMenuResult.EXIT);
   }
 
-  static void show(BuildContext context, int score) {
+  static void show(BuildContext context, int score, int gridSize) {
     showDialog<PauseMenuResult>(
       context: context,
       barrierDismissible: true,
       builder: (c) {
-        return GameOverDialog(finalScore: score);
+        return GameOverDialog(finalScore: score, gridSize: gridSize);
       },
-    ).then((result) {
+    ).then((result) async {
       if (result == null || result == PauseMenuResult.RESUME) return;
 
       if (result == PauseMenuResult.RESET) {
+        await SaveManager.wipe(gridSize);
         Navigator.of(context).pushReplacementNamed('/game4x4');
         return;
       }
