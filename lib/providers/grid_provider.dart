@@ -7,6 +7,7 @@ import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
+import 'package:flutter_2048/util/leaderboard.dart';
 import 'package:flutter_2048/util/tile_grid.dart';
 import 'package:flutter_2048/util/tuple.dart';
 import 'package:flutter_2048/widgets/tile.dart';
@@ -56,6 +57,7 @@ class GridProvider with ChangeNotifier {
 
     if (baseGrid._grid.spawnableSpaces <= 0)
       baseGrid._gameOver = baseGrid._grid.testGameOver();
+
     baseGrid._score = score;
 
     return baseGrid;
@@ -83,6 +85,10 @@ class GridProvider with ChangeNotifier {
 
   set gameOver(bool gameOver) {
     if (_gameOver == gameOver) return;
+
+    Leaderboard.fromJSON(_grid.sideLength).then(
+      (l) => l.insert(_score, _grid.sideLength),
+    );
 
     _gameOver = gameOver;
     notifyListeners();

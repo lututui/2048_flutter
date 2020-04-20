@@ -51,7 +51,7 @@ class ButtonsBar extends StatelessWidget {
   }
 
   void _reset(BuildContext context) {
-    SaveManager.wipe(
+    SaveManager.wipeSave(
       DimensionsProvider.of(context, listen: false).gridSize,
     ).then((_) {
       Navigator.of(context).pushReplacementNamed('/game4x4');

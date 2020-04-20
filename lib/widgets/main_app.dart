@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/util/fonts.dart';
+import 'package:flutter_2048/widgets/leaderboard_screen.dart';
 import 'package:flutter_2048/widgets/main_game.dart';
 import 'package:flutter_2048/widgets/main_menu.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,13 @@ class MainApp extends StatelessWidget {
               ),
             );
             break;
+          case '/leaderboard4':
+            return PageRouteBuilder(
+              pageBuilder: (context, _, __) => ChangeNotifierProvider(
+                create: (_) => DimensionsProvider.from(context, 4),
+                child: LeaderboardScreen(),
+              ),
+            );
           default:
             throw Exception("Route not found");
         }

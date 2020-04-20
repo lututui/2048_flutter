@@ -69,7 +69,7 @@ class PauseDialog extends StatelessWidget {
       builder: (_) => const PauseDialog(),
     ).then((result) {
       if (result != null && result == DialogResult.RESET) {
-        SaveManager.wipe(gridSize);
+        SaveManager.wipeSave(gridSize);
         Navigator.of(context).pushReplacementNamed('/game4x4');
       }
 

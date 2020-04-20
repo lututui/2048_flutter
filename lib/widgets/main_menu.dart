@@ -6,29 +6,37 @@ class MainMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              OutlineButton(
-                onPressed: () => Navigator.of(context).pushNamed('/game4x4'),
-                color: Colors.transparent,
-                borderSide: const BorderSide(style: BorderStyle.none),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            OutlineButton(
+              onPressed: () => Navigator.of(context).pushNamed('/game4x4'),
+              color: Colors.transparent,
+              borderSide: const BorderSide(style: BorderStyle.none),
+              child: const Text(
+                "Play",
+                style: const TextStyle(
+                  color: Colors.lightBlueAccent,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            OutlineButton(
+              onPressed: () => Navigator.of(context).pushNamed("/leaderboard4"),
+              color: Colors.transparent,
+              borderSide: const BorderSide(style: BorderStyle.none),
                 child: const Text(
-                  "Play",
+                  "Leaderboard",
                   style: const TextStyle(
                     color: Colors.lightBlueAccent,
                     fontSize: 16.0,
                   ),
-                ),
-              )
-            ],
-          ),
-        ],
+                )
+            ),
+          ],
+        ),
       ),
     );
   }

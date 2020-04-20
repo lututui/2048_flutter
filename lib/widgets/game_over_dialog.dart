@@ -93,13 +93,13 @@ class GameOverDialog extends StatelessWidget {
     Navigator.of(context).pop(DialogResult.EXIT);
   }
 
-  static void show(BuildContext context) {
+  static Future<void> show(BuildContext context) async {
     final DimensionsProvider dimensions = DimensionsProvider.of(
       context,
       listen: false,
     );
 
-    showDialog<DialogResult>(
+    return showDialog<DialogResult>(
       context: context,
       barrierDismissible: true,
       builder: (c) {
@@ -112,7 +112,7 @@ class GameOverDialog extends StatelessWidget {
       if (result == null || result == DialogResult.PAUSE) return;
 
       if (result == DialogResult.RESET) {
-        await SaveManager.wipe(dimensions.gridSize);
+        await SaveManager.wipeSave(dimensions.gridSize);
         Navigator.of(context).pushReplacementNamed('/game4x4');
         return;
       }
