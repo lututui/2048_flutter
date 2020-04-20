@@ -28,6 +28,39 @@ class GridProvider with ChangeNotifier {
 
   GridProvider._(this._grid);
 
+  factory GridProvider.of(BuildContext context, {bool listen = true}) {
+    return Provider.of<GridProvider>(context, listen: listen);
+  }
+
+  static Future<GridProvider> fromJSON(BuildContext context) async {
+    final GridProvider baseGrid = GridProvider._(
+      TileGrid(DimensionsProvider.of(context, listen: false).gridSize),
+    );
+
+    final Tuple<int, List<List<int>>> loadedValues = await SaveManager.load(
+      baseGrid._grid.sideLength,
+    );
+
+    if (loadedValues == null) return _loadFailed(baseGrid);
+
+    final int score = loadedValues.a;
+    final List<List<int>> gridValues = loadedValues.b;
+
+    for (int i = 0; i < baseGrid._grid.sideLength; i++) {
+      for (int j = 0; j < baseGrid._grid.sideLength; j++) {
+        if (gridValues[i][j] == -1) continue;
+
+        baseGrid.spawnAt(Tuple(i, j), value: gridValues[i][j]);
+      }
+    }
+
+    if (baseGrid._grid.spawnableSpaces <= 0)
+      baseGrid._gameOver = baseGrid._grid.testGameOver();
+    baseGrid._score = score;
+
+    return baseGrid;
+  }
+
   /*
   Getters
    */
@@ -261,39 +294,5 @@ class GridProvider with ChangeNotifier {
     baseGrid.spawn(amount: 3);
 
     return Future.value(baseGrid);
-  }
-
-  static Future<GridProvider> fromJSON(BuildContext context) async {
-    final GridProvider baseGrid = GridProvider._(
-      TileGrid(
-        Provider.of<DimensionsProvider>(
-          context,
-          listen: false,
-        ).gridSize,
-      ),
-    );
-
-    final Tuple<int, List<List<int>>> loadedValues = await SaveManager.load(
-      baseGrid._grid.sideLength,
-    );
-
-    if (loadedValues == null) return _loadFailed(baseGrid);
-
-    final int score = loadedValues.a;
-    final List<List<int>> gridValues = loadedValues.b;
-
-    for (int i = 0; i < baseGrid._grid.sideLength; i++) {
-      for (int j = 0; j < baseGrid._grid.sideLength; j++) {
-        if (gridValues[i][j] == -1) continue;
-
-        baseGrid.spawnAt(Tuple(i, j), value: gridValues[i][j]);
-      }
-    }
-
-    if (baseGrid._grid.spawnableSpaces <= 0)
-      baseGrid._gameOver = baseGrid._grid.testGameOver();
-    baseGrid._score = score;
-
-    return baseGrid;
   }
 }

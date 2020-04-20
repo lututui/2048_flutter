@@ -8,6 +8,7 @@ class DialogOption extends StatelessWidget {
   final IconData icon;
   final double width;
   final double height;
+  final EdgeInsets padding;
 
   const DialogOption({
     Key key,
@@ -16,12 +17,13 @@ class DialogOption extends StatelessWidget {
     @required this.icon,
     this.width,
     this.height,
+    this.padding = const EdgeInsets.all(0.0),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: this.padding,
       child: Container(
         width: this.width,
         height: this.height,

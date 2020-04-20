@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-enum DialogResult { RESUME, RESET, EXIT }
+enum DialogResult { PAUSE, RESET, EXIT }
 
 extension DialogResultIcons on DialogResult {
   IconData get icon {
     switch (this) {
-      case DialogResult.RESUME:
+      case DialogResult.PAUSE:
         return Icons.pause;
       case DialogResult.RESET:
         return Icons.settings_backup_restore;

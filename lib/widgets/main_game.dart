@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
 import 'package:flutter_2048/widgets/pause_dialog.dart';
 import 'package:flutter_2048/widgets/scoreboard.dart';
@@ -45,29 +46,27 @@ class MainGame extends StatelessWidget {
             ],
             child: Builder(
               builder: (context) {
+                final GridProvider state = GridProvider.of(context);
+
                 return WillPopScope(
                   onWillPop: () => PauseDialog.show(
                     context,
-                    Provider.of<DimensionsProvider>(
-                      context,
-                      listen: false,
-                    ).gridSize,
+                    DimensionsProvider.of(context, listen: false).gridSize,
                   ),
                   child: GestureDetector(
-                    onVerticalDragEnd: (details) => Provider.of<GridProvider>(
-                      context,
-                      listen: false,
-                    ).onVerticalDragEnd(details),
-                    onHorizontalDragEnd: (details) => Provider.of<GridProvider>(
-                      context,
-                      listen: false,
-                    ).onHorizontalDragEnd(details),
+                    onVerticalDragEnd: (info) => state.onVerticalDragEnd(
+                      info,
+                    ),
+                    onHorizontalDragEnd: (info) => state.onHorizontalDragEnd(
+                      info,
+                    ),
                     behavior: HitTestBehavior.opaque,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const <Widget>[
                         const Scoreboard(),
                         const GameGrid(),
+                        const ButtonsBar(),
                       ],
                     ),
                   ),

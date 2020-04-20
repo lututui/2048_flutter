@@ -10,7 +10,7 @@ class BorderedBox extends StatelessWidget {
   final double width;
 
   const BorderedBox({
-    @required this.child,
+    this.child,
     this.padding,
     this.backgroundColor = const Color(0xffb2ebf2),
     this.borderColor = const Color(0xff26c6da),
@@ -25,7 +25,7 @@ class BorderedBox extends StatelessWidget {
     return Container(
       padding: this.padding,
       width: (this.width != null) ? this.width + 2 * this.borderWidth : null,
-      height: (this.height != null) ? this.width + 2 * this.borderWidth : null,
+      height: (this.height != null) ? this.height + 2 * this.borderWidth : null,
       decoration: BoxDecoration(
         color: this.backgroundColor,
         border: Border.fromBorderSide(

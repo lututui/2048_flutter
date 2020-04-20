@@ -4,21 +4,18 @@ import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/bordered_box.dart';
 import 'package:flutter_2048/widgets/game_over_dialog.dart';
-import 'package:provider/provider.dart';
 
 class GameGrid extends StatelessWidget {
   const GameGrid({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final DimensionsProvider dimensions = Provider.of<DimensionsProvider>(
-      context,
-    );
-    final GridProvider grid = Provider.of<GridProvider>(context);
+    final DimensionsProvider dimensions = DimensionsProvider.of(context);
+    final GridProvider grid = GridProvider.of(context);
 
     if (grid.gameOver) {
       WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) => GameOverDialog.show(context),
+        (_) => GameOverDialog.show(context),
       );
     }
 

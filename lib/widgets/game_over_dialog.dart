@@ -4,9 +4,8 @@ import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:flutter_2048/widgets/flexible_dialog_option.dart';
+import 'package:flutter_2048/widgets/dialog_option.dart';
 import 'package:flutter_2048/widgets/score_text.dart';
-import 'package:provider/provider.dart';
 
 class GameOverDialog extends StatelessWidget {
   final GridProvider gridState;
@@ -22,11 +21,11 @@ class GameOverDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       titlePadding: const EdgeInsets.all(16.0),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-      title: Center(
+      contentPadding: const EdgeInsets.all(0.0),
+      title: const Center(
         child: const Text(
           "Game Over",
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 30,
           ),
         ),
@@ -58,6 +57,7 @@ class GameOverDialog extends StatelessWidget {
               color: Palette.BOX_BORDER,
               height: dimensionsState.tileSize.height,
               width: dimensionsState.tileSize.width,
+              padding: const EdgeInsets.all(8.0),
             ),
             DialogOption(
               icon: DialogResult.RESET.icon,
@@ -65,13 +65,15 @@ class GameOverDialog extends StatelessWidget {
               color: Palette.BOX_BORDER,
               height: dimensionsState.tileSize.height,
               width: dimensionsState.tileSize.width,
+              padding: const EdgeInsets.all(8.0),
             ),
             DialogOption(
-              icon: DialogResult.RESUME.icon,
+              icon: DialogResult.PAUSE.icon,
               callback: this._resume,
               color: Palette.BOX_BORDER,
               height: dimensionsState.tileSize.height,
               width: dimensionsState.tileSize.width,
+              padding: const EdgeInsets.all(8.0),
             ),
           ],
         ),
@@ -80,7 +82,7 @@ class GameOverDialog extends StatelessWidget {
   }
 
   void _resume(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.RESUME);
+    Navigator.of(context).pop(DialogResult.PAUSE);
   }
 
   void _reset(BuildContext context) {
@@ -92,7 +94,7 @@ class GameOverDialog extends StatelessWidget {
   }
 
   static void show(BuildContext context) {
-    final DimensionsProvider dimensions = Provider.of<DimensionsProvider>(
+    final DimensionsProvider dimensions = DimensionsProvider.of(
       context,
       listen: false,
     );
@@ -102,15 +104,12 @@ class GameOverDialog extends StatelessWidget {
       barrierDismissible: true,
       builder: (c) {
         return GameOverDialog(
-          gridState: Provider.of<GridProvider>(
-            context,
-            listen: false,
-          ),
+          gridState: GridProvider.of(context, listen: false),
           dimensionsState: dimensions,
         );
       },
     ).then((result) async {
-      if (result == null || result == DialogResult.RESUME) return;
+      if (result == null || result == DialogResult.PAUSE) return;
 
       if (result == DialogResult.RESET) {
         await SaveManager.wipe(dimensions.gridSize);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/util/data.dart';
 import 'package:flutter_2048/util/tuple.dart';
+import 'package:provider/provider.dart';
 
 class TileProvider extends ChangeNotifier {
   bool pendingValueUpdate = false;
@@ -16,6 +17,10 @@ class TileProvider extends ChangeNotifier {
       value ?? Data.SPAWN_VALUES[Data.rand.nextInt(Data.SPAWN_VALUES.length)],
       pos,
     );
+  }
+
+  factory TileProvider.of(BuildContext context, {bool listen = true}) {
+    return Provider.of<TileProvider>(context, listen: listen);
   }
 
   int get value => _value;

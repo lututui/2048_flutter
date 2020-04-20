@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DimensionsProvider with ChangeNotifier {
   final int gridSize;
@@ -16,6 +17,10 @@ class DimensionsProvider with ChangeNotifier {
 
   factory DimensionsProvider.from(BuildContext context, int gridSize) {
     return DimensionsProvider(MediaQuery.of(context).size, gridSize);
+  }
+
+  factory DimensionsProvider.of(BuildContext context, {bool listen = true}) {
+    return Provider.of<DimensionsProvider>(context, listen: listen);
   }
 
   Size get gapSize => _gapSize;

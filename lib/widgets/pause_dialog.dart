@@ -19,7 +19,7 @@ class PauseDialog extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Icon(DialogResult.RESUME.icon),
+              Icon(DialogResult.PAUSE.icon),
               const Text("Resume"),
             ],
           ),
@@ -52,7 +52,7 @@ class PauseDialog extends StatelessWidget {
   }
 
   void _resume(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.RESUME);
+    Navigator.of(context).pop(DialogResult.PAUSE);
   }
 
   void _reset(BuildContext context) {
