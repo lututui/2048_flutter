@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
-import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/bordered_box.dart';
 import 'package:flutter_2048/widgets/score_text.dart';
@@ -28,7 +27,6 @@ class Scoreboard extends StatelessWidget {
               child: const Text(
                 "Score",
                 style: const TextStyle(
-                  fontFamily: Fonts.RIGHTEOUS_FAMILY,
                   fontSize: 20,
                 ),
               ),

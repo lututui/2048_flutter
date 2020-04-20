@@ -2,32 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/util/fonts.dart';
 
 class FixedWidthText extends StatelessWidget {
-  final TextPainter textPainter;
+  final TextPainter textPainter = TextPainter(
+    textDirection: TextDirection.ltr,
+    textAlign: TextAlign.center,
+    maxLines: 1,
+  );
 
-  const FixedWidthText._({Key key, this.textPainter}) : super(key: key);
-
-  factory FixedWidthText({
+  FixedWidthText({
     Key key,
     @required String text,
     @required double width,
-  }) {
-    final TextPainter tPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.center,
-      maxLines: 1,
-      text: TextSpan(
-        text: text,
-        style: const TextStyle(
-          color: Colors.black,
-          fontFamily: Fonts.RIGHTEOUS_FAMILY,
-          fontSize: 16.0,
-        ),
+  }) : super(key: key) {
+    this.textPainter.text = TextSpan(
+      text: text,
+      style: const TextStyle(
+        color: Colors.black,
+        fontFamily: Fonts.RIGHTEOUS_FAMILY,
+        fontSize: 16.0,
       ),
     );
 
-    tPainter.layout(minWidth: width, maxWidth: width);
-
-    return FixedWidthText._(key: key, textPainter: tPainter);
+    this.textPainter.layout(minWidth: width, maxWidth: width);
   }
 
   @override

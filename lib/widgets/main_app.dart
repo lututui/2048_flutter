@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
+import 'package:flutter_2048/util/fonts.dart';
 import 'package:flutter_2048/widgets/main_game.dart';
 import 'package:flutter_2048/widgets/main_menu.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,9 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        fontFamily: Fonts.RIGHTEOUS_FAMILY,
+      ),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: (settings) {
         switch (settings.name) {

@@ -21,6 +21,9 @@ class Tile extends StatelessWidget {
         tileContext.gridPos.a * dimensions.tileSize.height +
         dimensions.gapSize.height;
 
+    final Color tileColor = Palette.getTileColor(tileContext.value);
+    final Color tileBorder = Palette.getTileBorder(tileContext.value);
+
     return AnimatedPositioned(
       onEnd: () {
         final GridProvider grid = Provider.of<GridProvider>(
@@ -39,10 +42,18 @@ class Tile extends StatelessWidget {
       left: leftPos,
       top: topPos,
       child: Container(
+        decoration: BoxDecoration(
+          color: tileColor,
+          border: Border.fromBorderSide(
+            BorderSide(
+              color: tileBorder,
+              width: dimensions.gapSize.width / 2,
+            ),
+          ),
+        ),
         height: dimensions.tileSize.height,
         width: dimensions.tileSize.width,
         alignment: Alignment.center,
-        color: Palette.getTileColor(tileContext.value),
         child: FixedWidthText(
           text: "${1 << tileContext.value}",
           width: dimensions.tileSize.width,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/util/fonts.dart';
 
 class ScoreText extends StatelessWidget {
   final int score;
@@ -14,7 +13,6 @@ class ScoreText extends StatelessWidget {
       textAlign: TextAlign.right,
       style: const TextStyle(
         color: Colors.black,
-        fontFamily: Fonts.RIGHTEOUS_FAMILY,
         fontSize: 20,
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/util/fonts.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({Key key}) : super(key: key);
@@ -24,7 +23,6 @@ class MainMenu extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.lightBlueAccent,
                     fontSize: 16.0,
-                    fontFamily: Fonts.RIGHTEOUS_FAMILY,
                   ),
                 ),
               )

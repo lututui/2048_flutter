@@ -18,11 +18,7 @@ class GameGrid extends StatelessWidget {
 
     if (grid.gameOver) {
       WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) => GameOverDialog.show(
-          context,
-          Provider.of<GridProvider>(context, listen: false).score,
-          Provider.of<DimensionsProvider>(context, listen: false).gridSize,
-        ),
+        (timeStamp) => GameOverDialog.show(context),
       );
     }
 

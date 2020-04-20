@@ -3,10 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
-import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
-import 'package:flutter_2048/widgets/pause.dart';
+import 'package:flutter_2048/widgets/pause_dialog.dart';
 import 'package:flutter_2048/widgets/scoreboard.dart';
 import 'package:provider/provider.dart';
 
@@ -47,7 +46,13 @@ class MainGame extends StatelessWidget {
             child: Builder(
               builder: (context) {
                 return WillPopScope(
-                  onWillPop: () => confirmReturn(context),
+                  onWillPop: () => PauseDialog.show(
+                    context,
+                    Provider.of<DimensionsProvider>(
+                      context,
+                      listen: false,
+                    ).gridSize,
+                  ),
                   child: GestureDetector(
                     onVerticalDragEnd: (details) => Provider.of<GridProvider>(
                       context,
@@ -73,25 +78,5 @@ class MainGame extends StatelessWidget {
         );
       },
     );
-  }
-
-  Future<bool> confirmReturn(BuildContext context) {
-    return showDialog<PauseMenuResult>(
-      context: context,
-      builder: (_) => const PauseMenu(),
-    ).then((result) async {
-      // Dismissed or resumed
-      if (result == null || result == PauseMenuResult.RESUME)
-        return Future.value(false);
-
-      if (result == PauseMenuResult.RESET) {
-        await SaveManager.wipe(
-          Provider.of<DimensionsProvider>(context, listen: false).gridSize,
-        );
-        Navigator.of(context).pushReplacementNamed('/game4x4');
-      }
-
-      return Future.value(result == PauseMenuResult.EXIT);
-    });
   }
 }
