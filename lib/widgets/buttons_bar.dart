@@ -4,7 +4,7 @@ import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/dialog_option.dart';
-import 'package:flutter_2048/widgets/pause_dialog.dart';
+import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
 
 class ButtonsBar extends StatelessWidget {
   const ButtonsBar({Key key}) : super(key: key);
@@ -51,10 +51,12 @@ class ButtonsBar extends StatelessWidget {
   }
 
   void _reset(BuildContext context) {
+    final int gridSize = DimensionsProvider.of(context, listen: false).gridSize;
+
     SaveManager.wipeSave(
-      DimensionsProvider.of(context, listen: false).gridSize,
+      gridSize,
     ).then((_) {
-      Navigator.of(context).pushReplacementNamed('/game4x4');
+      Navigator.of(context).pushReplacementNamed('/game', arguments: gridSize);
     });
   }
 

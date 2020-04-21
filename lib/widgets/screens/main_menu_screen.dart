@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MainMenu extends StatelessWidget {
-  const MainMenu({Key key}) : super(key: key);
+class MainMenuScreen extends StatelessWidget {
+  const MainMenuScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class MainMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             OutlineButton(
-              onPressed: () => Navigator.of(context).pushNamed('/game4x4'),
+              onPressed: () => Navigator.of(context).pushNamed('/game', arguments: 4),
               color: Colors.transparent,
               borderSide: const BorderSide(style: BorderStyle.none),
               child: const Text(
@@ -24,7 +24,7 @@ class MainMenu extends StatelessWidget {
               ),
             ),
             OutlineButton(
-              onPressed: () => Navigator.of(context).pushNamed("/leaderboard4"),
+              onPressed: () => Navigator.of(context).pushNamed("/leaderboard", arguments: 4),
               color: Colors.transparent,
               borderSide: const BorderSide(style: BorderStyle.none),
                 child: const Text(

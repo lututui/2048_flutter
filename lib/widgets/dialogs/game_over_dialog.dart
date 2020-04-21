@@ -113,7 +113,10 @@ class GameOverDialog extends StatelessWidget {
 
       if (result == DialogResult.RESET) {
         await SaveManager.wipeSave(dimensions.gridSize);
-        Navigator.of(context).pushReplacementNamed('/game4x4');
+        Navigator.of(context).pushReplacementNamed(
+          '/game',
+          arguments: dimensions.gridSize,
+        );
         return;
       }
 

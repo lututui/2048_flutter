@@ -1,4 +1,4 @@
-import 'package:quiver/core.dart';
+import 'package:quiver/core.dart' as Quiver;
 
 class Tuple<T, E> {
   T a;
@@ -16,7 +16,7 @@ class Tuple<T, E> {
   }
 
   @override
-  int get hashCode => hash2(this.a, this.b);
+  int get hashCode => Quiver.hash2(this.a, this.b);
 
   void set(T a, E b) {
     this.a = a;

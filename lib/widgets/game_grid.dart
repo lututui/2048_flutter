@@ -3,7 +3,7 @@ import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/bordered_box.dart';
-import 'package:flutter_2048/widgets/game_over_dialog.dart';
+import 'package:flutter_2048/widgets/dialogs/game_over_dialog.dart';
 
 class GameGrid extends StatelessWidget {
   const GameGrid({Key key}) : super(key: key);

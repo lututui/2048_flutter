@@ -6,14 +6,14 @@ import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
-import 'package:flutter_2048/widgets/pause_dialog.dart';
+import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
 import 'package:flutter_2048/widgets/scoreboard.dart';
 import 'package:provider/provider.dart';
 
-class MainGame extends StatelessWidget {
+class GameScreen extends StatelessWidget {
   final AsyncMemoizer<GridProvider> _memoizer = AsyncMemoizer();
 
-  MainGame({Key key}) : super(key: key);
+  GameScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
