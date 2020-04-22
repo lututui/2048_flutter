@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/types/void_callback.dart';
+import 'package:flutter_2048/types/callbacks.dart';
 import 'package:flutter_2048/util/palette.dart';
 
 class DialogOption extends StatelessWidget {

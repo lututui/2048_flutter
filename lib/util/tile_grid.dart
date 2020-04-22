@@ -34,6 +34,8 @@ class TileGrid {
 
   int get sideLength => _grid.length;
 
+  int get flattenLength => _grid.length * _grid.length;
+
   List<Tuple<int, int>> get spawnableSpacesList => List.unmodifiable(_free);
 
   int get spawnableSpaces => _free.length;

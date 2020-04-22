@@ -4,20 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class DimensionsProvider with ChangeNotifier {
-  final int gridSize;
+  static const int _DEFAULT_GRID_SIZE = 4;
 
   Size _screenSize;
   Size _tileSize;
   Size _gapSize;
   Size _gameSize;
 
-  DimensionsProvider(Size s, this.gridSize) {
-    this.screenSize = s;
-  }
+  int _gridSize;
 
-  factory DimensionsProvider.from(BuildContext context, int gridSize) {
-    return DimensionsProvider(MediaQuery.of(context).size, gridSize);
-  }
+  DimensionsProvider() : _gridSize = _DEFAULT_GRID_SIZE;
 
   factory DimensionsProvider.of(BuildContext context, {bool listen = true}) {
     return Provider.of<DimensionsProvider>(context, listen: listen);
@@ -31,14 +27,53 @@ class DimensionsProvider with ChangeNotifier {
 
   Size get tileSize => _tileSize;
 
-  set screenSize(Size value) {
-    _screenSize = value;
+  int get gridSize => _gridSize;
 
-    _tileSize = Size.square(min(value.width, value.height) / (gridSize + 2));
-    _gapSize = _tileSize / (2.0 * gridSize);
-    _gameSize = Size.square(
-        gridSize * (_tileSize.width + _gapSize.width) + _gapSize.width);
+  set gridSize(int value) {
+    _gridSize = value;
 
-    notifyListeners();
+    if (_screenSize != null) this._updateSizes();
+  }
+
+  void _updateSizes() {
+    final bool skipNotify = [
+      _tileSize,
+      _gapSize,
+      _gameSize,
+    ].any((k) => k == null);
+
+    final Map<String, Size> sizes = calculateSizes(_screenSize, _gridSize);
+
+    _tileSize = sizes["tile"];
+    _gapSize = sizes["gap"];
+    _gameSize = sizes["game"];
+
+    if (!skipNotify) notifyListeners();
+  }
+
+  void updateScreenSize(BuildContext context) {
+    final Size newSize = MediaQuery.of(context).size;
+
+    if (_screenSize == newSize) return;
+
+    _screenSize = newSize;
+
+    this._updateSizes();
+  }
+
+  static Map<String, Size> calculateSizes(Size screenSize, int gridSize) {
+    final Size tileSize = Size.square(
+      min(screenSize.width, screenSize.height) / (gridSize + 2),
+    );
+    final Size gapSize = tileSize / (2.0 * gridSize);
+    final Size gameSize = Size.square(
+      gridSize * (tileSize.width + gapSize.width) + gapSize.width,
+    );
+
+    return <String, Size>{
+      "tile": tileSize,
+      "gap": gapSize,
+      "game": gameSize,
+    };
   }
 }
