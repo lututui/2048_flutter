@@ -47,7 +47,9 @@ class ButtonsBar extends StatelessWidget {
     PauseDialog.show(
       context,
       DimensionsProvider.of(context, listen: false).gridSize,
-    );
+    ).then((bool shouldPop) {
+      if (shouldPop) Navigator.of(context).pop();
+    });
   }
 
   void _reset(BuildContext context) {

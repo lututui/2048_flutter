@@ -4,7 +4,7 @@ import 'package:flutter_2048/util/data.dart';
 import 'package:flutter_2048/util/tuple.dart';
 import 'package:provider/provider.dart';
 
-class TileProvider extends ChangeNotifier {
+class TileProvider with ChangeNotifier {
   bool pendingValueUpdate = false;
   bool moving = false;
   Tuple<int, int> _gridPos;

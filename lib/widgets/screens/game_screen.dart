@@ -2,7 +2,7 @@ import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
@@ -65,7 +65,7 @@ class GameScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const <Widget>[
                         const Scoreboard(),
-                        const GameGrid(),
+                        const GameGrid<GridProvider>(),
                         const ButtonsBar(),
                       ],
                     ),

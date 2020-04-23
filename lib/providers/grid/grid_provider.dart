@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
+import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
@@ -13,11 +14,9 @@ import 'package:flutter_2048/util/tuple.dart';
 import 'package:flutter_2048/widgets/tile.dart';
 import 'package:provider/provider.dart';
 
-class GridProvider with ChangeNotifier {
+class GridProvider extends BaseGridProvider with ChangeNotifier {
   final List<TileProvider> _pendingRemoval = List();
-  final List<Widget> _tiles = List();
 
-  TileGrid grid;
   bool _pendingSpawn = false;
   bool _gameOver = false;
   int _moving = 0;
@@ -27,13 +26,11 @@ class GridProvider with ChangeNotifier {
   Constructors
    */
 
-  GridProvider._(this.grid);
+  GridProvider._(TileGrid grid) : super(grid);
 
   factory GridProvider.of(BuildContext context, {bool listen = true}) {
     return Provider.of<GridProvider>(context, listen: listen);
   }
-
-  GridProvider.empty();
 
   static Future<GridProvider> fromJSON(BuildContext context) async {
     final GridProvider baseGrid = GridProvider._(
@@ -73,8 +70,6 @@ class GridProvider with ChangeNotifier {
 
   bool get gameOver => _gameOver;
 
-  List<Widget> get tiles => _tiles;
-
   /*
   Setters
    */
@@ -100,15 +95,9 @@ class GridProvider with ChangeNotifier {
   Logic
    */
 
+  @override
   void spawn({int amount = 1}) {
-    if (grid.spawnableSpaces < amount) {
-      throw Exception(
-        "Tried to spawn $amount but only ${grid.spawnableSpaces} spaces are available",
-      );
-    }
-
-    for (int i = 0; i < amount; i++)
-      this.spawnAt(grid.getRandomSpawnableSpace());
+    super.spawn(amount: amount);
 
     SaveManager.save(grid.sideLength, this);
     this._pendingSpawn = false;
@@ -117,17 +106,6 @@ class GridProvider with ChangeNotifier {
     if (grid.spawnableSpaces > 0) return;
 
     gameOver = grid.testGameOver();
-  }
-
-  void spawnAt(Tuple<int, int> pos, {int value}) {
-    grid.setAtTuple(pos, TileProvider(pos, value: value), allowReplace: false);
-    _tiles.add(
-      ChangeNotifierProvider.value(
-        key: ObjectKey(grid.getByTuple(pos)),
-        value: grid.getByTuple(pos),
-        child: const Tile(),
-      ),
-    );
   }
 
   void onVerticalDragEnd(DragEndDetails details) {
@@ -256,7 +234,7 @@ class GridProvider with ChangeNotifier {
     --_moving;
 
     if (_pendingRemoval.remove(tp)) {
-      final List<TileProvider> matchingTiles = _tiles
+      final List<TileProvider> matchingTiles = tiles
           .map((provider) => (provider.key as ObjectKey).value as TileProvider)
           .where((other) => other == tp || other.gridPos == tp.gridPos)
           .toList();
@@ -271,10 +249,10 @@ class GridProvider with ChangeNotifier {
         if (t != tp) continue;
 
         final List<ChangeNotifierProvider> toRemove = List.from(
-          _tiles.where((p) => (p.key as ObjectKey).value == t),
+          tiles.where((p) => (p.key as ObjectKey).value == t),
         );
 
-        if (toRemove.length != 1 || !_tiles.remove(toRemove.first))
+        if (toRemove.length != 1 || !tiles.remove(toRemove.first))
           throw Exception("Failed to remove $tp from moving list");
 
         Logger.log<GridProvider>(
@@ -302,5 +280,17 @@ class GridProvider with ChangeNotifier {
     baseGrid.spawn(amount: 3);
 
     return Future.value(baseGrid);
+  }
+
+  @override
+  void spawnAt(Tuple<int, int> pos, {int value}) {
+    grid.setAtTuple(pos, TileProvider(pos, value: value), allowReplace: false);
+    tiles.add(
+      ChangeNotifierProvider.value(
+        key: ObjectKey(grid.getByTuple(pos)),
+        value: grid.getByTuple(pos),
+        child: const Tile(),
+      ),
+    );
   }
 }

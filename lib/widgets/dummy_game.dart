@@ -1,61 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/providers/grid/dummy_grid_provider.dart';
+import 'package:flutter_2048/providers/grid/dummy_holder_provider.dart';
 import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/util/data.dart';
-import 'package:flutter_2048/util/tile_grid.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
 import 'package:provider/provider.dart';
 
 class DummyGame extends StatelessWidget {
-  final GridProvider dummyGridProvider;
+  DummyGame(BuildContext context, {Key key}) : super(key: key) {
+    final DummyHolderProvider providerHolder = DummyHolderProvider.of(
+      context,
+      listen: false,
+    );
+    final DimensionsProvider dimensions = DimensionsProvider.of(
+      context,
+      listen: false,
+    );
+    final int index = SizeOptions.getSizeIndexBySideLength(dimensions.gridSize);
 
-  const DummyGame({Key key, this.dummyGridProvider}) : super(key: key);
+    if (providerHolder.providers[index] == null) {
+      providerHolder.providers[index] = DummyGridProvider(context);
+      providerHolder.providers[index].spawn(
+        amount: Data.rand.nextIntRanged(
+          min: providerHolder.providers[index].grid.sideLength,
+          max: providerHolder.providers[index].grid.flattenLength,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final DimensionsProvider dimensions = DimensionsProvider.of(context);
-    final Size predictedMaxSize = DimensionsProvider.calculateSizes(
-          MediaQuery.of(context).size,
-          SizeOptions.SIZES.first.sideLength,
-        )["game"] *
-        0.7;
-    bool needsSpawn = false;
+    final int index = SizeOptions.getSizeIndexBySideLength(
+      DimensionsProvider.of(context).gridSize,
+    );
 
-    if (dummyGridProvider.grid == null) {
-      dummyGridProvider.grid = TileGrid(dimensions.gridSize);
-      dummyGridProvider.tiles.clear();
-
-      needsSpawn = true;
-    } else if (dummyGridProvider.grid.sideLength != dimensions.gridSize) {
-      dummyGridProvider.grid = TileGrid(dimensions.gridSize);
-      dummyGridProvider.tiles.clear();
-
-      needsSpawn = true;
-    }
-
-    if (needsSpawn) {
-      final int spawnTilesQuantity =
-          3 + Data.rand.nextInt(dummyGridProvider.grid.flattenLength - 3);
-
-      for (int i = 0; i < spawnTilesQuantity; i++) {
-        dummyGridProvider.spawnAt(
-          dummyGridProvider.grid.getRandomSpawnableSpace(),
-          value: Data.rand.nextInt(spawnTilesQuantity),
-        );
-      }
-    }
-
-    return ChangeNotifierProvider.value(
-      value: dummyGridProvider,
+    return Provider.value(
+      value: DummyHolderProvider.of(context, listen: false).providers[index],
       child: Builder(
         builder: (context) {
+          final Size predictedMaxSize = DimensionsProvider.calculateSizes(
+                MediaQuery.of(context).size,
+                SizeOptions.SIZES.first.sideLength,
+              )["game"] *
+              0.7;
+
           return Container(
             width: predictedMaxSize.width,
             height: predictedMaxSize.height,
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: GameGrid(),
+              child: GameGrid<DummyGridProvider>(),
             ),
           );
         },

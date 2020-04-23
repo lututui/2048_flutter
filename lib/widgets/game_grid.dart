@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/bordered_box.dart';
 import 'package:flutter_2048/widgets/dialogs/game_over_dialog.dart';
+import 'package:provider/provider.dart';
 
-class GameGrid extends StatelessWidget {
+class GameGrid<T extends BaseGridProvider> extends StatelessWidget {
   const GameGrid({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final DimensionsProvider dimensions = DimensionsProvider.of(context);
-    final GridProvider grid = GridProvider.of(context);
+    final T grid = Provider.of<T>(context);
 
-    if (grid.gameOver) {
+    if (grid is GridProvider && grid.gameOver) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => GameOverDialog.show(context),
       );

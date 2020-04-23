@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/util/data.dart';
 import 'package:flutter_2048/util/tuple.dart';
 import 'package:path_provider/path_provider.dart';

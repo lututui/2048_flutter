@@ -17,4 +17,8 @@ class SizeOptions {
     SIZE_5x5,
     SIZE_7x7
   ];
+
+  static int getSizeIndexBySideLength(int length) {
+    return SIZES.indexWhere((e) => e.sideLength == length);
+  }
 }
