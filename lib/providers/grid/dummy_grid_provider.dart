@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/tile_provider.dart';
-import 'package:flutter_2048/util/tile_grid.dart';
+import 'package:flutter_2048/providers/tile/dummy_tile_provider.dart';
+import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
+import 'package:flutter_2048/util/dummy_tile_grid.dart';
 import 'package:flutter_2048/util/tuple.dart';
-import 'package:flutter_2048/widgets/tile.dart';
+import 'package:flutter_2048/widgets/immovable_tile.dart';
 import 'package:provider/provider.dart';
 
 class DummyGridProvider extends BaseGridProvider {
-  DummyGridProvider._(TileGrid grid) : super(grid);
+  @override
+  DummyTileGrid grid;
+
+  DummyGridProvider._(this.grid) : super();
 
   factory DummyGridProvider(BuildContext context) {
     return DummyGridProvider._(
-      TileGrid(DimensionsProvider.of(context).gridSize),
+      DummyTileGrid(DimensionsProvider.of(context).gridSize),
     );
   }
 
@@ -22,12 +25,14 @@ class DummyGridProvider extends BaseGridProvider {
 
   @override
   void spawnAt(Tuple<int, int> pos, {int value}) {
-    grid.setAtTuple(pos, TileProvider(pos, value: value), allowReplace: false);
+    grid.setAtTuple(
+      pos,
+      DummyTileProvider(pos, value: value),
+      allowReplace: false,
+    );
     tiles.add(
-      ChangeNotifierProvider.value(
-        key: ObjectKey(grid.getByTuple(pos)),
-        value: grid.getByTuple(pos),
-        child: const Tile(),
+      Builder(
+        builder: (context) => ImmovableTile(grid.getByTuple(pos), context),
       ),
     );
   }

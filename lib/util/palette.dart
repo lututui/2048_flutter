@@ -8,6 +8,7 @@ class Palette {
   static const Color BACKGROUND = const Color(0xffd8d8f6);
   static const Color BOX_BORDER = const Color(0xffbcb3bc);
   static const Color PAUSE_BACKGROUND = const Color(0xcccfc8cf);
+  static const Color PROGRESS_INDICATOR_COLOR = const Color(0xfff6f5d8);
 
   static const List<Color> TILE_COLORS = const <Color>[
     const Color(0xffe8eef2),

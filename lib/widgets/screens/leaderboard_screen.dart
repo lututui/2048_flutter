@@ -21,9 +21,9 @@ class LeaderboardScreen extends StatelessWidget {
             backgroundColor: Palette.BOX_BACKGROUND,
             body: Container(
               alignment: Alignment.center,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Palette.getRandomTileColor(),
+              child: const CircularProgressIndicator(
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Palette.PROGRESS_INDICATOR_COLOR,
                 ),
               ),
             ),

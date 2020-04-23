@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid/grid_provider.dart';
-import 'package:flutter_2048/providers/tile_provider.dart';
+import 'package:flutter_2048/providers/tile/tile_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/fixed_width_text.dart';
 

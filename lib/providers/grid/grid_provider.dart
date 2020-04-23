@@ -3,9 +3,9 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
-import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/tile_provider.dart';
+import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
+import 'package:flutter_2048/providers/tile/tile_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/util/leaderboard.dart';
@@ -16,6 +16,8 @@ import 'package:provider/provider.dart';
 
 class GridProvider extends BaseGridProvider with ChangeNotifier {
   final List<TileProvider> _pendingRemoval = List();
+  @override
+  TileGrid grid;
 
   bool _pendingSpawn = false;
   bool _gameOver = false;
@@ -26,7 +28,7 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
   Constructors
    */
 
-  GridProvider._(TileGrid grid) : super(grid);
+  GridProvider._(this.grid) : super();
 
   factory GridProvider.of(BuildContext context, {bool listen = true}) {
     return Provider.of<GridProvider>(context, listen: listen);

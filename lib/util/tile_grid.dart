@@ -1,17 +1,13 @@
 import 'package:flutter_2048/logger.dart';
-import 'package:flutter_2048/providers/tile_provider.dart';
-import 'package:flutter_2048/util/data.dart';
+import 'package:flutter_2048/providers/tile/tile_provider.dart';
+import 'package:flutter_2048/util/grid.dart';
 import 'package:flutter_2048/util/tuple.dart';
 
-class TileGrid {
-  final List<List<TileProvider>> _grid;
-  final Set<Tuple<int, int>> _free;
-
-  /*
-  Constructors
-   */
-
-  const TileGrid._(this._grid, this._free);
+class TileGrid extends Grid<TileProvider> {
+  TileGrid._(
+    List<List<TileProvider>> grid,
+    Set<Tuple<int, int>> free,
+  ) : super(grid, free);
 
   factory TileGrid(int gridSize) {
     return TileGrid._(
@@ -29,58 +25,11 @@ class TileGrid {
   }
 
   /*
-  Getters
-   */
-
-  int get sideLength => _grid.length;
-
-  int get flattenLength => _grid.length * _grid.length;
-
-  List<Tuple<int, int>> get spawnableSpacesList => List.unmodifiable(_free);
-
-  int get spawnableSpaces => _free.length;
-
-  TileProvider get(int i, int j) => _grid[i][j];
-
-  TileProvider getByTuple(Tuple<int, int> t) => _grid[t.a][t.b];
-
-  Tuple<int, int> getRandomSpawnableSpace() {
-    return spawnableSpacesList[Data.rand.nextInt(_free.length)];
-  }
-
-  /*
-  Setters
-   */
-
-  void set(int i, int j, TileProvider p, {bool allowReplace = true}) {
-    if (_grid[i][j] == p) return;
-
-    if (_grid[i][j] == null && !_free.remove(Tuple(i, j)))
-      throw Exception("Tile grid sanity violated");
-
-    if (p == null && !_free.add(Tuple(i, j)))
-      throw Exception("Tile grid sanity violated");
-
-    if (!allowReplace && p != null && _grid[i][j] != null)
-      throw Exception("Tile grid tried to replace");
-
-    _grid[i][j] = p;
-  }
-
-  void setAtTuple(
-    Tuple<int, int> t,
-    TileProvider p, {
-    bool allowReplace = true,
-  }) {
-    this.set(t.a, t.b, p, allowReplace: allowReplace);
-  }
-
-  /*
   Exporters
    */
 
   Map<String, dynamic> toJSON() {
-    final List<List<int>> convertedGrid = _grid.map<List<int>>((line) {
+    final List<List<int>> convertedGrid = grid.map<List<int>>((line) {
       return line.map<int>((provider) {
         return provider?.value ?? -1;
       }).toList();

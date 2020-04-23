@@ -5,8 +5,8 @@ import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
-import 'package:flutter_2048/widgets/game_grid.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
+import 'package:flutter_2048/widgets/game_grid.dart';
 import 'package:flutter_2048/widgets/scoreboard.dart';
 import 'package:provider/provider.dart';
 
@@ -25,9 +25,9 @@ class GameScreen extends StatelessWidget {
             backgroundColor: Palette.BACKGROUND,
             body: Container(
               alignment: Alignment.center,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Palette.getRandomTileColor(),
+              child: const CircularProgressIndicator(
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Palette.PROGRESS_INDICATOR_COLOR,
                 ),
               ),
             ),

@@ -49,9 +49,9 @@ class DummyGame extends StatelessWidget {
           return Container(
             width: predictedMaxSize.width,
             height: predictedMaxSize.height,
-            child: FittedBox(
+            child: const FittedBox(
               fit: BoxFit.scaleDown,
-              child: GameGrid<DummyGridProvider>(),
+              child: const GameGrid<DummyGridProvider>(),
             ),
           );
         },

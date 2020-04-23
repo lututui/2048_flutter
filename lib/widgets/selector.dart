@@ -35,7 +35,7 @@ class _SelectorState extends State<Selector> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          icon: Icon(Icons.keyboard_arrow_left),
+          icon: const Icon(Icons.keyboard_arrow_left),
           onPressed: () {
             setState(() {
               if (this.selected == 0) {
@@ -52,7 +52,7 @@ class _SelectorState extends State<Selector> {
         ),
         this.widget.children[this.selected].widget,
         IconButton(
-          icon: Icon(Icons.keyboard_arrow_right),
+          icon: const Icon(Icons.keyboard_arrow_right),
           onPressed: () {
             setState(() {
               if (this.selected == this.widget.children.length - 1) {
