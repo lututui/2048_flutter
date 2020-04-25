@@ -15,7 +15,6 @@ class Scoreboard extends StatelessWidget {
 
     return Container(
       width: dimensions.gameSize.width + dimensions.gapSize.width,
-      padding: EdgeInsets.only(bottom: dimensions.gapSize.width),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[

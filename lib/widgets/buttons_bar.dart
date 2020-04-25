@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
@@ -13,32 +14,37 @@ class ButtonsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final DimensionsProvider dimensions = DimensionsProvider.of(context);
 
+    final double barRatio = dimensions.gameSize.width /
+        (dimensions.tileSize.height +
+            dimensions.gridSize * dimensions.gapSize.width);
+
     return Container(
-      width: dimensions.gameSize.width + dimensions.gapSize.width,
-      height: dimensions.tileSize.height + dimensions.gapSize.width,
-      padding: EdgeInsets.only(top: dimensions.gapSize.height),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          DialogOption(
-            height: dimensions.tileSize.height,
-            color: Palette.BOX_BACKGROUND,
-            callback: this._exit,
-            icon: DialogResult.EXIT.icon,
-          ),
-          DialogOption(
-            height: dimensions.tileSize.height,
-            color: Palette.BOX_BACKGROUND,
-            callback: this._reset,
-            icon: DialogResult.RESET.icon,
-          ),
-          DialogOption(
-            height: dimensions.tileSize.height,
-            color: Palette.BOX_BACKGROUND,
-            callback: this._pause,
-            icon: DialogResult.PAUSE.icon,
-          ),
-        ],
+      width: dimensions.gameSize.width,
+      child: AspectRatio(
+        aspectRatio: barRatio,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            DialogOption.square(
+              callback: this._exit,
+              icon: DialogResult.EXIT.icon,
+              color: Palette.BOX_BACKGROUND,
+              borderColor: Palette.BOX_BORDER,
+            ),
+            DialogOption.square(
+              callback: this._reset,
+              icon: DialogResult.RESET.icon,
+              color: Palette.BOX_BACKGROUND,
+              borderColor: Palette.BOX_BORDER,
+            ),
+            DialogOption.square(
+              callback: this._pause,
+              icon: DialogResult.PAUSE.icon,
+              color: Palette.BOX_BACKGROUND,
+              borderColor: Palette.BOX_BORDER,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -61,13 +61,15 @@ class GameScreen extends StatelessWidget {
                       info,
                     ),
                     behavior: HitTestBehavior.opaque,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        const Scoreboard(),
-                        const GameGrid<GridProvider>(),
-                        const ButtonsBar(),
-                      ],
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const <Widget>[
+                          const Scoreboard(),
+                          const GameGrid<GridProvider>(),
+                          const ButtonsBar(),
+                        ],
+                      ),
                     ),
                   ),
                 );

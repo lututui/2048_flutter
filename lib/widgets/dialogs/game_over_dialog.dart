@@ -6,6 +6,7 @@ import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/dialog_option.dart';
 import 'package:flutter_2048/widgets/score_text.dart';
+import 'package:provider/provider.dart';
 
 class GameOverDialog extends StatelessWidget {
   final GridProvider gridState;
@@ -48,35 +49,51 @@ class GameOverDialog extends StatelessWidget {
           indent: 16.0,
           endIndent: 16.0,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            DialogOption(
-              icon: DialogResult.EXIT.icon,
-              callback: this._exit,
-              color: Palette.BOX_BORDER,
-              height: dimensionsState.tileSize.height,
-              width: dimensionsState.tileSize.width,
-              padding: const EdgeInsets.all(8.0),
+        ChangeNotifierProvider.value(
+          value: this.dimensionsState,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Container(
+                  width: constraints.maxWidth,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DialogOption.square(
+                            icon: DialogResult.EXIT.icon,
+                            callback: this._exit,
+                            color: Palette.BOX_BORDER,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DialogOption.square(
+                            icon: DialogResult.RESET.icon,
+                            callback: this._reset,
+                            color: Palette.BOX_BORDER,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DialogOption.square(
+                            icon: DialogResult.PAUSE.icon,
+                            callback: this._resume,
+                            color: Palette.BOX_BORDER,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-            DialogOption(
-              icon: DialogResult.RESET.icon,
-              callback: this._reset,
-              color: Palette.BOX_BORDER,
-              height: dimensionsState.tileSize.height,
-              width: dimensionsState.tileSize.width,
-              padding: const EdgeInsets.all(8.0),
-            ),
-            DialogOption(
-              icon: DialogResult.PAUSE.icon,
-              callback: this._resume,
-              color: Palette.BOX_BORDER,
-              height: dimensionsState.tileSize.height,
-              width: dimensionsState.tileSize.width,
-              padding: const EdgeInsets.all(8.0),
-            ),
-          ],
-        ),
+          ),
+        )
       ],
     );
   }

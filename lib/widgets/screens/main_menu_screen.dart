@@ -16,28 +16,40 @@ class MainMenuScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            DummyGame(context),
-            Selector(
-              onSelectChange: (int selected) {
-                DimensionsProvider.of(
-                  context,
-                  listen: false,
-                ).gridSize = selected;
-              },
-              children: SizeOptions.SIZES,
-              defaultOption: 1,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  DummyGame(context),
+                  Selector(
+                    onSelectChange: (int selected) {
+                      DimensionsProvider.of(
+                        context,
+                        listen: false,
+                      ).gridSize = selected;
+                    },
+                    children: SizeOptions.SIZES,
+                    defaultOption: SizeOptions.getSizeIndexBySideLength(
+                      DimensionsProvider.of(context, listen: false).gridSize,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Column(
-              children: <Widget>[
-                MainMenuButton(
-                  routeName: '/game',
-                  buttonText: "Play",
-                ),
-                MainMenuButton(
-                  routeName: '/leaderboard',
-                  buttonText: "Leaderboard",
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  MainMenuButton(
+                    routeName: '/game',
+                    buttonText: "Play",
+                  ),
+                  MainMenuButton(
+                    routeName: '/leaderboard',
+                    buttonText: "Leaderboard",
+                  ),
+                ],
+              ),
             ),
           ],
         ),

@@ -21,7 +21,8 @@ class GameGrid<T extends BaseGridProvider> extends StatelessWidget {
       );
     }
 
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: BorderedBox(
         backgroundColor: Palette.BOX_BACKGROUND,
         borderColor: Palette.BOX_BORDER,
