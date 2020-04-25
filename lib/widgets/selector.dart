@@ -50,7 +50,7 @@ class _SelectorState extends State<Selector> {
             });
           },
         ),
-        this.widget.children[this.selected].widget,
+        this.widget.children[this.selected].child,
         IconButton(
           icon: const Icon(Icons.keyboard_arrow_right),
           onPressed: () {

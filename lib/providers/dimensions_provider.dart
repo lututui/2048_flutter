@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_2048/logger.dart';
 import 'package:provider/provider.dart';
 
 class DimensionsProvider with ChangeNotifier {
@@ -19,6 +20,10 @@ class DimensionsProvider with ChangeNotifier {
     return Provider.of<DimensionsProvider>(context, listen: listen);
   }
 
+  void log(String message) {
+    Logger.log<DimensionsProvider>(message, instance: this);
+  }
+
   Size get gapSize => _gapSize;
 
   Size get gameSize => _gameSize;
@@ -32,7 +37,12 @@ class DimensionsProvider with ChangeNotifier {
   set gridSize(int value) {
     _gridSize = value;
 
-    if (_screenSize != null) this._updateSizes();
+    this.log("Changed gridSize to $_gridSize");
+
+    if (_screenSize != null) {
+      this.log("Updating other sizes");
+      this._updateSizes();
+    }
   }
 
   void _updateSizes() {
@@ -42,13 +52,21 @@ class DimensionsProvider with ChangeNotifier {
       _gameSize,
     ].any((k) => k == null);
 
+    if (skipNotify) {
+      this.log("Won't notifty listeners ($_tileSize, $_gapSize, $_gameSize)");
+    }
+
     final Map<String, Size> sizes = calculateSizes(_screenSize, _gridSize);
 
     _tileSize = sizes["tile"];
     _gapSize = sizes["gap"];
     _gameSize = sizes["game"];
 
-    if (!skipNotify) notifyListeners();
+    this.log("Updated values: ($_tileSize, $_gapSize, $_gameSize)");
+
+    if (!skipNotify) {
+      notifyListeners();
+    }
   }
 
   void updateScreenSize(BuildContext context) {

@@ -31,12 +31,10 @@ class MainMenuScreen extends StatelessWidget {
               children: <Widget>[
                 MainMenuButton(
                   routeName: '/game',
-                  routeArgs: DimensionsProvider.of(context).gridSize,
                   buttonText: "Play",
                 ),
                 MainMenuButton(
                   routeName: '/leaderboard',
-                  routeArgs: DimensionsProvider.of(context).gridSize,
                   buttonText: "Leaderboard",
                 ),
               ],

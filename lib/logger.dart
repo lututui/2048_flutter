@@ -21,7 +21,7 @@ class Logger {
     if (_blackList[T] ?? false) return;
 
     if (instance != null) {
-      print("[$T] [$instance] $message");
+      print("[$T] [0x${instance.hashCode.toRadixString(16)}] $message");
       return;
     }
 

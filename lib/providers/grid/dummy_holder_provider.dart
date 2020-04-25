@@ -8,7 +8,7 @@ class DummyHolderProvider {
 
   DummyHolderProvider();
 
-  factory DummyHolderProvider.of(BuildContext context, {bool listen = true}) {
-    return Provider.of<DummyHolderProvider>(context, listen: listen);
+  factory DummyHolderProvider.of(BuildContext context) {
+    return Provider.of<DummyHolderProvider>(context, listen: false);
   }
 }

@@ -1,94 +1,38 @@
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/util/leaderboard.dart';
-import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/types/size_options.dart';
+import 'package:flutter_2048/widgets/leaderboard_tab.dart';
 
 class LeaderboardScreen extends StatelessWidget {
-  final AsyncMemoizer<Leaderboard> _memoizer = AsyncMemoizer();
+  final List<Tab> leaderboardTabs = SizeOptions.SIZES
+      .map<Tab>(
+        (size) => Tab(child: size.child),
+      )
+      .toList();
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Leaderboard>(
-      future: _memoizer.runOnce(
-        () => Leaderboard.fromJSON(
-          DimensionsProvider.of(context, listen: false).gridSize,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Leaderboard"),
+      ),
+      body: DefaultTabController(
+        length: SizeOptions.SIZES.length,
+        initialIndex: 1,
+        child: Column(
+          children: <Widget>[
+            TabBar(tabs: this.leaderboardTabs),
+            Expanded(
+              child: TabBarView(
+                children: SizeOptions.SIZES
+                    .map<Widget>(
+                      (size) => LeaderboardTab(gridSize: size.sideLength),
+                    )
+                    .toList(),
+              ),
+            ),
+          ],
         ),
       ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done)
-          return Scaffold(
-            backgroundColor: Palette.BOX_BACKGROUND,
-            body: Container(
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Palette.PROGRESS_INDICATOR_COLOR,
-                ),
-              ),
-            ),
-          );
-
-        if (snapshot.hasError || !snapshot.hasData)
-          throw Exception("Something went wrong");
-
-        final Leaderboard leaderboard = snapshot.data;
-
-        return Scaffold(
-          backgroundColor: Palette.BOX_BACKGROUND,
-          body: Center(
-            child: Container(
-              width: DimensionsProvider.of(context).gameSize.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Spacer(),
-                  Column(
-                    children: const <Widget>[
-                      const Text(
-                        "Leaderboard",
-                        style: const TextStyle(fontSize: 30),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Column(
-                    children: this.buildLeaderboardEntries(leaderboard),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
-  }
-
-  List<Widget> buildLeaderboardEntries(Leaderboard leaderboard) {
-    final List<Widget> widgets = List();
-
-    for (int i = 0; i < leaderboard.length; i++) {
-      widgets.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                "${i + 1}",
-                style: const TextStyle(fontSize: 15),
-              ),
-              Text(
-                (leaderboard[i] == null) ? "---" : "${leaderboard[i]}",
-                style: const TextStyle(fontSize: 15),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return widgets;
   }
 }

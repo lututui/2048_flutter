@@ -11,7 +11,6 @@ class DummyGame extends StatelessWidget {
   DummyGame(BuildContext context, {Key key}) : super(key: key) {
     final DummyHolderProvider providerHolder = DummyHolderProvider.of(
       context,
-      listen: false,
     );
     final DimensionsProvider dimensions = DimensionsProvider.of(
       context,
@@ -36,8 +35,20 @@ class DummyGame extends StatelessWidget {
       DimensionsProvider.of(context).gridSize,
     );
 
+    final DummyHolderProvider providerHolder = DummyHolderProvider.of(context);
+
+    if (providerHolder.providers[index] == null) {
+      providerHolder.providers[index] = DummyGridProvider(context);
+      providerHolder.providers[index].spawn(
+        amount: Data.rand.nextIntRanged(
+          min: providerHolder.providers[index].grid.sideLength,
+          max: providerHolder.providers[index].grid.flattenLength,
+        ),
+      );
+    }
+
     return Provider.value(
-      value: DummyHolderProvider.of(context, listen: false).providers[index],
+      value: providerHolder.providers[index],
       child: Builder(
         builder: (context) {
           final Size predictedMaxSize = DimensionsProvider.calculateSizes(
