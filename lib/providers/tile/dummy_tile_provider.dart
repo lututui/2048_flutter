@@ -11,7 +11,7 @@ class DummyTileProvider extends BaseTileProvider {
   factory DummyTileProvider(Tuple<int, int> pos, {int value}) {
     return DummyTileProvider._(
       pos,
-      value ?? Data.SPAWN_VALUES[Data.rand.nextInt(Data.SPAWN_VALUES.length)],
+      value ?? Data.pickSpawnValue(),
     );
   }
 }

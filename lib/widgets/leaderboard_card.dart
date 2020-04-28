@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/widgets/animated_gradient_border.dart';
-import 'package:flutter_2048/util/lists.dart';
+import 'package:flutter_2048/widgets/generic/animated_gradient_border.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/util/palette.dart';
 
 class LeaderboardCard extends StatelessWidget {

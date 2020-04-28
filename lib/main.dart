@@ -32,10 +32,10 @@ class Main extends StatelessWidget {
       theme: ThemeData(
         fontFamily: Fonts.RIGHTEOUS_FAMILY,
         scaffoldBackgroundColor: Palette.BACKGROUND,
-        tabBarTheme: TabBarTheme(
+        tabBarTheme: const TabBarTheme(
           labelColor: Palette.TAB_BAR_THEME_COLOR,
         ),
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           color: Palette.APP_BAR_THEME_COLOR,
         ),
       ),

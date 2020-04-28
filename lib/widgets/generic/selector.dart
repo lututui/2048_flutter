@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/types/callbacks.dart';
 
 class Selector extends StatefulWidget {
-  final List<SizeOptions> children;
+  final List<Widget> children;
   final VoidIntCallback onSelectChange;
   final int defaultOption;
 
@@ -44,13 +43,11 @@ class _SelectorState extends State<Selector> {
                 this.selected--;
               }
 
-              this.widget.onSelectChange(
-                    this.widget.children[this.selected].sideLength,
-                  );
+              this.widget.onSelectChange(this.selected);
             });
           },
         ),
-        this.widget.children[this.selected].child,
+        this.widget.children[this.selected],
         IconButton(
           icon: const Icon(Icons.keyboard_arrow_right),
           onPressed: () {
@@ -61,9 +58,7 @@ class _SelectorState extends State<Selector> {
                 this.selected++;
               }
 
-              this.widget.onSelectChange(
-                    this.widget.children[this.selected].sideLength,
-                  );
+              this.widget.onSelectChange(this.selected);
             });
           },
         ),

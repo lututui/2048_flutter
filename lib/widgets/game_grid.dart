@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
+import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
 import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:flutter_2048/widgets/bordered_box.dart';
 import 'package:flutter_2048/widgets/dialogs/game_over_dialog.dart';
+import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:provider/provider.dart';
 
 class GameGrid<T extends BaseGridProvider> extends StatelessWidget {
@@ -17,7 +17,12 @@ class GameGrid<T extends BaseGridProvider> extends StatelessWidget {
 
     if (grid is GridProvider && grid.gameOver) {
       WidgetsBinding.instance.addPostFrameCallback(
-        (_) => GameOverDialog.show(context),
+        (_) => GameOverDialog.show(
+          context,
+          grid.score,
+          dimensions.tileSize.width,
+          dimensions.gridSize,
+        ),
       );
     }
 

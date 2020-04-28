@@ -15,29 +15,20 @@ class MainMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Palette.OUTLINE_BUTTON_BACKGROUND_COLOR,
-        ),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            buttonTheme: ButtonTheme.of(context).copyWith(
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
+      child: RaisedButton(
+        onPressed: () => Navigator.of(context).pushNamed(this.routeName),
+        color: Palette.MAIN_MENU_BUTTON_BACKGROUND_COLOR,
+        shape: const Border.fromBorderSide(
+          const BorderSide(
+            width: 2.0,
+            color: Palette.MAIN_MENU_BUTTON_BORDER_COLOR,
           ),
-          child: OutlineButton(
-            borderSide: BorderSide(
-              width: 2.0,
-              color: Palette.OUTLINE_BUTTON_BORDER_COLOR,
-            ),
-            onPressed: () => Navigator.of(context).pushNamed(this.routeName),
-            child: Text(
-              this.buttonText,
-              style: TextStyle(
-                color: Palette.OUTLINE_BUTTON_TEXT_COLOR,
-                fontSize: 16.0,
-              ),
-            ),
+        ),
+        child: Text(
+          this.buttonText,
+          style: const TextStyle(
+            color: Palette.MAIN_MENU_BUTTON_TEXT_COLOR,
+            fontSize: 16.0,
           ),
         ),
       ),

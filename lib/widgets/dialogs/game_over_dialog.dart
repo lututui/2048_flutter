@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:flutter_2048/widgets/dialog_option.dart';
 import 'package:flutter_2048/widgets/score_text.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
 class GameOverDialog extends StatelessWidget {
-  final GridProvider gridState;
-  final DimensionsProvider dimensionsState;
+  final int finalScore;
+  final double maxButtonSize;
 
   const GameOverDialog({
     Key key,
-    @required this.gridState,
-    @required this.dimensionsState,
+    @required this.finalScore,
+    @required this.maxButtonSize,
   }) : super(key: key);
 
   @override
@@ -41,7 +38,7 @@ class GameOverDialog extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            ScoreText(score: this.gridState.score),
+            ScoreText(score: this.finalScore),
           ],
         ),
         Divider(
@@ -49,49 +46,52 @@ class GameOverDialog extends StatelessWidget {
           indent: 16.0,
           endIndent: 16.0,
         ),
-        ChangeNotifierProvider.value(
-          value: this.dimensionsState,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Container(
-                  width: constraints.maxWidth,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DialogOption.square(
-                            icon: DialogResult.EXIT.icon,
-                            callback: this._exit,
-                            color: Palette.BOX_BORDER,
-                          ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                width: constraints.maxWidth,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SquareIconButton(
+                          maxSize: this.maxButtonSize,
+                          icon: DialogResult.EXIT.icon,
+                          onPress: this._exit,
+                          color: Palette.BOX_BORDER,
+                          borderColor: Palette.GAME_OVER_BUTTON_BORDER_COLOR,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DialogOption.square(
-                            icon: DialogResult.RESET.icon,
-                            callback: this._reset,
-                            color: Palette.BOX_BORDER,
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SquareIconButton(
+                          maxSize: this.maxButtonSize,
+                          icon: DialogResult.RESET.icon,
+                          onPress: this._reset,
+                          color: Palette.BOX_BORDER,
+                          borderColor: Palette.GAME_OVER_BUTTON_BORDER_COLOR,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DialogOption.square(
-                            icon: DialogResult.PAUSE.icon,
-                            callback: this._resume,
-                            color: Palette.BOX_BORDER,
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SquareIconButton(
+                          maxSize: this.maxButtonSize,
+                          icon: DialogResult.PAUSE.icon,
+                          onPress: this._resume,
+                          color: Palette.BOX_BORDER,
+                          borderColor: Palette.GAME_OVER_BUTTON_BORDER_COLOR,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         )
       ],
@@ -110,29 +110,29 @@ class GameOverDialog extends StatelessWidget {
     Navigator.of(context).pop(DialogResult.EXIT);
   }
 
-  static Future<void> show(BuildContext context) async {
-    final DimensionsProvider dimensions = DimensionsProvider.of(
-      context,
-      listen: false,
-    );
-
+  static Future<void> show(
+    BuildContext context,
+    int score,
+    double buttonSize,
+    int gridSize,
+  ) async {
     return showDialog<DialogResult>(
       context: context,
       barrierDismissible: true,
       builder: (c) {
         return GameOverDialog(
-          gridState: GridProvider.of(context, listen: false),
-          dimensionsState: dimensions,
+          finalScore: score,
+          maxButtonSize: buttonSize,
         );
       },
     ).then((result) async {
       if (result == null || result == DialogResult.PAUSE) return;
 
       if (result == DialogResult.RESET) {
-        await SaveManager.wipeSave(dimensions.gridSize);
+        await SaveManager.wipeSave(gridSize);
         Navigator.of(context).pushReplacementNamed(
           '/game',
-          arguments: dimensions.gridSize,
+          arguments: gridSize,
         );
         return;
       }

@@ -15,7 +15,7 @@ class DummyGridProvider extends BaseGridProvider {
 
   factory DummyGridProvider(BuildContext context) {
     return DummyGridProvider._(
-      DummyTileGrid(DimensionsProvider.of(context).gridSize),
+      DummyTileGrid(DimensionsProvider.of(context, listen: false).gridSize),
     );
   }
 
@@ -30,10 +30,7 @@ class DummyGridProvider extends BaseGridProvider {
       DummyTileProvider(pos, value: value),
       allowReplace: false,
     );
-    tiles.add(
-      Builder(
-        builder: (context) => ImmovableTile(grid.getByTuple(pos), context),
-      ),
+    tiles.add(ImmovableTile(grid.getByTuple(pos)),
     );
   }
 }

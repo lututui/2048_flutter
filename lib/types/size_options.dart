@@ -30,6 +30,10 @@ class SizeOptions {
     SIZE_7x7
   ];
 
+  static List<Widget> getChildren() {
+    return SIZES.map<Widget>((size) => size.child).toList(growable: false);
+  }
+
   static int getSizeIndexBySideLength(int length) {
     return SIZES.indexWhere((e) => e.sideLength == length);
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:flutter_2048/widgets/bordered_box.dart';
+import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:flutter_2048/widgets/score_text.dart';
 
 class Scoreboard extends StatelessWidget {
@@ -19,12 +19,7 @@ class Scoreboard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           BorderedBox(
-            child: const Text(
-              "Score",
-              style: const TextStyle(
-                fontSize: 20,
-              ),
-            ),
+            child: const Text("Score", style: const TextStyle(fontSize: 20)),
             backgroundColor: Palette.BOX_BACKGROUND,
             borderColor: Palette.BOX_BORDER,
             borderWidth: dimensions.gapSize.width / 2,

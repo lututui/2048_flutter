@@ -1,65 +1,47 @@
-import 'package:async/async.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
+import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/scoreboard.dart';
 import 'package:provider/provider.dart';
 
 class GameScreen extends StatelessWidget {
-  final AsyncMemoizer<GridProvider> _memoizer = AsyncMemoizer();
-
-  GameScreen({Key key}) : super(key: key);
+  const GameScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<GridProvider>(
-      future: _memoizer.runOnce(() => GridProvider.fromJSON(context)),
-      builder: (futureContext, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done)
-          return Scaffold(
-            backgroundColor: Palette.BACKGROUND,
-            body: Container(
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Palette.PROGRESS_INDICATOR_COLOR,
-                ),
-              ),
+    return FutureWidget<GridProvider>(
+      computation: () => GridProvider.fromJSON(context),
+      loadingChild: Scaffold(
+        backgroundColor: Palette.BACKGROUND,
+        body: Container(
+          alignment: Alignment.center,
+          child: const CircularProgressIndicator(
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              Palette.PROGRESS_INDICATOR_COLOR,
             ),
-          );
-
-        if (snapshot.hasError || !snapshot.hasData)
-          throw Exception("Something went wrong: ${snapshot.error}");
-
+          ),
+        ),
+      ),
+      onError: (error) => throw Exception("Something went wrong: $error"),
+      builder: (context, snapshot) {
         return Scaffold(
           backgroundColor: Palette.BACKGROUND,
-          body: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<GridProvider>.value(
-                value: snapshot.data,
-              ),
-            ],
-            child: Builder(
-              builder: (context) {
-                final GridProvider state = GridProvider.of(context);
-
+          body: ChangeNotifierProvider<GridProvider>.value(
+            value: snapshot.data,
+            child: Consumer<GridProvider>(
+              builder: (context, grid, child) {
                 return WillPopScope(
                   onWillPop: () => PauseDialog.show(
                     context,
-                    DimensionsProvider.of(context, listen: false).gridSize,
+                    grid.grid.sideLength,
                   ),
                   child: GestureDetector(
-                    onVerticalDragEnd: (info) => state.onVerticalDragEnd(
-                      info,
-                    ),
-                    onHorizontalDragEnd: (info) => state.onHorizontalDragEnd(
-                      info,
-                    ),
+                    onVerticalDragEnd: (i) => grid.onVerticalDragEnd(i),
+                    onHorizontalDragEnd: (i) => grid.onHorizontalDragEnd(i),
                     behavior: HitTestBehavior.opaque,
                     child: Center(
                       child: Column(

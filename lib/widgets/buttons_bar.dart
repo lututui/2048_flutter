@@ -4,7 +4,7 @@ import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:flutter_2048/widgets/dialog_option.dart';
+import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
 
 class ButtonsBar extends StatelessWidget {
@@ -25,21 +25,24 @@ class ButtonsBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            DialogOption.square(
-              callback: this._exit,
+            SquareIconButton(
+              onPress: this._exit,
               icon: DialogResult.EXIT.icon,
+              maxSize: dimensions.tileSize.width,
               color: Palette.BOX_BACKGROUND,
               borderColor: Palette.BOX_BORDER,
             ),
-            DialogOption.square(
-              callback: this._reset,
+            SquareIconButton(
+              onPress: this._reset,
               icon: DialogResult.RESET.icon,
+              maxSize: dimensions.tileSize.width,
               color: Palette.BOX_BACKGROUND,
               borderColor: Palette.BOX_BORDER,
             ),
-            DialogOption.square(
-              callback: this._pause,
+            SquareIconButton(
+              onPress: this._pause,
               icon: DialogResult.PAUSE.icon,
+              maxSize: dimensions.tileSize.width,
               color: Palette.BOX_BACKGROUND,
               borderColor: Palette.BOX_BORDER,
             ),

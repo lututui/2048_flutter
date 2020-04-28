@@ -1,33 +1,28 @@
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/util/leaderboard.dart';
 import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/leaderboard_card.dart';
 
 class LeaderboardTab extends StatelessWidget {
-  final AsyncMemoizer<Leaderboard> _memoizer = AsyncMemoizer();
   final int gridSize;
 
   LeaderboardTab({Key key, this.gridSize}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Leaderboard>(
-      future: _memoizer.runOnce(() => Leaderboard.fromJSON(this.gridSize)),
+    return FutureWidget<Leaderboard>(
+      computation: () => Leaderboard.fromJSON(this.gridSize),
+      loadingChild: Container(
+        alignment: Alignment.center,
+        child: const CircularProgressIndicator(
+          valueColor: const AlwaysStoppedAnimation<Color>(
+            Palette.PROGRESS_INDICATOR_COLOR,
+          ),
+        ),
+      ),
+      onError: (error) => throw Exception("Something went wrong: $error"),
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done)
-          return Container(
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Palette.PROGRESS_INDICATOR_COLOR,
-              ),
-            ),
-          );
-
-        if (snapshot.hasError || !snapshot.hasData)
-          throw Exception("Something went wrong");
-
         final Leaderboard leaderboard = snapshot.data;
 
         return Column(

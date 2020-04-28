@@ -11,7 +11,7 @@ import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/util/leaderboard.dart';
 import 'package:flutter_2048/util/tile_grid.dart';
 import 'package:flutter_2048/util/tuple.dart';
-import 'package:flutter_2048/widgets/tile.dart';
+import 'package:flutter_2048/widgets/movable_tile.dart';
 import 'package:provider/provider.dart';
 
 class GridProvider extends BaseGridProvider with ChangeNotifier {
@@ -291,7 +291,7 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
       ChangeNotifierProvider.value(
         key: ObjectKey(grid.getByTuple(pos)),
         value: grid.getByTuple(pos),
-        child: const Tile(),
+        child: const MovableTile(),
       ),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:quiver/core.dart' as Quiver;
+import 'dart:ui';
 
 class Tuple<T, E> {
   T a;
@@ -16,12 +16,38 @@ class Tuple<T, E> {
   }
 
   @override
-  int get hashCode => Quiver.hash2(this.a, this.b);
+  int get hashCode => hashValues(this.a, this.b);
 
   void set(T a, E b) {
     this.a = a;
     this.b = b;
   }
+
+  @override
+  String toString() => "($a, $b)";
+}
+
+class ImmutableTuple<T, E> {
+  final T a;
+  final E b;
+
+  const ImmutableTuple(this.a, this.b);
+
+  factory ImmutableTuple.copy(ImmutableTuple other) {
+    return ImmutableTuple<T, E>(other.a, other.b);
+  }
+
+  factory ImmutableTuple.fromMutable(Tuple other) {
+    return ImmutableTuple<T, E>(other.a, other.b);
+  }
+
+  @override
+  bool operator ==(other) {
+    return other is Tuple<T, E> && other.a == this.a && other.b == this.b;
+  }
+
+  @override
+  int get hashCode => hashValues(this.a, this.b);
 
   @override
   String toString() => "($a, $b)";

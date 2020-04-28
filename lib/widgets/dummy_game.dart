@@ -4,6 +4,7 @@ import 'package:flutter_2048/providers/grid/dummy_grid_provider.dart';
 import 'package:flutter_2048/providers/grid/dummy_holder_provider.dart';
 import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/util/data.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
 import 'package:provider/provider.dart';
 
@@ -47,25 +48,23 @@ class DummyGame extends StatelessWidget {
       );
     }
 
+    final Size predictedMaxSize = Sizes.scale(
+      DimensionsProvider.calculateSizes(
+        MediaQuery.of(context).size,
+        SizeOptions.SIZES.first.sideLength,
+      )["game"],
+      factor: 0.7,
+    );
+
     return Provider.value(
       value: providerHolder.providers[index],
-      child: Builder(
-        builder: (context) {
-          final Size predictedMaxSize = DimensionsProvider.calculateSizes(
-                MediaQuery.of(context).size,
-                SizeOptions.SIZES.first.sideLength,
-              )["game"] *
-              0.7;
-
-          return Container(
-            width: predictedMaxSize.width,
-            height: predictedMaxSize.height,
-            child: const FittedBox(
-              fit: BoxFit.scaleDown,
-              child: const GameGrid<DummyGridProvider>(),
-            ),
-          );
-        },
+      child: Container(
+        width: predictedMaxSize.width,
+        height: predictedMaxSize.height,
+        child: const FittedBox(
+          fit: BoxFit.scaleDown,
+          child: const GameGrid<DummyGridProvider>(),
+        ),
       ),
     );
   }
