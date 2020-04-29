@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
-import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/types/tuple.dart';
 import 'package:meta/meta.dart';
 
 extension RandomExtension on Random {

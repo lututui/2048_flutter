@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_2048/types/extensions.dart';
-import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/types/tuple.dart';
 
 class Misc {
   static int _weightSum;

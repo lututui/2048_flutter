@@ -4,7 +4,7 @@ import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:flutter_2048/widgets/tiles/immovable_tile.dart';
 

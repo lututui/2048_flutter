@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/util/misc.dart';
-import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/types/tuple.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SaveManager {

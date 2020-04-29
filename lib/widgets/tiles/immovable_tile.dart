@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/tiles/unplaced_tile.dart';
 import 'package:provider/provider.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/util/misc.dart';
-import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/types/tuple.dart';
 
 class TileGrid {
   final List<List<TileProvider>> _grid;

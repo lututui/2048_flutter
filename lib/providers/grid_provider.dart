@@ -9,7 +9,7 @@ import 'package:flutter_2048/providers/tile_grid.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
-import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
 import 'package:provider/provider.dart';
 

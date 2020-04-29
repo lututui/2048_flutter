@@ -16,6 +16,17 @@ abstract class Tuple<T, E> {
   factory Tuple.copy(Tuple other) => other.isImmutable
       ? _ImmutableTuple.copy(other)
       : _MutableTuple.copy(other);
+
+  @override
+  int get hashCode => hashValues(this.a, this.b);
+
+  @override
+  bool operator ==(other) {
+    return other is Tuple<T, E> && other.a == this.a && other.b == this.b;
+  }
+
+  @override
+  String toString() => "($a, $b)";
 }
 
 class _MutableTuple<T, E> extends Tuple<T, E> {
@@ -30,21 +41,10 @@ class _MutableTuple<T, E> extends Tuple<T, E> {
     return _MutableTuple<T, E>(other.a, other.b);
   }
 
-  @override
-  bool operator ==(other) {
-    return other is Tuple<T, E> && other.a == this.a && other.b == this.b;
-  }
-
-  @override
-  int get hashCode => hashValues(this.a, this.b);
-
   void set(T a, E b) {
     this.a = a;
     this.b = b;
   }
-
-  @override
-  String toString() => "($a, $b)";
 
   @override
   bool get isImmutable => false;
@@ -61,21 +61,6 @@ class _ImmutableTuple<T, E> extends Tuple<T, E> {
   factory _ImmutableTuple.copy(_ImmutableTuple other) {
     return _ImmutableTuple<T, E>(other.a, other.b);
   }
-
-  factory _ImmutableTuple.fromMutable(Tuple other) {
-    return _ImmutableTuple<T, E>(other.a, other.b);
-  }
-
-  @override
-  bool operator ==(other) {
-    return other is Tuple<T, E> && other.a == this.a && other.b == this.b;
-  }
-
-  @override
-  int get hashCode => hashValues(this.a, this.b);
-
-  @override
-  String toString() => "($a, $b)";
 
   @override
   bool get isImmutable => true;
