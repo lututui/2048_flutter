@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/providers/grid/grid_provider.dart';
+import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
@@ -48,7 +48,7 @@ class GameScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const <Widget>[
                           const Scoreboard(),
-                          const GameGrid<GridProvider>(),
+                          const GameGrid(),
                           const ButtonsBar(),
                         ],
                       ),

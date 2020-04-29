@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_2048/providers/grid/grid_provider.dart';
-import 'package:flutter_2048/util/data.dart';
+import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/util/tuple.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -110,7 +110,7 @@ class SaveManager {
 
     parsedJson.remove("version");
 
-    final List<int> scores = List(Data.LEADERBOARD_SIZE);
+    final List<int> scores = List(Misc.LEADERBOARD_SIZE);
 
     parsedJson.forEach((key, value) => scores[int.parse(key)] = value as int);
 

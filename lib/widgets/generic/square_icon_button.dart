@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/types/callbacks.dart';
 import 'package:flutter_2048/util/palette.dart';
+
+typedef OnPressCallback = void Function(BuildContext);
 
 class SquareIconButton extends StatelessWidget {
   final Color color;
   final Color borderColor;
-  final VoidContextCallback onPress;
+  final OnPressCallback onPress;
   final IconData icon;
   final double maxSize;
   final double borderWidth;

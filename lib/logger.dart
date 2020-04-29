@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 class Logger {
   static final Map<Type, bool> _blackList = Map();
 
-  static bool enabled = true;
+  static bool enabled = false;
 
   Logger._();
 

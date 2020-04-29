@@ -16,6 +16,7 @@ class MainMenuButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: RaisedButton(
+        elevation: 0.0,
         onPressed: () => Navigator.of(context).pushNamed(this.routeName),
         color: Palette.MAIN_MENU_BUTTON_BACKGROUND_COLOR,
         shape: const Border.fromBorderSide(

@@ -1,13 +1,33 @@
 import 'dart:ui';
 
-class Tuple<T, E> {
+abstract class Tuple<T, E> {
+  T get a;
+
+  E get b;
+
+  bool get isImmutable;
+
+  Tuple._();
+
+  factory Tuple(T a, E b) => _ImmutableTuple(a, b);
+
+  factory Tuple.mutable(T a, E b) => _MutableTuple(a, b);
+
+  factory Tuple.copy(Tuple other) => other.isImmutable
+      ? _ImmutableTuple.copy(other)
+      : _MutableTuple.copy(other);
+}
+
+class _MutableTuple<T, E> extends Tuple<T, E> {
+  @override
   T a;
+  @override
   E b;
 
-  Tuple(this.a, this.b);
+  _MutableTuple(this.a, this.b) : super._();
 
-  factory Tuple.copy(Tuple other) {
-    return Tuple<T, E>(other.a, other.b);
+  factory _MutableTuple.copy(Tuple other) {
+    return _MutableTuple<T, E>(other.a, other.b);
   }
 
   @override
@@ -25,20 +45,25 @@ class Tuple<T, E> {
 
   @override
   String toString() => "($a, $b)";
+
+  @override
+  bool get isImmutable => false;
 }
 
-class ImmutableTuple<T, E> {
+class _ImmutableTuple<T, E> extends Tuple<T, E> {
+  @override
   final T a;
+  @override
   final E b;
 
-  const ImmutableTuple(this.a, this.b);
+  _ImmutableTuple(this.a, this.b) : super._();
 
-  factory ImmutableTuple.copy(ImmutableTuple other) {
-    return ImmutableTuple<T, E>(other.a, other.b);
+  factory _ImmutableTuple.copy(_ImmutableTuple other) {
+    return _ImmutableTuple<T, E>(other.a, other.b);
   }
 
-  factory ImmutableTuple.fromMutable(Tuple other) {
-    return ImmutableTuple<T, E>(other.a, other.b);
+  factory _ImmutableTuple.fromMutable(Tuple other) {
+    return _ImmutableTuple<T, E>(other.a, other.b);
   }
 
   @override
@@ -51,4 +76,7 @@ class ImmutableTuple<T, E> {
 
   @override
   String toString() => "($a, $b)";
+
+  @override
+  bool get isImmutable => true;
 }

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
-import 'package:flutter_2048/util/data.dart';
+import 'package:flutter_2048/util/misc.dart';
 
 class Palette {
   static const Color BOX_BACKGROUND = const Color(0xffcfc8cf);
@@ -15,7 +15,8 @@ class Palette {
   static const Color TAB_BAR_THEME_COLOR = const Color(0xff222297);
   static const Color MAIN_MENU_BUTTON_BORDER_COLOR = const Color(0xff5151d7);
   static const Color MAIN_MENU_BUTTON_TEXT_COLOR = const Color(0xff2c2cc0);
-  static const Color MAIN_MENU_BUTTON_BACKGROUND_COLOR = const Color(0xffb2b2ed);
+  static const Color MAIN_MENU_BUTTON_BACKGROUND_COLOR =
+      const Color(0xffb2b2ed);
 
   static const Gradient SILVER_GRADIENT = const LinearGradient(
     begin: Alignment.topLeft,
@@ -98,7 +99,7 @@ class Palette {
   }
 
   static Color getRandomTileColor() {
-    return getTileColor(Data.rand.nextInt(TILE_COLORS.length));
+    return getTileColor(Misc.rand.nextInt(TILE_COLORS.length));
   }
 
   Palette._();

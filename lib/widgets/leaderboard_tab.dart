@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/util/leaderboard.dart';
+import 'package:flutter_2048/providers/leaderboard.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/leaderboard_card.dart';

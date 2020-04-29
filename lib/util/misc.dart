@@ -1,43 +1,24 @@
-import 'dart:ui';
+import 'dart:math';
 
-class Lists {
-  const Lists._();
+import 'package:flutter_2048/types/extensions.dart';
+import 'package:flutter_2048/util/tuple.dart';
 
-  static num takeAverage(List<num> list) {
-    if (list == null || list.isEmpty)
-      throw Exception("Cannot take average of empty list");
+class Misc {
+  static int _weightSum;
+  static List<Tuple<int, int>> _spawnValues = [
+    Tuple(0, 10),
+    Tuple(1, 20),
+    Tuple(2, 5),
+  ];
+  static const int LEADERBOARD_SIZE = 10;
 
-    return list.reduce((value, element) => value += element) / list.length;
+  static final Random rand = Random();
+
+  static int pickSpawnValue() {
+    _weightSum ??= _spawnValues.fold(0, (v, element) => v += element.b);
+
+    return rand.pickWithWeight(_spawnValues, weightSum: _weightSum);
   }
-}
 
-class Sizes {
-  const Sizes._();
-
-  static Size scale(
-    Size s, {
-    double factor,
-    double widthFactor,
-    double heightFactor,
-  }) {
-    if (s == null) return null;
-
-    double width = s.width;
-    double height = s.height;
-
-    if (widthFactor != null) {
-      width *= widthFactor;
-    }
-
-    if (heightFactor != null) {
-      height *= heightFactor;
-    }
-
-    if (factor != null) {
-      width *= factor;
-      height *= factor;
-    }
-
-    return Size(width, height);
-  }
+  Misc._();
 }

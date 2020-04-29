@@ -9,7 +9,11 @@ class PauseDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Center(child: const Text("Paused", style: TextStyle(fontSize: 30),)),
+      title: const Center(
+          child: const Text(
+        "Paused",
+        style: TextStyle(fontSize: 30),
+      )),
       titlePadding: const EdgeInsets.all(24.0),
       backgroundColor: Palette.PAUSE_BACKGROUND,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -70,7 +74,8 @@ class PauseDialog extends StatelessWidget {
     ).then((result) {
       if (result != null && result == DialogResult.RESET) {
         SaveManager.wipeSave(gridSize);
-        Navigator.of(context).pushReplacementNamed('/game', arguments: gridSize);
+        Navigator.of(context)
+            .pushReplacementNamed('/game', arguments: gridSize);
       }
 
       return Future.value(result == DialogResult.EXIT);

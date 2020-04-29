@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/tile/dummy_tile_provider.dart';
-import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/util/tuple.dart';
-import 'package:flutter_2048/widgets/generic/unplaced_tile.dart';
+import 'package:flutter_2048/widgets/tiles/unplaced_tile.dart';
 import 'package:provider/provider.dart';
 
 class ImmovableTile extends StatelessWidget {
@@ -12,23 +10,13 @@ class ImmovableTile extends StatelessWidget {
   final int value;
   final Tuple<int, int> gridPos;
 
-  const ImmovableTile._({
+  const ImmovableTile({
     Key key,
     @required this.color,
     @required this.borderColor,
     @required this.value,
     @required this.gridPos,
   }) : super(key: key);
-
-  factory ImmovableTile(DummyTileProvider dummyTileProvider, {Key key}) {
-    return ImmovableTile._(
-      key: key,
-      gridPos: dummyTileProvider.gridPos,
-      color: Palette.getTileColor(dummyTileProvider.value),
-      borderColor: Palette.getTileBorder(dummyTileProvider.value),
-      value: 1 << dummyTileProvider.value,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

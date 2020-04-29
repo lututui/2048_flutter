@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:flutter_2048/widgets/score_text.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
 class GameOverDialog extends StatelessWidget {
@@ -38,7 +37,12 @@ class GameOverDialog extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            ScoreText(score: this.finalScore),
+            Text(
+              "$finalScore",
+              maxLines: 1,
+              textAlign: TextAlign.right,
+              style: const TextStyle(color: Colors.black, fontSize: 20),
+            ),
           ],
         ),
         Divider(

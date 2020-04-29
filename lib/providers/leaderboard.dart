@@ -1,5 +1,5 @@
 import 'package:flutter_2048/save_manager.dart';
-import 'package:flutter_2048/util/data.dart';
+import 'package:flutter_2048/util/misc.dart';
 
 class Leaderboard {
   final List<int> _scores;
@@ -10,7 +10,7 @@ class Leaderboard {
     final List<int> loadedData = await SaveManager.loadLeaderboard(gridSize);
 
     if (loadedData == null) {
-      return Leaderboard._(List(Data.LEADERBOARD_SIZE));
+      return Leaderboard._(List(Misc.LEADERBOARD_SIZE));
     }
 
     return Leaderboard._(loadedData);
@@ -21,7 +21,7 @@ class Leaderboard {
   int get length => _scores.length;
 
   int insert(int score, int gridSize) {
-    for (int i = 0; i < Data.LEADERBOARD_SIZE; i++) {
+    for (int i = 0; i < Misc.LEADERBOARD_SIZE; i++) {
       if ((_scores[i] ?? -1) >= score) continue;
 
       final List<int> newList = List.of(_scores);

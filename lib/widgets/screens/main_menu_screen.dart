@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/widgets/dummy_game.dart';
-import 'package:flutter_2048/widgets/main_menu_button.dart';
 import 'package:flutter_2048/widgets/generic/selector.dart';
+import 'package:flutter_2048/widgets/main_menu_button.dart';
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({Key key}) : super(key: key);
@@ -20,7 +20,7 @@ class MainMenuScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: <Widget>[
-                  DummyGame(context),
+                  DummyGame.withSizes(context, SizeOptions.SIZES.length),
                   Selector(
                     onSelectChange: (int selected) {
                       DimensionsProvider.of(

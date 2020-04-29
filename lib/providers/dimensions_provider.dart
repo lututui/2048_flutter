@@ -21,7 +21,7 @@ class DimensionsProvider with ChangeNotifier {
   }
 
   void log(String message) {
-    Logger.log<DimensionsProvider>(message, instance: this);
+    Logger.log<DimensionsProvider>(message);
   }
 
   Size get gapSize => _gapSize;

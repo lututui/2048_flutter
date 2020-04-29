@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/types/callbacks.dart';
+
+typedef SelectCallback = void Function(int);
 
 class Selector extends StatefulWidget {
   final List<Widget> children;
-  final VoidIntCallback onSelectChange;
+  final SelectCallback onSelectChange;
   final int defaultOption;
 
   const Selector({

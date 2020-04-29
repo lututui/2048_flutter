@@ -1,69 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/grid/dummy_grid_provider.dart';
-import 'package:flutter_2048/providers/grid/dummy_holder_provider.dart';
+import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/types/size_options.dart';
-import 'package:flutter_2048/util/data.dart';
 import 'package:flutter_2048/util/misc.dart';
-import 'package:flutter_2048/widgets/game_grid.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/util/tuple.dart';
+import 'package:flutter_2048/widgets/generic/bordered_box.dart';
+import 'package:flutter_2048/widgets/tiles/immovable_tile.dart';
 
 class DummyGame extends StatelessWidget {
-  DummyGame(BuildContext context, {Key key}) : super(key: key) {
-    final DummyHolderProvider providerHolder = DummyHolderProvider.of(
-      context,
-    );
-    final DimensionsProvider dimensions = DimensionsProvider.of(
-      context,
-      listen: false,
-    );
-    final int index = SizeOptions.getSizeIndexBySideLength(dimensions.gridSize);
+  final List<List<Widget>> tiles;
 
-    if (providerHolder.providers[index] == null) {
-      providerHolder.providers[index] = DummyGridProvider(context);
-      providerHolder.providers[index].spawn(
-        amount: Data.rand.nextIntRanged(
-          min: providerHolder.providers[index].grid.sideLength,
-          max: providerHolder.providers[index].grid.flattenLength,
-        ),
+  DummyGame.withSizes(BuildContext context, int sizes, {Key key})
+      : tiles = List.generate(sizes, (_) => List(), growable: false),
+        super(key: key);
+
+  void spawnTiles(int index, int sideLength) {
+    final int flatLength = sideLength * sideLength;
+    final int spawnAmount = Misc.rand.nextIntRanged(
+      min: sideLength - 1,
+      max: flatLength - sideLength,
+    );
+
+    final List<Tuple<int, int>> spawningPosList = List.generate(
+      flatLength,
+      (i) => Tuple(i ~/ sideLength, i % sideLength),
+    );
+
+    for (int i = 0; i < spawnAmount; i++) {
+      final Tuple<int, int> pickedSpawnedPos = Misc.rand.pick(
+        spawningPosList,
+        remove: true,
       );
+      final int value = Misc.rand.nextInt(sideLength);
+
+      final ImmovableTile newTile = ImmovableTile(
+        borderColor: Palette.getTileBorder(value),
+        color: Palette.getTileColor(value),
+        gridPos: pickedSpawnedPos,
+        value: 1 << value,
+      );
+
+      this.tiles[index].add(newTile);
+
+      assert(!spawningPosList.contains(pickedSpawnedPos));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final int index = SizeOptions.getSizeIndexBySideLength(
-      DimensionsProvider.of(context).gridSize,
-    );
+    final DimensionsProvider dimensions = DimensionsProvider.of(context);
+    final int index = SizeOptions.getSizeIndexBySideLength(dimensions.gridSize);
 
-    final DummyHolderProvider providerHolder = DummyHolderProvider.of(context);
-
-    if (providerHolder.providers[index] == null) {
-      providerHolder.providers[index] = DummyGridProvider(context);
-      providerHolder.providers[index].spawn(
-        amount: Data.rand.nextIntRanged(
-          min: providerHolder.providers[index].grid.sideLength,
-          max: providerHolder.providers[index].grid.flattenLength,
-        ),
-      );
+    if (tiles[index].isEmpty) {
+      this.spawnTiles(index, dimensions.gridSize);
     }
 
-    final Size predictedMaxSize = Sizes.scale(
-      DimensionsProvider.calculateSizes(
-        MediaQuery.of(context).size,
-        SizeOptions.SIZES.first.sideLength,
-      )["game"],
-      factor: 0.7,
-    );
+    final Size predictedMaxSize = DimensionsProvider.calculateSizes(
+      MediaQuery.of(context).size,
+      SizeOptions.SIZES.first.sideLength,
+    )["game"]
+        .scale(factor: 0.7);
 
-    return Provider.value(
-      value: providerHolder.providers[index],
-      child: Container(
-        width: predictedMaxSize.width,
-        height: predictedMaxSize.height,
-        child: const FittedBox(
-          fit: BoxFit.scaleDown,
-          child: const GameGrid<DummyGridProvider>(),
+    return Container(
+      width: predictedMaxSize.width,
+      height: predictedMaxSize.height,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: BorderedBox(
+            backgroundColor: Palette.BOX_BACKGROUND,
+            borderColor: Palette.BOX_BORDER,
+            width: dimensions.gameSize.width,
+            height: dimensions.gameSize.height,
+            borderWidth: dimensions.gapSize.width / 2,
+            child: Stack(
+              overflow: Overflow.visible,
+              children: tiles[index],
+            ),
+          ),
         ),
       ),
     );

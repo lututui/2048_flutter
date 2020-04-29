@@ -4,20 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/grid/base_grid_provider.dart';
-import 'package:flutter_2048/providers/tile/tile_provider.dart';
+import 'package:flutter_2048/providers/leaderboard.dart';
+import 'package:flutter_2048/providers/tile_grid.dart';
+import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
-import 'package:flutter_2048/util/leaderboard.dart';
-import 'package:flutter_2048/util/tile_grid.dart';
 import 'package:flutter_2048/util/tuple.dart';
-import 'package:flutter_2048/widgets/movable_tile.dart';
+import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
 import 'package:provider/provider.dart';
 
-class GridProvider extends BaseGridProvider with ChangeNotifier {
+class GridProvider with ChangeNotifier {
   final List<TileProvider> _pendingRemoval = List();
-  @override
-  TileGrid grid;
+  final List<Widget> tiles = List();
+  final TileGrid grid;
 
   bool _pendingSpawn = false;
   bool _gameOver = false;
@@ -28,15 +27,15 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
   Constructors
    */
 
-  GridProvider._(this.grid) : super();
+  GridProvider(this.grid);
 
   factory GridProvider.of(BuildContext context, {bool listen = true}) {
     return Provider.of<GridProvider>(context, listen: listen);
   }
 
   static Future<GridProvider> fromJSON(BuildContext context) async {
-    final GridProvider baseGrid = GridProvider._(
-      TileGrid(DimensionsProvider.of(context, listen: false).gridSize),
+    final GridProvider baseGrid = GridProvider(
+      TileGrid.withSize(DimensionsProvider.of(context, listen: false).gridSize),
     );
 
     final Tuple<int, List<List<int>>> loadedValues = await SaveManager.load(
@@ -97,9 +96,15 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
   Logic
    */
 
-  @override
   void spawn({int amount = 1}) {
-    super.spawn(amount: amount);
+    if (grid.spawnableSpaces < amount) {
+      throw Exception(
+        "Tried to spawn $amount but only ${grid.spawnableSpaces} spaces are available",
+      );
+    }
+
+    for (int i = 0; i < amount; i++)
+      this.spawnAt(grid.getRandomSpawnableSpace());
 
     SaveManager.save(grid.sideLength, this);
     this._pendingSpawn = false;
@@ -136,7 +141,7 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
     int somethingMoved = 0;
     int scoreAdd = 0;
 
-    Logger.log<GridProvider>("Swipe ${type.toDirectionString()}");
+    this.log("Swipe ${type.toDirectionString()}");
 
     for (int i = 0; i < grid.sideLength; i++) {
       int newIndex = type.towardsOrigin ? 0 : grid.sideLength - 1;
@@ -164,16 +169,15 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
 
           scoreAdd += 1 << (tile.value + 1);
 
-          Logger.log<GridProvider>(
-            "Merging ${grid.getByTuple(previous)} and $tile",
-          );
+          this.log("Merging ${grid.getByTuple(previous)} and $tile");
 
           grid.getByTuple(previous).gridPos = destination;
           tile.gridPos = destination;
 
+          this.log("Marking ${grid.getByTuple(previous)} to update value");
           grid.getByTuple(previous).pendingValueUpdate = true;
 
-          Logger.log<GridProvider>("Marking $tile for deletion");
+          this.log("Marking $tile for deletion");
           _pendingRemoval.add(tile);
 
           grid.setAtTuple(destination, grid.getByTuple(previous));
@@ -257,8 +261,7 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
         if (toRemove.length != 1 || !tiles.remove(toRemove.first))
           throw Exception("Failed to remove $tp from moving list");
 
-        Logger.log<GridProvider>(
-            "Removed ${(toRemove.first.key as ObjectKey).value}");
+        this.log("Removed ${(toRemove.first.key as ObjectKey).value}");
       }
 
       notifyListeners();
@@ -284,7 +287,6 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
     return Future.value(baseGrid);
   }
 
-  @override
   void spawnAt(Tuple<int, int> pos, {int value}) {
     grid.setAtTuple(pos, TileProvider(pos, value: value), allowReplace: false);
     tiles.add(
@@ -294,5 +296,9 @@ class GridProvider extends BaseGridProvider with ChangeNotifier {
         child: const MovableTile(),
       ),
     );
+  }
+
+  void log(String message) {
+    Logger.log<GridProvider>(message);
   }
 }

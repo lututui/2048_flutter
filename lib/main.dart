@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/providers/grid/dummy_holder_provider.dart';
 import 'package:flutter_2048/route/main_menu_route_builder.dart';
-import 'package:flutter_2048/util/fonts.dart';
+import 'package:flutter_2048/types/fonts.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/screens/game_screen.dart';
 import 'package:flutter_2048/widgets/screens/leaderboard_screen.dart';
@@ -15,14 +13,11 @@ void main() async {
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  Logger.enabled = false;
-
   runApp(const Main());
 }
 
 class Main extends StatelessWidget {
   static final dimensionsProvider = DimensionsProvider();
-  static final dummyHolderProvider = DummyHolderProvider();
 
   const Main({Key key}) : super(key: key);
 
@@ -44,7 +39,6 @@ class Main extends StatelessWidget {
         if (settings.name == '/') {
           return MainMenuRouteBuilder(
             dimensionsProvider: dimensionsProvider,
-            dummyHolderProvider: dummyHolderProvider,
             pageBuilder: (context) => const MainMenuScreen(),
           );
         }
