@@ -1,5 +1,5 @@
 class Fonts {
-  static const String RIGHTEOUS_FAMILY = "Righteous";
-
   Fonts._();
+
+  static const String righteousFamily = 'Righteous';
 }

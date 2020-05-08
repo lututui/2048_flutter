@@ -19,18 +19,18 @@ class MainMenuScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: <Widget>[
-                  DummyGame.withSizes(SizeOptions.SIZES.length),
+                  DummyGame.withSizes(SizeOptions.sizes.length),
                   Selector(
                     onSelectChange: (int selected) {
                       DimensionsProvider.setGridSize(
                         context,
-                        SizeOptions.SIZES[selected].sideLength,
+                        SizeOptions.sizes[selected].sideLength,
                       );
                     },
-                    children: SizeOptions.getChildren(),
                     defaultOption: SizeOptions.getSizeIndexBySideLength(
                       DimensionsProvider.getGridSize(context),
                     ),
+                    children: SizeOptions.getChildren(),
                   ),
                 ],
               ),
@@ -40,24 +40,22 @@ class MainMenuScreen extends StatelessWidget {
               child: Theme(
                 data: Theme.of(context).copyWith(
                   buttonTheme: ButtonTheme.of(context).copyWith(
-                    shape: const Border.fromBorderSide(
-                      const BorderSide(width: 2.0),
-                    ),
+                    shape: const Border.fromBorderSide(BorderSide(width: 2.0)),
                   ),
                 ),
                 child: Column(
-                  children: <Widget>[
+                  children: const <Widget>[
                     MainMenuButton(
                       routeName: '/game',
-                      buttonText: "Play",
+                      buttonText: 'Play',
                     ),
                     MainMenuButton(
                       routeName: '/leaderboard',
-                      buttonText: "Leaderboard",
+                      buttonText: 'Leaderboard',
                     ),
                     MainMenuButton(
                       routeName: '/settings',
-                      buttonText: "Settings",
+                      buttonText: 'Settings',
                     ),
                   ],
                 ),

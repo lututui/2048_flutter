@@ -14,24 +14,20 @@ import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
 import 'package:provider/provider.dart';
 
 class GridProvider with ChangeNotifier {
-  final List<TileProvider> _pendingRemoval = List();
-  final List<Widget> tiles = List();
+  GridProvider(this.grid);
+
+  factory GridProvider.of(BuildContext context) {
+    return context.read<GridProvider>();
+  }
+
+  final List<TileProvider> _pendingRemoval = [];
+  final List<Widget> tiles = [];
   final TileGrid grid;
 
   bool _pendingSpawn = false;
   bool _gameOver = false;
   int _moving = 0;
   int _score = 0;
-
-  /*
-  Constructors
-   */
-
-  GridProvider(this.grid);
-
-  factory GridProvider.of(BuildContext context) {
-    return Provider.of<GridProvider>(context, listen: false);
-  }
 
   static Future<GridProvider> fromJSON(BuildContext context) async {
     final GridProvider baseGrid = GridProvider(
@@ -55,8 +51,9 @@ class GridProvider with ChangeNotifier {
       }
     }
 
-    if (baseGrid.grid.spawnableSpaces <= 0)
+    if (baseGrid.grid.spawnableSpaces <= 0) {
       baseGrid._gameOver = baseGrid.grid.testGameOver();
+    }
 
     baseGrid._score = score;
 
@@ -99,15 +96,17 @@ class GridProvider with ChangeNotifier {
   void spawn({int amount = 1}) {
     if (grid.spawnableSpaces < amount) {
       throw Exception(
-        "Tried to spawn $amount but only ${grid.spawnableSpaces} spaces are available",
+        'Tried to spawn $amount but only '
+        '${grid.spawnableSpaces} spaces are available',
       );
     }
 
-    for (int i = 0; i < amount; i++)
-      this.spawnAt(grid.getRandomSpawnableSpace());
+    for (int i = 0; i < amount; i++) {
+      spawnAt(grid.getRandomSpawnableSpace());
+    }
 
     SaveManager.save(grid.sideLength, this);
-    this._pendingSpawn = false;
+    _pendingSpawn = false;
     notifyListeners();
 
     if (grid.spawnableSpaces > 0) return;
@@ -119,20 +118,20 @@ class GridProvider with ChangeNotifier {
     if (gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dy < 0
-        ? SwipeGestureType.UP
-        : SwipeGestureType.DOWN;
+        ? SwipeGestureType.up
+        : SwipeGestureType.down;
 
-    this.swipe(type);
+    swipe(type);
   }
 
   void onHorizontalDragEnd(DragEndDetails details) {
     if (gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dx < 0
-        ? SwipeGestureType.LEFT
-        : SwipeGestureType.RIGHT;
+        ? SwipeGestureType.left
+        : SwipeGestureType.right;
 
-    this.swipe(type);
+    swipe(type);
   }
 
   void swipe(SwipeGestureType type) {
@@ -141,7 +140,7 @@ class GridProvider with ChangeNotifier {
     int somethingMoved = 0;
     int scoreAdd = 0;
 
-    this.log("Swipe ${type.toDirectionString()}");
+    log('Swipe ${type.directionString}');
 
     for (int i = 0; i < grid.sideLength; i++) {
       int newIndex = type.towardsOrigin ? 0 : grid.sideLength - 1;
@@ -169,15 +168,15 @@ class GridProvider with ChangeNotifier {
 
           scoreAdd += 1 << (tile.value + 1);
 
-          this.log("Merging ${grid.getByTuple(previous)} and $tile");
+          log('Merging ${grid.getByTuple(previous)} and $tile');
 
           grid.getByTuple(previous).gridPos = destination;
           tile.gridPos = destination;
 
-          this.log("Marking ${grid.getByTuple(previous)} to update value");
+          log('Marking ${grid.getByTuple(previous)} to update value');
           grid.getByTuple(previous).pendingValueUpdate = true;
 
-          this.log("Marking $tile for deletion");
+          log('Marking $tile for deletion');
           _pendingRemoval.add(tile);
 
           grid.setAtTuple(destination, grid.getByTuple(previous));
@@ -221,8 +220,8 @@ class GridProvider with ChangeNotifier {
     }
 
     if (somethingMoved > 0) {
-      this._moving += somethingMoved;
-      this._pendingSpawn = true;
+      _moving += somethingMoved;
+      _pendingSpawn = true;
     }
 
     notifyListeners();
@@ -231,13 +230,13 @@ class GridProvider with ChangeNotifier {
 
   void onMoveEnd(TileProvider tp) {
     if (_moving <= 0) {
-      throw Exception([
-        "Received message that tile $tp finished moving",
-        "but no tiles should be moving"
-      ].join(" "));
+      throw Exception(
+        'Received message that tile $tp finished moving '
+        'but no tiles should be moving',
+      );
     }
 
-    --_moving;
+    _moving--;
 
     if (_pendingRemoval.remove(tp)) {
       final List<TileProvider> matchingTiles = tiles
@@ -245,10 +244,11 @@ class GridProvider with ChangeNotifier {
           .where((other) => other == tp || other.gridPos == tp.gridPos)
           .toList();
 
-      if (matchingTiles.length < 1 || matchingTiles.length > 2)
+      if (matchingTiles.isEmpty || matchingTiles.length > 2) {
         throw RangeError.range(matchingTiles.length, 1, 2);
+      }
 
-      for (TileProvider t in matchingTiles) {
+      for (final t in matchingTiles) {
         if (t.moving) continue;
         if (t.pendingValueUpdate) t.updateValue();
 
@@ -258,10 +258,11 @@ class GridProvider with ChangeNotifier {
           tiles.where((p) => (p.key as ObjectKey).value == t),
         );
 
-        if (toRemove.length != 1 || !tiles.remove(toRemove.first))
-          throw Exception("Failed to remove $tp from moving list");
+        if (toRemove.length != 1 || !tiles.remove(toRemove.first)) {
+          throw Exception('Failed to remove $tp from moving list');
+        }
 
-        this.log("Removed ${(toRemove.first.key as ObjectKey).value}");
+        log('Removed ${(toRemove.first.key as ObjectKey).value}');
       }
 
       notifyListeners();
@@ -269,17 +270,17 @@ class GridProvider with ChangeNotifier {
 
     if (_moving == 0 && _pendingSpawn) {
       if (_pendingRemoval.isNotEmpty) {
-        throw Exception([
-          "There should be no tiles moving but some are still pending removal:",
-          IterableBase.iterableToFullString(_pendingRemoval),
-        ].join(" "));
+        throw Exception(
+          'There should be no tiles moving but some are still pending removal: '
+          '${IterableBase.iterableToFullString(_pendingRemoval)}',
+        );
       }
 
-      this.spawn();
+      spawn();
     }
   }
 
-  Map<String, dynamic> toJSON() => grid.toJSON()..["score"] = score;
+  Map<String, dynamic> toJSON() => grid.toJSON()..['score'] = score;
 
   static Future<GridProvider> _loadFailed(GridProvider baseGrid) async {
     baseGrid.spawn(amount: 3);

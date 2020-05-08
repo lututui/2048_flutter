@@ -4,14 +4,14 @@ import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
 class GameOverDialog extends StatelessWidget {
-  final int finalScore;
-  final double maxButtonSize;
-
   const GameOverDialog({
-    Key key,
     @required this.finalScore,
     @required this.maxButtonSize,
+    Key key,
   }) : super(key: key);
+
+  final int finalScore;
+  final double maxButtonSize;
 
   @override
   Widget build(BuildContext context) {
@@ -19,25 +19,15 @@ class GameOverDialog extends StatelessWidget {
       titlePadding: const EdgeInsets.all(16.0),
       contentPadding: const EdgeInsets.all(0.0),
       title: const Center(
-        child: const Text(
-          "Game Over",
-          style: const TextStyle(
-            fontSize: 30,
-          ),
-        ),
+        child: Text('Game Over', style: TextStyle(fontSize: 30)),
       ),
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            const Text(
-              "Score:",
-              style: const TextStyle(
-                fontSize: 20,
-              ),
-            ),
+            const Text('Score:', style: TextStyle(fontSize: 20)),
             Text(
-              "$finalScore",
+              '$finalScore',
               maxLines: 1,
               textAlign: TextAlign.right,
               style: const TextStyle(color: Colors.black, fontSize: 20),
@@ -63,25 +53,25 @@ class GameOverDialog extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SquareIconButton(
-                          maxSize: this.maxButtonSize,
-                          iconData: DialogResult.EXIT.icon,
-                          onPress: this._exit,
+                          maxSize: maxButtonSize,
+                          iconData: DialogResult.exit.icon,
+                          onPress: _exit,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SquareIconButton(
-                          maxSize: this.maxButtonSize,
-                          iconData: DialogResult.RESET.icon,
-                          onPress: this._reset,
+                          maxSize: maxButtonSize,
+                          iconData: DialogResult.reset.icon,
+                          onPress: _reset,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SquareIconButton(
-                          maxSize: this.maxButtonSize,
-                          iconData: DialogResult.PAUSE.icon,
-                          onPress: this._resume,
+                          maxSize: maxButtonSize,
+                          iconData: DialogResult.pause.icon,
+                          onPress: _resume,
                         ),
                       ),
                     ],
@@ -96,15 +86,15 @@ class GameOverDialog extends StatelessWidget {
   }
 
   void _resume(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.PAUSE);
+    Navigator.of(context).pop(DialogResult.pause);
   }
 
   void _reset(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.RESET);
+    Navigator.of(context).pop(DialogResult.reset);
   }
 
   void _exit(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.EXIT);
+    Navigator.of(context).pop(DialogResult.exit);
   }
 
   static Future<void> show(
@@ -123,9 +113,9 @@ class GameOverDialog extends StatelessWidget {
         );
       },
     ).then((result) async {
-      if (result == null || result == DialogResult.PAUSE) return;
+      if (result == null || result == DialogResult.pause) return;
 
-      if (result == DialogResult.RESET) {
+      if (result == DialogResult.reset) {
         await SaveManager.wipeSave(gridSize);
         Navigator.of(context).pushReplacementNamed(
           '/game',

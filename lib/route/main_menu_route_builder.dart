@@ -16,9 +16,10 @@ class MainMenuRouteBuilder<T> extends PageRouteBuilder<T> {
             }
 
             final List<SingleChildWidget> providers = <SingleChildWidget>[
-              (dimensionsProvider != null)
-                  ? ChangeNotifierProvider.value(value: dimensionsProvider)
-                  : null,
+              if (dimensionsProvider != null)
+                ChangeNotifierProvider.value(value: dimensionsProvider)
+              else
+                null,
             ].where((it) => it != null).toList();
 
             return MultiProvider(

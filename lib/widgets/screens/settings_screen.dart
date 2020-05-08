@@ -9,7 +9,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
+      appBar: AppBar(title: const Text('Settings')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -18,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Appearance",
+                  'Appearance',
                   style: Theme.of(context).textTheme.headline6,
                 ),
                 Divider(
@@ -31,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
             Consumer<SettingsProvider>(
               builder: (context, settings, _) {
                 return SwitchSettingWidget(
-                  text: "Dark mode",
+                  text: 'Dark mode',
                   value: settings.darkMode,
                   onChangedCallback: (newValue) => settings.darkMode = newValue,
                 );
@@ -44,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      const Text("Game palette"),
+                      const Text('Game palette'),
                       FlatButton(
                         onPressed: () {
                           Navigator.of(context).pushNamed('/palette_picker');

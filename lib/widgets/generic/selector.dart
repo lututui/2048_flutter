@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 typedef SelectCallback = void Function(int);
 
 class Selector extends StatefulWidget {
-  final List<Widget> children;
-  final SelectCallback onSelectChange;
-  final int defaultOption;
-
   const Selector({
-    Key key,
     @required this.children,
     this.onSelectChange,
     this.defaultOption = 0,
+    Key key,
   })  : assert(children != null),
         super(key: key);
+
+  final List<Widget> children;
+  final SelectCallback onSelectChange;
+  final int defaultOption;
 
   @override
   _SelectorState createState() => _SelectorState();
@@ -26,7 +26,7 @@ class _SelectorState extends State<Selector> {
   void initState() {
     super.initState();
 
-    this.selected = this.widget.defaultOption;
+    selected = widget.defaultOption;
   }
 
   @override
@@ -38,28 +38,28 @@ class _SelectorState extends State<Selector> {
           icon: const Icon(Icons.keyboard_arrow_left),
           onPressed: () {
             setState(() {
-              if (this.selected == 0) {
-                this.selected = this.widget.children.length - 1;
+              if (selected == 0) {
+                selected = widget.children.length - 1;
               } else {
-                this.selected--;
+                selected--;
               }
 
-              this.widget.onSelectChange(this.selected);
+              widget.onSelectChange(selected);
             });
           },
         ),
-        this.widget.children[this.selected],
+        widget.children[selected],
         IconButton(
           icon: const Icon(Icons.keyboard_arrow_right),
           onPressed: () {
             setState(() {
-              if (this.selected == this.widget.children.length - 1) {
-                this.selected = 0;
+              if (selected == widget.children.length - 1) {
+                selected = 0;
               } else {
-                this.selected++;
+                selected++;
               }
 
-              this.widget.onSelectChange(this.selected);
+              widget.onSelectChange(selected);
             });
           },
         ),

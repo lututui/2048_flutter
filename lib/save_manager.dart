@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_2048/providers/grid_provider.dart';
-import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/types/tuple.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SaveManager {
   SaveManager._();
 
-  static const int SAVE_VERSION = 2;
-  static const int LEADERBOARD_VERSION = 2;
+  static const int _saveVersion = 2;
+  static const int _leaderboardVersion = 2;
 
   static Future<Directory> get dir async => getApplicationDocumentsDirectory();
 
@@ -23,7 +23,7 @@ class SaveManager {
 
     if (path == null) return null;
 
-    final File f = File("$path/${prefix}_$gridSize.json");
+    final File f = File('$path/${prefix}_$gridSize.json');
 
     if (!mustExist) return f;
 
@@ -33,21 +33,21 @@ class SaveManager {
   }
 
   static Future<File> getSaveFile(int gridSize, {bool mustExist = true}) async {
-    return _getFile(gridSize, "save", mustExist: mustExist);
+    return _getFile(gridSize, 'save', mustExist: mustExist);
   }
 
   static Future<File> getLeaderboardFile(
     int gridSize, {
     bool mustExist = true,
   }) async {
-    return _getFile(gridSize, "leaderboard", mustExist: mustExist);
+    return _getFile(gridSize, 'leaderboard', mustExist: mustExist);
   }
 
   static Future<File> save(int gridSize, GridProvider provider) async {
     if (gridSize == null || provider == null) return null;
 
     return (await getSaveFile(gridSize, mustExist: false))?.writeAsString(
-      json.encode(provider.toJSON()..["version"] = SAVE_VERSION),
+      json.encode(provider.toJSON()..['version'] = _saveVersion),
     );
   }
 
@@ -60,28 +60,29 @@ class SaveManager {
 
     if (jsonString == null || jsonString.isEmpty) return null;
 
-    final Map<String, dynamic> parsedJson = json.decode(jsonString);
+    final Map<String, dynamic> parsedJson =
+        json.decode(jsonString) as Map<String, dynamic>;
 
-    if (parsedJson["version"] as int != SAVE_VERSION) {
+    if (parsedJson['version'] as int != _saveVersion) {
       await wipeSave(gridSize);
 
       return null;
     }
 
     return Tuple(
-      parsedJson["score"] as int,
-      (parsedJson["grid"] as List<dynamic>)
-          .map((line) => List<int>.from(line))
+      parsedJson['score'] as int,
+      (parsedJson['grid'] as List<dynamic>)
+          .map((line) => List<int>.from(line as Iterable))
           .toList(),
     );
   }
 
   static Future<FileSystemEntity> wipeSave(int gridSize) async {
-    return _wipe(gridSize, "save");
+    return _wipe(gridSize, 'save');
   }
 
   static Future<FileSystemEntity> wipeLeaderboard(int gridSize) async {
-    return _wipe(gridSize, "leaderboard");
+    return _wipe(gridSize, 'leaderboard');
   }
 
   static Future<FileSystemEntity> _wipe(int gridSize, String prefix) async {
@@ -101,16 +102,17 @@ class SaveManager {
 
     if (jsonString == null || jsonString.isEmpty) return null;
 
-    final Map<String, dynamic> parsedJson = json.decode(jsonString);
+    final Map<String, dynamic> parsedJson =
+        json.decode(jsonString) as Map<String, dynamic>;
 
-    if (parsedJson["version"] != LEADERBOARD_VERSION) {
+    if (parsedJson['version'] != _leaderboardVersion) {
       await wipeLeaderboard(gridSize);
       return null;
     }
 
-    parsedJson.remove("version");
+    parsedJson.remove('version');
 
-    final List<int> scores = List(Misc.LEADERBOARD_SIZE);
+    final List<int> scores = List(Misc.leaderboardSize);
 
     parsedJson.forEach((key, value) => scores[int.parse(key)] = value as int);
 
@@ -122,7 +124,7 @@ class SaveManager {
     Map<String, int> leaderboard,
   ) async {
     return (await getLeaderboardFile(gridSize, mustExist: false)).writeAsString(
-      json.encode(leaderboard..["version"] = LEADERBOARD_VERSION),
+      json.encode(leaderboard..['version'] = _leaderboardVersion),
     );
   }
 }

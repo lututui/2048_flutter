@@ -14,7 +14,7 @@ import 'package:flutter_2048/widgets/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Future.wait([
@@ -31,10 +31,10 @@ void main() async {
 }
 
 class Main extends StatelessWidget {
-  static final dimensionsProvider = DimensionsProvider();
-  static final settingsProvider = SettingsProvider();
-
   const Main({Key key}) : super(key: key);
+
+  static final DimensionsProvider dimensionsProvider = DimensionsProvider();
+  static final SettingsProvider settingsProvider = SettingsProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +45,12 @@ class Main extends StatelessWidget {
           return MaterialApp(
             themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
             theme: Misc.buildThemeDataFromColorScheme(
-              Palette.LIGHT_THEME,
-              fontFamily: Fonts.RIGHTEOUS_FAMILY,
+              Palette.lightTheme,
+              fontFamily: Fonts.righteousFamily,
             ),
             darkTheme: Misc.buildThemeDataFromColorScheme(
-              Palette.DARK_THEME,
-              fontFamily: Fonts.RIGHTEOUS_FAMILY,
+              Palette.darkTheme,
+              fontFamily: Fonts.righteousFamily,
             ),
             debugShowCheckedModeBanner: false,
             onGenerateRoute: (settings) {
@@ -76,7 +76,7 @@ class Main extends StatelessWidget {
 
               if (settings.name == '/settings') {
                 return MainMenuRouteBuilder(
-                  pageBuilder: (context) => SettingsScreen(),
+                  pageBuilder: (context) => const SettingsScreen(),
                 );
               }
 
@@ -86,7 +86,7 @@ class Main extends StatelessWidget {
                 );
               }
 
-              throw Exception("Route not found: ${settings.name}");
+              throw Exception('Route not found: ${settings.name}');
             },
           );
         },

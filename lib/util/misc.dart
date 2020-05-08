@@ -2,17 +2,20 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/types/tuple.dart';
 
 class Misc {
+  Misc._();
+
   static int _weightSum;
-  static List<Tuple<int, int>> _spawnValues = [
+  static final List<Tuple<int, int>> _spawnValues = [
     Tuple(0, 10),
     Tuple(1, 20),
     Tuple(2, 5),
   ];
-  static const int LEADERBOARD_SIZE = 10;
+  static const int leaderboardSize = 10;
 
   static final Random rand = Random();
 
@@ -32,11 +35,10 @@ class Misc {
         )
         .toColor();
 
-    print([
-      "${factor * 100}%: "
-          "0x${original.value.toRadixString(16)}, ",
-      "0x${result.value.toRadixString(16)}"
-    ].join());
+    Logger.log<Misc>(
+      '${factor * 100}%: 0x${original.value.toRadixString(16)}, '
+      '0x${result.value.toRadixString(16)}',
+    );
     return result;
   }
 
@@ -73,6 +75,4 @@ class Misc {
       ),
     );
   }
-
-  Misc._();
 }

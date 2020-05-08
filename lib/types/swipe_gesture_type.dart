@@ -1,49 +1,44 @@
-enum SwipeGestureType { UP, DOWN, LEFT, RIGHT }
+enum _GestureDirection { up, down, left, right }
 
-extension SwipeGestureTypeString on SwipeGestureType {
-  String toDirectionString() {
-    if (this == SwipeGestureType.UP) return "UP";
+class SwipeGestureType {
+  const SwipeGestureType._(this.type, this.directionString);
 
-    if (this == SwipeGestureType.RIGHT) return "RIGHT";
-
-    if (this == SwipeGestureType.LEFT) return "LEFT";
-
-    if (this == SwipeGestureType.DOWN) return "DOWN";
-
-    throw Exception(
-      "Unknown SwipeGestureType: (${this.index}, ${this.toString()})",
-    );
-  }
+  final _GestureDirection type;
+  final String directionString;
 
   bool get isVertical {
-    if (this == SwipeGestureType.DOWN || this == SwipeGestureType.UP)
-      return true;
-
-    if (this == SwipeGestureType.LEFT || this == SwipeGestureType.RIGHT)
-      return false;
-
-    throw Exception(
-      "Unknown SwipeGestureType: (${this.index}, ${this.toString()})",
-    );
+    return type == _GestureDirection.up || type == _GestureDirection.down;
   }
 
   bool get isHorizontal {
-    return !this.isVertical;
+    return type == _GestureDirection.left || type == _GestureDirection.right;
   }
 
   bool get towardsOrigin {
-    if (this == SwipeGestureType.LEFT || this == SwipeGestureType.UP)
-      return true;
-
-    if (this == SwipeGestureType.RIGHT || this == SwipeGestureType.DOWN)
-      return false;
-
-    throw Exception(
-      "Unknown SwipeGestureType: (${this.index}, ${this.toString()})",
-    );
+    return type == _GestureDirection.up || type == _GestureDirection.left;
   }
 
   bool get awayFromOrigin {
-    return !this.towardsOrigin;
+    return type == _GestureDirection.down || type == _GestureDirection.right;
   }
+
+  static const SwipeGestureType up = SwipeGestureType._(
+    _GestureDirection.up,
+    'UP',
+  );
+
+  static const SwipeGestureType down = SwipeGestureType._(
+    _GestureDirection.down,
+    'DOWN',
+  );
+
+  static const SwipeGestureType left = SwipeGestureType._(
+    _GestureDirection.left,
+    'LEFT',
+  );
+
+  static const SwipeGestureType right = SwipeGestureType._(
+    _GestureDirection.right,
+    'RIGHT',
+  );
 }

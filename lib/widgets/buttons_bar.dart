@@ -21,18 +21,18 @@ class ButtonsBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 SquareIconButton(
-                  onPress: this._exit,
-                  iconData: DialogResult.EXIT.icon,
+                  onPress: _exit,
+                  iconData: DialogResult.exit.icon,
                   maxSize: dimensions.tileSize.width,
                 ),
                 SquareIconButton(
-                  onPress: this._reset,
-                  iconData: DialogResult.RESET.icon,
+                  onPress: _reset,
+                  iconData: DialogResult.reset.icon,
                   maxSize: dimensions.tileSize.width,
                 ),
                 SquareIconButton(
-                  onPress: this._pause,
-                  iconData: DialogResult.PAUSE.icon,
+                  onPress: _pause,
+                  iconData: DialogResult.pause.icon,
                   maxSize: dimensions.tileSize.width,
                 ),
               ],

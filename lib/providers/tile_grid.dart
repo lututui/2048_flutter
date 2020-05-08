@@ -1,12 +1,9 @@
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
-import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/types/tuple.dart';
+import 'package:flutter_2048/util/misc.dart';
 
 class TileGrid {
-  final List<List<TileProvider>> _grid;
-  final Set<Tuple<int, int>> _free;
-
   TileGrid.withSize(int gridSize)
       : assert(gridSize != null && gridSize > 0),
         _grid = List.generate(
@@ -19,6 +16,9 @@ class TileGrid {
           (i) => Tuple(i ~/ gridSize, i % gridSize),
           growable: true,
         ).toSet();
+
+  final List<List<TileProvider>> _grid;
+  final Set<Tuple<int, int>> _free;
 
   int get sideLength => _grid.length;
 
@@ -39,14 +39,17 @@ class TileGrid {
   void set(int i, int j, TileProvider p, {bool allowReplace = true}) {
     if (_grid[i][j] == p) return;
 
-    if (_grid[i][j] == null && !_free.remove(Tuple(i, j)))
+    if (_grid[i][j] == null && !_free.remove(Tuple(i, j))) {
       throw Exception("Grid is null at ($i, $j) but it's marked as filled");
+    }
 
-    if (p == null && !_free.add(Tuple(i, j)))
+    if (p == null && !_free.add(Tuple(i, j))) {
       throw Exception("Trying to clear ($i, $j) but it's already empty");
+    }
 
-    if (!allowReplace && p != null && _grid[i][j] != null)
-      throw Exception("Tried to replace ${_grid[i][j]} with $p at ($i, $j)");
+    if (!allowReplace && p != null && _grid[i][j] != null) {
+      throw Exception('Tried to replace ${_grid[i][j]} with $p at ($i, $j)');
+    }
 
     _grid[i][j] = p;
   }
@@ -56,7 +59,7 @@ class TileGrid {
     TileProvider p, {
     bool allowReplace = true,
   }) {
-    this.set(t.a, t.b, p, allowReplace: allowReplace);
+    set(t.a, t.b, p, allowReplace: allowReplace);
   }
 
   /*
@@ -84,23 +87,23 @@ class TileGrid {
         if (skipI && skipJ) continue;
 
         final TileProvider tile = get(i, j);
-        final TileProvider iNeighbor = (skipI) ? null : get(i + 1, j);
-        final TileProvider jNeighbor = (skipJ) ? null : get(i, j + 1);
+        final TileProvider iNeighbor = skipI ? null : get(i + 1, j);
+        final TileProvider jNeighbor = skipJ ? null : get(i, j + 1);
 
         if (tile.compareValue(iNeighbor)) {
-          this.log([
-            "${tile.gridPos} can merge with",
-            "${iNeighbor.gridPos}: ${tile.value}",
-          ]);
+          log(
+            '${tile.gridPos} can merge with '
+            '${iNeighbor.gridPos}: ${tile.value}',
+          );
 
           return false;
         }
 
         if (tile.compareValue(jNeighbor)) {
-          this.log([
-            "${tile.gridPos} can merge with",
-            "${jNeighbor.gridPos}: ${tile.value}",
-          ]);
+          log(
+            '${tile.gridPos} can merge with '
+            '${jNeighbor.gridPos}: ${tile.value}',
+          );
 
           return false;
         }
@@ -110,7 +113,7 @@ class TileGrid {
     return true;
   }
 
-  void log(Iterable<String> messages) {
-    Logger.log<TileGrid>(messages.join());
+  void log(String message) {
+    Logger.log<TileGrid>(message, instance: this);
   }
 }

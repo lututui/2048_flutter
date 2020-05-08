@@ -3,17 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AnimatedGradientBorder extends StatefulWidget {
-  final Widget child;
-  final Gradient gradientStart;
-  final Gradient gradientEnd;
-  final double width;
-  final double height;
-  final double borderWidth;
-  final Duration duration;
-  final BorderRadiusGeometry borderRadius;
-
   const AnimatedGradientBorder({
-    Key key,
     @required this.child,
     @required this.gradientStart,
     @required this.gradientEnd,
@@ -22,7 +12,17 @@ class AnimatedGradientBorder extends StatefulWidget {
     @required this.borderWidth,
     this.duration = const Duration(seconds: 2),
     this.borderRadius,
+    Key key,
   }) : super(key: key);
+
+  final Widget child;
+  final Gradient gradientStart;
+  final Gradient gradientEnd;
+  final double width;
+  final double height;
+  final double borderWidth;
+  final Duration duration;
+  final BorderRadiusGeometry borderRadius;
 
   @override
   _AnimatedGradientBorderState createState() => _AnimatedGradientBorderState();
@@ -54,13 +54,6 @@ class _AnimatedGradientBorderState extends State<AnimatedGradientBorder>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      child: Container(
-        child: widget.child,
-        constraints: BoxConstraints.tightFor(
-          width: widget.width - widget.borderWidth,
-          height: widget.height - widget.borderWidth,
-        ),
-      ),
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
@@ -79,6 +72,13 @@ class _AnimatedGradientBorderState extends State<AnimatedGradientBorder>
           child: child,
         );
       },
+      child: Container(
+        constraints: BoxConstraints.tightFor(
+          width: widget.width - widget.borderWidth,
+          height: widget.height - widget.borderWidth,
+        ),
+        child: widget.child,
+      ),
     );
   }
 }

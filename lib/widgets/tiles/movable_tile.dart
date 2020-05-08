@@ -39,7 +39,7 @@ class MovableTile extends StatelessWidget {
                 borderWidth: dimensions.gapSize.width / 2.0,
                 height: dimensions.tileSize.height,
                 width: dimensions.tileSize.width,
-                text: "${1 << tileContext.value}",
+                text: '${1 << tileContext.value}',
               );
             },
           ),

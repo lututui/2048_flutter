@@ -1,0 +1,14 @@
+include: package:lint/analysis_options.yaml
+
+linter:
+  rules:
+    # Has false positives
+    invariant_booleans: false
+
+    sort_constructors_first: true
+    prefer_single_quotes: true
+    lines_longer_than_80_chars: true
+    always_put_required_named_parameters_first: true
+    use_key_in_widget_constructors: true
+    sort_pub_dependencies: true
+    directives_ordering: true

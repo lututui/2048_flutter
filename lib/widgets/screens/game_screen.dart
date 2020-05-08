@@ -20,7 +20,7 @@ class GameScreen extends StatelessWidget {
           alignment: Alignment.center,
           child: Misc.getDefaultProgressIndicator(context),
         ),
-        onError: (error) => throw Exception("Something went wrong: $error"),
+        onError: (error) => throw Exception('Something went wrong: $error'),
         builder: (context, snapshot) {
           return ChangeNotifierProvider<GridProvider>.value(
             value: snapshot.data,
@@ -39,9 +39,9 @@ class GameScreen extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const <Widget>[
-                          const Scoreboard(),
-                          const GameGrid(),
-                          const ButtonsBar(),
+                          Scoreboard(),
+                          GameGrid(),
+                          ButtonsBar(),
                         ],
                       ),
                     ),

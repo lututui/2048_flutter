@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/settings_provider.dart';
+import 'package:flutter_2048/types/tile_color.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:provider/provider.dart';
 
@@ -11,11 +12,11 @@ class PaletteSelectionScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          const SliverAppBar(title: const Text("Game palette"), pinned: true),
+          const SliverAppBar(title: Text('Game palette'), pinned: true),
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              this.buildGamePalette,
-              childCount: Palette.GAME_PALETTES.length,
+              buildGamePalette,
+              childCount: Palette.gamePalettes.length,
             ),
           ),
         ],
@@ -28,13 +29,13 @@ class PaletteSelectionScreen extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) {
-          bool isSelected = settings.palette == Palette.GAME_PALETTES[index];
+          final isSelected = settings.palette == Palette.gamePalettes[index];
 
           return FlatButton(
             onPressed: () {
               if (isSelected) return;
 
-              settings.palette = Palette.GAME_PALETTES[index];
+              settings.palette = Palette.gamePalettes[index];
             },
             child: Card(
               elevation: isSelected ? 6.0 : 1.0,
@@ -54,7 +55,7 @@ class PaletteSelectionScreen extends StatelessWidget {
                       child: Row(
                         children: <Widget>[
                           Text(
-                            Palette.GAME_PALETTES[index].name,
+                            Palette.gamePalettes[index].name,
                             style: Theme.of(context).textTheme.headline6,
                           ),
                         ],
@@ -64,7 +65,7 @@ class PaletteSelectionScreen extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
                         child: Row(
-                          children: Palette.GAME_PALETTES[index].tileColors.map(
+                          children: Palette.gamePalettes[index].tileColors.map(
                             (TileColor tile) {
                               return Expanded(
                                 child: Container(color: tile.backgroundColor),

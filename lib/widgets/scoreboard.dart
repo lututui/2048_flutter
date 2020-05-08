@@ -10,16 +10,6 @@ class Scoreboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<DimensionsProvider>(
-      child: Consumer<GridProvider>(
-        builder: (context, grid, _) {
-          return Text(
-            "${grid.score}",
-            maxLines: 1,
-            textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 20),
-          );
-        },
-      ),
       builder: (context, dimensions, scoreText) {
         return Container(
           width: dimensions.gameSize.width + dimensions.gapSize.width,
@@ -27,22 +17,29 @@ class Scoreboard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               BorderedBox(
-                child: const Text(
-                  "Score",
-                  style: const TextStyle(fontSize: 20),
-                ),
                 borderWidth: dimensions.gapSize.width / 2,
                 padding: const EdgeInsets.all(2.0),
+                child: const Text('Score', style: TextStyle(fontSize: 20)),
               ),
               BorderedBox(
-                child: scoreText,
                 borderWidth: dimensions.gapSize.width / 2,
                 padding: const EdgeInsets.all(2.0),
+                child: scoreText,
               ),
             ],
           ),
         );
       },
+      child: Consumer<GridProvider>(
+        builder: (context, grid, _) {
+          return Text(
+            '${grid.score}',
+            maxLines: 1,
+            textAlign: TextAlign.right,
+            style: const TextStyle(fontSize: 20),
+          );
+        },
+      ),
     );
   }
 }

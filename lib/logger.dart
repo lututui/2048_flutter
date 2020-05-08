@@ -1,18 +1,19 @@
 import 'package:flutter/foundation.dart';
 
 class Logger {
-  static final Map<Type, bool> _blackList = Map();
-
-  static bool enabled = false;
-
   Logger._();
+
+  static final Map<Type, bool> _blackList = {};
+  static bool enabled = false;
 
   static void blacklist(Type t) {
     _blackList[t] = true;
   }
 
-  static void blacklistAll(Iterable<Type> t) {
-    t.forEach((element) => blacklist(element));
+  static void blacklistAll(Iterable<Type> types) {
+    for (final type in types) {
+      blacklist(type);
+    }
   }
 
   static void log<T>(String message, {Object instance}) {
@@ -21,10 +22,10 @@ class Logger {
     if (_blackList[T] ?? false) return;
 
     if (instance != null) {
-      print("[$T] [0x${instance.hashCode.toRadixString(16)}] $message");
+      debugPrint('[$T] [0x${instance.hashCode.toRadixString(16)}] $message');
       return;
     }
 
-    print("[$T] $message");
+    debugPrint('[$T] $message');
   }
 }

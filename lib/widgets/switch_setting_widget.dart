@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class SwitchSettingWidget extends StatelessWidget {
-  final void Function(bool) onChangedCallback;
-  final String text;
-  final bool value;
-
   const SwitchSettingWidget({
-    Key key,
     @required this.text,
     @required this.value,
     @required this.onChangedCallback,
+    Key key,
   }) : super(key: key);
+
+  final void Function(bool) onChangedCallback;
+  final String text;
+  final bool value;
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +19,8 @@ class SwitchSettingWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(this.text),
-          Switch(value: this.value, onChanged: this.onChangedCallback),
+          Text(text),
+          Switch(value: value, onChanged: onChangedCallback),
         ],
       ),
     );

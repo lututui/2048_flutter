@@ -6,21 +6,21 @@ import 'package:flutter_2048/types/tuple.dart';
 import 'package:meta/meta.dart';
 
 extension RandomExtension on Random {
-  int nextIntRanged({int min = 0, @required int max}) {
+  int nextIntRanged({@required int max, int min = 0}) {
     ArgumentError.checkNotNull(min, 'min');
     ArgumentError.checkNotNull(max, 'max');
 
     if (min > max) {
       throw RangeError(
-        "min ($min) value should be greater or equal to max ($max) value",
+        'min ($min) value should be greater or equal to max ($max) value',
       );
     }
 
-    return min + this.nextInt(max - min);
+    return min + nextInt(max - min);
   }
 
   T pick<T>(List<T> options, {bool remove = false}) {
-    final int picked = this.nextInt(options.length);
+    final int picked = nextInt(options.length);
 
     if (remove) return options.removeAt(picked);
 
@@ -30,7 +30,7 @@ extension RandomExtension on Random {
   T pickWithWeight<T>(List<Tuple<T, int>> options, {int weightSum}) {
     weightSum ??= options.fold(0, (v, element) => v += element.b);
 
-    int picked = this.nextInt(weightSum);
+    int picked = nextInt(weightSum);
     int j = 0;
 
     for (; picked >= options[j].b && j < options.length; j++) {
@@ -43,16 +43,19 @@ extension RandomExtension on Random {
 
 extension NumListExtension on List<num> {
   num takeAverage() {
-    if (this.isEmpty) throw Exception("Cannot take average of empty list");
+    if (isEmpty) {
+      throw Exception('Cannot take average of empty list');
+    }
 
-    return this.reduce((value, element) => value += element) / this.length;
+    return reduce((value, element) => value += element) / length;
   }
 }
 
 extension SizeExtension on Size {
   Size scale({double factor, double widthFactor, double heightFactor}) {
-    if (factor == null && widthFactor == null && heightFactor == null)
+    if (factor == null && widthFactor == null && heightFactor == null) {
       return null;
+    }
 
     double width = this.width;
     double height = this.height;
@@ -75,5 +78,5 @@ extension SizeExtension on Size {
 }
 
 extension BoxConstraintsExtension on BoxConstraints {
-  double get averageWidth => 0.5 * (this.minWidth + this.maxWidth);
+  double get averageWidth => 0.5 * (minWidth + maxWidth);
 }

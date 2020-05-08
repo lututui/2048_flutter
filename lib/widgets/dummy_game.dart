@@ -9,11 +9,11 @@ import 'package:flutter_2048/widgets/tiles/immovable_tile.dart';
 import 'package:provider/provider.dart';
 
 class DummyGame extends StatelessWidget {
-  final List<List<Widget>> tiles;
-
   DummyGame.withSizes(int sizes, {Key key})
-      : tiles = List.generate(sizes, (_) => List(), growable: false),
+      : tiles = List.generate(sizes, (_) => [], growable: false),
         super(key: key);
+
+  final List<List<Widget>> tiles;
 
   void spawnTiles(int index, int sideLength) {
     final int flatLength = sideLength * sideLength;
@@ -39,7 +39,7 @@ class DummyGame extends StatelessWidget {
         value: value,
       );
 
-      this.tiles[index].add(newTile);
+      tiles[index].add(newTile);
 
       assert(!spawningPosList.contains(pickedSpawnedPos));
     }
@@ -49,8 +49,8 @@ class DummyGame extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size predictedMaxSize = DimensionsProvider.calculateSizes(
       MediaQuery.of(context).size,
-      SizeOptions.SIZES.first.sideLength,
-    )["game"]
+      SizeOptions.sizes.first.sideLength,
+    )['game']
         .scale(factor: 0.7);
 
     return Container(
@@ -67,7 +67,7 @@ class DummyGame extends StatelessWidget {
               );
 
               if (tiles[index].isEmpty) {
-                this.spawnTiles(index, dimensions.gridSize);
+                spawnTiles(index, dimensions.gridSize);
               }
 
               return BorderedBox(

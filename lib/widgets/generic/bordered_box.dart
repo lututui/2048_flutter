@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 
 class BorderedBox extends StatelessWidget {
-  final Widget child;
-  final EdgeInsets padding;
-  final Color backgroundColor;
-  final Color borderColor;
-  final double borderWidth;
-  final double _height;
-  final double _width;
-  final AlignmentGeometry alignment;
-  final bool rectifySize;
-
   const BorderedBox({
     Key key,
     this.child,
@@ -25,6 +15,16 @@ class BorderedBox extends StatelessWidget {
   })  : _height = height,
         _width = width,
         super(key: key);
+
+  final Widget child;
+  final EdgeInsets padding;
+  final Color backgroundColor;
+  final Color borderColor;
+  final double borderWidth;
+  final double _height;
+  final double _width;
+  final AlignmentGeometry alignment;
+  final bool rectifySize;
 
   double get height {
     if (_height == null || !rectifySize) return _height;
@@ -46,17 +46,17 @@ class BorderedBox extends StatelessWidget {
         this.borderColor ?? Theme.of(context).colorScheme.primaryVariant;
 
     return Container(
-      padding: this.padding,
-      width: this.width,
-      height: this.height,
+      padding: padding,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border.fromBorderSide(
-          BorderSide(color: borderColor, width: this.borderWidth),
+          BorderSide(color: borderColor, width: borderWidth),
         ),
       ),
-      child: this.child,
-      alignment: this.alignment,
+      alignment: alignment,
+      child: child,
     );
   }
 }

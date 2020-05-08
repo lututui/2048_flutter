@@ -5,7 +5,9 @@ import 'package:flutter_2048/logger.dart';
 import 'package:provider/provider.dart';
 
 class DimensionsProvider with ChangeNotifier {
-  static const int _DEFAULT_GRID_SIZE = 4;
+  DimensionsProvider() : _gridSize = _defaultGridSize;
+
+  static const int _defaultGridSize = 4;
 
   Size _screenSize;
   Size _tileSize;
@@ -14,18 +16,12 @@ class DimensionsProvider with ChangeNotifier {
 
   int _gridSize;
 
-  DimensionsProvider() : _gridSize = _DEFAULT_GRID_SIZE;
-
-  factory DimensionsProvider.of(BuildContext context) {
-    return Provider.of<DimensionsProvider>(context, listen: false);
-  }
-
   static int getGridSize(BuildContext context) {
-    return DimensionsProvider.of(context).gridSize;
+    return context.read<DimensionsProvider>().gridSize;
   }
 
   static void setGridSize(BuildContext context, int newSize) {
-    DimensionsProvider.of(context).gridSize = newSize;
+    context.read<DimensionsProvider>().gridSize = newSize;
   }
 
   void log(String message) {
@@ -49,11 +45,11 @@ class DimensionsProvider with ChangeNotifier {
   set gridSize(int value) {
     _gridSize = value;
 
-    this.log("Changed gridSize to $_gridSize");
+    log('Changed gridSize to $_gridSize');
 
     if (_screenSize != null) {
-      this.log("Updating other sizes");
-      this._updateSizes();
+      log('Updating other sizes');
+      _updateSizes();
     }
   }
 
@@ -65,16 +61,16 @@ class DimensionsProvider with ChangeNotifier {
     ].any((k) => k == null);
 
     if (skipNotify) {
-      this.log("Won't notifty listeners ($_tileSize, $_gapSize, $_gameSize)");
+      log("Won't notifty listeners ($_tileSize, $_gapSize, $_gameSize)");
     }
 
     final Map<String, Size> sizes = calculateSizes(_screenSize, _gridSize);
 
-    _tileSize = sizes["tile"];
-    _gapSize = sizes["gap"];
-    _gameSize = sizes["game"];
+    _tileSize = sizes['tile'];
+    _gapSize = sizes['gap'];
+    _gameSize = sizes['game'];
 
-    this.log("Updated values: ($_tileSize, $_gapSize, $_gameSize)");
+    log('Updated values: ($_tileSize, $_gapSize, $_gameSize)');
 
     if (!skipNotify) {
       notifyListeners();
@@ -88,7 +84,7 @@ class DimensionsProvider with ChangeNotifier {
 
     _screenSize = newSize;
 
-    this._updateSizes();
+    _updateSizes();
   }
 
   static Map<String, Size> calculateSizes(Size screenSize, int gridSize) {
@@ -101,9 +97,9 @@ class DimensionsProvider with ChangeNotifier {
     );
 
     return <String, Size>{
-      "tile": tileSize,
-      "gap": gapSize,
-      "game": gameSize,
+      'tile': tileSize,
+      'gap': gapSize,
+      'game': gameSize,
     };
   }
 }

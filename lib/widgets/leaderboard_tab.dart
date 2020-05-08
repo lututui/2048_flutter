@@ -5,19 +5,19 @@ import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/leaderboard_card.dart';
 
 class LeaderboardTab extends StatelessWidget {
-  final int gridSize;
+  const LeaderboardTab({Key key, this.gridSize}) : super(key: key);
 
-  LeaderboardTab({Key key, this.gridSize}) : super(key: key);
+  final int gridSize;
 
   @override
   Widget build(BuildContext context) {
     return FutureWidget<Leaderboard>(
-      computation: () => Leaderboard.fromJSON(this.gridSize),
+      computation: () => Leaderboard.fromJSON(gridSize),
       loadingChild: Container(
         alignment: Alignment.center,
         child: Misc.getDefaultProgressIndicator(context),
       ),
-      onError: (error) => throw Exception("Something went wrong: $error"),
+      onError: (error) => throw Exception('Something went wrong: $error'),
       builder: (context, snapshot) {
         final Leaderboard leaderboard = snapshot.data;
 
@@ -27,9 +27,9 @@ class LeaderboardTab extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 0.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text("Position", style: const TextStyle(fontSize: 16)),
-                  const Text("Score", style: const TextStyle(fontSize: 16)),
+                children: const <Widget>[
+                  Text('Position', style: TextStyle(fontSize: 16)),
+                  Text('Score', style: TextStyle(fontSize: 16)),
                 ],
               ),
             ),

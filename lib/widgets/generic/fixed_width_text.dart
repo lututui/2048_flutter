@@ -1,39 +1,37 @@
 import 'package:flutter/material.dart';
 
 class FixedWidthText extends StatelessWidget {
-  final TextPainter textPainter = TextPainter();
-
   FixedWidthText({
-    Key key,
     @required InlineSpan inlineSpan,
     @required num width,
     TextDirection textDirection = TextDirection.ltr,
     TextAlign textAlign = TextAlign.center,
     int maxLines = 1,
+    Key key,
   }) : super(key: key) {
     ArgumentError.checkNotNull(inlineSpan, 'inlineSpan');
     ArgumentError.checkNotNull(width, 'width');
 
-    this.textPainter
+    textPainter
       ..textDirection = textDirection ?? TextDirection.ltr
       ..textAlign = textAlign ?? TextAlign.center
       ..maxLines = maxLines ?? 1
       ..text = inlineSpan
-      ..layout(minWidth: width, maxWidth: width);
+      ..layout(minWidth: width.toDouble(), maxWidth: width.toDouble());
   }
+
+  final TextPainter textPainter = TextPainter();
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _FixedWidthTextPainter(this.textPainter),
-    );
+    return CustomPaint(painter: _FixedWidthTextPainter(textPainter));
   }
 }
 
 class _FixedWidthTextPainter extends CustomPainter {
-  final TextPainter painter;
-
   const _FixedWidthTextPainter(this.painter);
+
+  final TextPainter painter;
 
   @override
   void paint(Canvas canvas, Size size) {
