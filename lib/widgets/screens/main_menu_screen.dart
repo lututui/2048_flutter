@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/types/size_options.dart';
@@ -20,17 +19,17 @@ class MainMenuScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: <Widget>[
-                  DummyGame.withSizes(context, SizeOptions.SIZES.length),
+                  DummyGame.withSizes(SizeOptions.SIZES.length),
                   Selector(
                     onSelectChange: (int selected) {
-                      DimensionsProvider.of(
+                      DimensionsProvider.setGridSize(
                         context,
-                        listen: false,
-                      ).gridSize = SizeOptions.SIZES[selected].sideLength;
+                        SizeOptions.SIZES[selected].sideLength,
+                      );
                     },
                     children: SizeOptions.getChildren(),
                     defaultOption: SizeOptions.getSizeIndexBySideLength(
-                      DimensionsProvider.of(context, listen: false).gridSize,
+                      DimensionsProvider.getGridSize(context),
                     ),
                   ),
                 ],
@@ -38,17 +37,30 @@ class MainMenuScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  MainMenuButton(
-                    routeName: '/game',
-                    buttonText: "Play",
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  buttonTheme: ButtonTheme.of(context).copyWith(
+                    shape: const Border.fromBorderSide(
+                      const BorderSide(width: 2.0),
+                    ),
                   ),
-                  MainMenuButton(
-                    routeName: '/leaderboard',
-                    buttonText: "Leaderboard",
-                  ),
-                ],
+                ),
+                child: Column(
+                  children: <Widget>[
+                    MainMenuButton(
+                      routeName: '/game',
+                      buttonText: "Play",
+                    ),
+                    MainMenuButton(
+                      routeName: '/leaderboard',
+                      buttonText: "Leaderboard",
+                    ),
+                    MainMenuButton(
+                      routeName: '/settings',
+                      buttonText: "Settings",
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

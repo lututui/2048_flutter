@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
-import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
 class GameOverDialog extends StatelessWidget {
@@ -46,7 +45,7 @@ class GameOverDialog extends StatelessWidget {
           ],
         ),
         Divider(
-          color: Palette.BOX_BORDER.withAlpha(0xcc),
+          color: Theme.of(context).colorScheme.secondary.withAlpha(0xcc),
           indent: 16.0,
           endIndent: 16.0,
         ),
@@ -65,30 +64,24 @@ class GameOverDialog extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: SquareIconButton(
                           maxSize: this.maxButtonSize,
-                          icon: DialogResult.EXIT.icon,
+                          iconData: DialogResult.EXIT.icon,
                           onPress: this._exit,
-                          color: Palette.BOX_BORDER,
-                          borderColor: Palette.GAME_OVER_BUTTON_BORDER_COLOR,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SquareIconButton(
                           maxSize: this.maxButtonSize,
-                          icon: DialogResult.RESET.icon,
+                          iconData: DialogResult.RESET.icon,
                           onPress: this._reset,
-                          color: Palette.BOX_BORDER,
-                          borderColor: Palette.GAME_OVER_BUTTON_BORDER_COLOR,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SquareIconButton(
                           maxSize: this.maxButtonSize,
-                          icon: DialogResult.PAUSE.icon,
+                          iconData: DialogResult.PAUSE.icon,
                           onPress: this._resume,
-                          color: Palette.BOX_BORDER,
-                          borderColor: Palette.GAME_OVER_BUTTON_BORDER_COLOR,
                         ),
                       ),
                     ],

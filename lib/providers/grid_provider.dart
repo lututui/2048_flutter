@@ -29,13 +29,13 @@ class GridProvider with ChangeNotifier {
 
   GridProvider(this.grid);
 
-  factory GridProvider.of(BuildContext context, {bool listen = true}) {
-    return Provider.of<GridProvider>(context, listen: listen);
+  factory GridProvider.of(BuildContext context) {
+    return Provider.of<GridProvider>(context, listen: false);
   }
 
   static Future<GridProvider> fromJSON(BuildContext context) async {
     final GridProvider baseGrid = GridProvider(
-      TileGrid.withSize(DimensionsProvider.of(context, listen: false).gridSize),
+      TileGrid.withSize(DimensionsProvider.getGridSize(context)),
     );
 
     final Tuple<int, List<List<int>>> loadedValues = await SaveManager.load(

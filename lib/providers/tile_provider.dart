@@ -16,8 +16,8 @@ class TileProvider with ChangeNotifier {
     int value,
   }) : _value = value ?? Misc.pickSpawnValue();
 
-  factory TileProvider.of(BuildContext context, {bool listen = true}) {
-    return Provider.of<TileProvider>(context, listen: listen);
+  factory TileProvider.of(BuildContext context) {
+    return Provider.of<TileProvider>(context, listen: false);
   }
 
   set value(int value) {

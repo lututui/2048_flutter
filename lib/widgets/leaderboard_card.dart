@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/util/palette.dart';
@@ -73,7 +72,7 @@ class LeaderboardCard extends StatelessWidget {
             child: Container(
               padding: this.innerPadding,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.all(this.borderRadius),
               ),
               child: Row(

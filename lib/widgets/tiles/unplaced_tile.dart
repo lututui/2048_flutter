@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:flutter_2048/widgets/generic/fixed_width_text.dart';
 
@@ -6,15 +7,13 @@ class UnplacedTile extends StatelessWidget {
   const UnplacedTile({
     Key key,
     @required this.color,
-    @required this.borderColor,
     @required this.borderWidth,
     @required this.height,
     @required this.width,
     @required this.text,
   }) : super(key: key);
 
-  final Color color;
-  final Color borderColor;
+  final TileColor color;
   final double borderWidth;
   final double height;
   final double width;
@@ -23,8 +22,8 @@ class UnplacedTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BorderedBox(
-      backgroundColor: this.color,
-      borderColor: this.borderColor,
+      backgroundColor: this.color.backgroundColor,
+      borderColor: this.color.borderColor,
       borderWidth: this.borderWidth,
       height: this.height,
       width: this.width,

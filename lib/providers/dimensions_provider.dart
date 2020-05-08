@@ -16,12 +16,24 @@ class DimensionsProvider with ChangeNotifier {
 
   DimensionsProvider() : _gridSize = _DEFAULT_GRID_SIZE;
 
-  factory DimensionsProvider.of(BuildContext context, {bool listen = true}) {
-    return Provider.of<DimensionsProvider>(context, listen: listen);
+  factory DimensionsProvider.of(BuildContext context) {
+    return Provider.of<DimensionsProvider>(context, listen: false);
+  }
+
+  static int getGridSize(BuildContext context) {
+    return DimensionsProvider.of(context).gridSize;
+  }
+
+  static void setGridSize(BuildContext context, int newSize) {
+    DimensionsProvider.of(context).gridSize = newSize;
   }
 
   void log(String message) {
     Logger.log<DimensionsProvider>(message);
+  }
+
+  double get aspectRatio {
+    return _gameSize.width / (_tileSize.height + _gridSize * _gapSize.width);
   }
 
   Size get gapSize => _gapSize;

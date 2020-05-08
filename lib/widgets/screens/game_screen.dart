@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
-import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
 import 'package:flutter_2048/widgets/game_grid.dart';
@@ -13,27 +13,19 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureWidget<GridProvider>(
-      computation: () => GridProvider.fromJSON(context),
-      loadingChild: Scaffold(
-        backgroundColor: Palette.BACKGROUND,
-        body: Container(
+    return Scaffold(
+      body: FutureWidget<GridProvider>(
+        computation: () => GridProvider.fromJSON(context),
+        loadingChild: Container(
           alignment: Alignment.center,
-          child: const CircularProgressIndicator(
-            valueColor: const AlwaysStoppedAnimation<Color>(
-              Palette.PROGRESS_INDICATOR_COLOR,
-            ),
-          ),
+          child: Misc.getDefaultProgressIndicator(context),
         ),
-      ),
-      onError: (error) => throw Exception("Something went wrong: $error"),
-      builder: (context, snapshot) {
-        return Scaffold(
-          backgroundColor: Palette.BACKGROUND,
-          body: ChangeNotifierProvider<GridProvider>.value(
+        onError: (error) => throw Exception("Something went wrong: $error"),
+        builder: (context, snapshot) {
+          return ChangeNotifierProvider<GridProvider>.value(
             value: snapshot.data,
             child: Consumer<GridProvider>(
-              builder: (context, grid, child) {
+              builder: (context, grid, _) {
                 return WillPopScope(
                   onWillPop: () => PauseDialog.show(
                     context,
@@ -57,9 +49,9 @@ class GameScreen extends StatelessWidget {
                 );
               },
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

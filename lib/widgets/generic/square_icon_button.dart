@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/util/palette.dart';
 
 typedef OnPressCallback = void Function(BuildContext);
 
@@ -9,33 +8,34 @@ class SquareIconButton extends StatelessWidget {
   final Color color;
   final Color borderColor;
   final OnPressCallback onPress;
-  final IconData icon;
+  final IconData iconData;
   final double maxSize;
   final double borderWidth;
 
-  SquareIconButton({
+  const SquareIconButton({
     Key key,
-    @required this.color,
     @required this.onPress,
-    @required this.icon,
+    @required this.iconData,
     @required this.maxSize,
-    Color borderColor,
+    this.color,
+    this.borderColor,
     this.borderWidth = 3.0,
-  })  : borderColor = borderColor ?? Palette.darkenColor(color),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final Color backgroundColor =
+        this.color ?? Theme.of(context).colorScheme.primary;
+    final Color borderColor =
+        this.borderColor ?? Theme.of(context).colorScheme.primaryVariant;
+
     return Container(
       width: this.maxSize,
       height: this.maxSize,
       decoration: BoxDecoration(
-        color: this.color,
+        color: backgroundColor,
         border: Border.fromBorderSide(
-          BorderSide(
-            color: this.borderColor,
-            width: this.borderWidth,
-          ),
+          BorderSide(color: borderColor, width: this.borderWidth),
         ),
       ),
       child: AspectRatio(
@@ -46,7 +46,7 @@ class SquareIconButton extends StatelessWidget {
           icon: LayoutBuilder(
             builder: (context, constraints) {
               return Icon(
-                this.icon,
+                this.iconData,
                 size: min(constraints.maxHeight, constraints.maxWidth),
               );
             },

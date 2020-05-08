@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/leaderboard.dart';
-import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/leaderboard_card.dart';
 
@@ -15,11 +15,7 @@ class LeaderboardTab extends StatelessWidget {
       computation: () => Leaderboard.fromJSON(this.gridSize),
       loadingChild: Container(
         alignment: Alignment.center,
-        child: const CircularProgressIndicator(
-          valueColor: const AlwaysStoppedAnimation<Color>(
-            Palette.PROGRESS_INDICATOR_COLOR,
-          ),
-        ),
+        child: Misc.getDefaultProgressIndicator(context),
       ),
       onError: (error) => throw Exception("Something went wrong: $error"),
       builder: (context, snapshot) {
@@ -32,20 +28,8 @@ class LeaderboardTab extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Text(
-                    "Position",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Palette.TAB_BAR_THEME_COLOR,
-                    ),
-                  ),
-                  const Text(
-                    "Score",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Palette.TAB_BAR_THEME_COLOR,
-                    ),
-                  ),
+                  const Text("Position", style: const TextStyle(fontSize: 16)),
+                  const Text("Score", style: const TextStyle(fontSize: 16)),
                 ],
               ),
             ),

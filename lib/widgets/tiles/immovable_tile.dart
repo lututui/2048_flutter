@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
+import 'package:flutter_2048/providers/settings_provider.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/tiles/unplaced_tile.dart';
 import 'package:provider/provider.dart';
 
 class ImmovableTile extends StatelessWidget {
-  final Color color;
-  final Color borderColor;
   final int value;
   final Tuple<int, int> gridPos;
 
   const ImmovableTile({
     Key key,
-    @required this.color,
-    @required this.borderColor,
     @required this.value,
     @required this.gridPos,
   }) : super(key: key);
@@ -32,13 +29,16 @@ class ImmovableTile extends StatelessWidget {
         return Positioned(
           left: xPos,
           top: yPos,
-          child: UnplacedTile(
-            color: this.color,
-            borderColor: this.borderColor,
-            borderWidth: dimensions.gapSize.width / 2.0,
-            height: dimensions.tileSize.height,
-            width: dimensions.tileSize.width,
-            text: "${this.value}",
+          child: Consumer<SettingsProvider>(
+            builder: (context, settings, _) {
+              return UnplacedTile(
+                color: settings.palette.getTileColor(this.value),
+                borderWidth: dimensions.gapSize.width / 2.0,
+                height: dimensions.tileSize.height,
+                width: dimensions.tileSize.width,
+                text: "${1 << this.value}",
+              );
+            },
           ),
         );
       },

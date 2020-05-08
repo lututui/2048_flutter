@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/types/size_options.dart';
-import 'package:flutter_2048/util/misc.dart';
-import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/types/tuple.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:flutter_2048/widgets/tiles/immovable_tile.dart';
+import 'package:provider/provider.dart';
 
 class DummyGame extends StatelessWidget {
   final List<List<Widget>> tiles;
 
-  DummyGame.withSizes(BuildContext context, int sizes, {Key key})
+  DummyGame.withSizes(int sizes, {Key key})
       : tiles = List.generate(sizes, (_) => List(), growable: false),
         super(key: key);
 
@@ -35,10 +35,8 @@ class DummyGame extends StatelessWidget {
       final int value = Misc.rand.nextInt(sideLength);
 
       final ImmovableTile newTile = ImmovableTile(
-        borderColor: Palette.getTileBorder(value),
-        color: Palette.getTileColor(value),
         gridPos: pickedSpawnedPos,
-        value: 1 << value,
+        value: value,
       );
 
       this.tiles[index].add(newTile);
@@ -49,13 +47,6 @@ class DummyGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DimensionsProvider dimensions = DimensionsProvider.of(context);
-    final int index = SizeOptions.getSizeIndexBySideLength(dimensions.gridSize);
-
-    if (tiles[index].isEmpty) {
-      this.spawnTiles(index, dimensions.gridSize);
-    }
-
     final Size predictedMaxSize = DimensionsProvider.calculateSizes(
       MediaQuery.of(context).size,
       SizeOptions.SIZES.first.sideLength,
@@ -69,16 +60,26 @@ class DummyGame extends StatelessWidget {
         fit: BoxFit.scaleDown,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: BorderedBox(
-            backgroundColor: Palette.BOX_BACKGROUND,
-            borderColor: Palette.BOX_BORDER,
-            width: dimensions.gameSize.width,
-            height: dimensions.gameSize.height,
-            borderWidth: dimensions.gapSize.width / 2,
-            child: Stack(
-              overflow: Overflow.visible,
-              children: tiles[index],
-            ),
+          child: Consumer<DimensionsProvider>(
+            builder: (context, dimensions, _) {
+              final int index = SizeOptions.getSizeIndexBySideLength(
+                dimensions.gridSize,
+              );
+
+              if (tiles[index].isEmpty) {
+                this.spawnTiles(index, dimensions.gridSize);
+              }
+
+              return BorderedBox(
+                width: dimensions.gameSize.width,
+                height: dimensions.gameSize.height,
+                borderWidth: dimensions.gapSize.width / 2,
+                child: Stack(
+                  overflow: Overflow.visible,
+                  children: tiles[index],
+                ),
+              );
+            },
           ),
         ),
       ),

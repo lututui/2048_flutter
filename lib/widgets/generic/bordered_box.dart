@@ -40,17 +40,19 @@ class BorderedBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color backgroundColor =
+        this.backgroundColor ?? Theme.of(context).colorScheme.primary;
+    final Color borderColor =
+        this.borderColor ?? Theme.of(context).colorScheme.primaryVariant;
+
     return Container(
       padding: this.padding,
       width: this.width,
       height: this.height,
       decoration: BoxDecoration(
-        color: this.backgroundColor,
+        color: backgroundColor,
         border: Border.fromBorderSide(
-          BorderSide(
-            color: this.borderColor,
-            width: this.borderWidth,
-          ),
+          BorderSide(color: borderColor, width: this.borderWidth),
         ),
       ),
       child: this.child,

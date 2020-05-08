@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/save_manager.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
-import 'package:flutter_2048/util/palette.dart';
 
 class PauseDialog extends StatelessWidget {
   const PauseDialog({Key key}) : super(key: key);
@@ -10,12 +9,13 @@ class PauseDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: const Center(
-          child: const Text(
-        "Paused",
-        style: TextStyle(fontSize: 30),
-      )),
+        child: const Text(
+          "Paused",
+          style: TextStyle(fontSize: 30),
+        ),
+      ),
       titlePadding: const EdgeInsets.all(24.0),
-      backgroundColor: Palette.PAUSE_BACKGROUND,
+      backgroundColor: Theme.of(context).colorScheme.background,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
       children: <Widget>[
         RaisedButton(
@@ -71,14 +71,16 @@ class PauseDialog extends StatelessWidget {
     return showDialog<DialogResult>(
       context: context,
       builder: (_) => const PauseDialog(),
-    ).then((result) {
-      if (result != null && result == DialogResult.RESET) {
-        SaveManager.wipeSave(gridSize);
-        Navigator.of(context)
-            .pushReplacementNamed('/game', arguments: gridSize);
-      }
+    ).then(
+      (result) {
+        if (result != null && result == DialogResult.RESET) {
+          SaveManager.wipeSave(gridSize);
+          Navigator.of(context)
+              .pushReplacementNamed('/game', arguments: gridSize);
+        }
 
-      return Future.value(result == DialogResult.EXIT);
-    });
+        return Future.value(result == DialogResult.EXIT);
+      },
+    );
   }
 }

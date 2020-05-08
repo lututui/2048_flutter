@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/providers/settings_provider.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
-import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/tiles/unplaced_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -22,26 +22,26 @@ class MovableTile extends StatelessWidget {
                 tileContext.gridPos.a * dimensions.tileSize.height +
                 dimensions.gapSize.height;
 
-        final Color tileColor = Palette.getTileColor(tileContext.value);
-        final Color tileBorder = Palette.getTileBorder(tileContext.value);
-
         return AnimatedPositioned(
           onEnd: () {
-            final TileProvider tile = TileProvider.of(context, listen: false);
+            final TileProvider tile = TileProvider.of(context);
 
             tile.onMoveEnd();
-            GridProvider.of(context, listen: false).onMoveEnd(tile);
+            GridProvider.of(context).onMoveEnd(tile);
           },
           duration: const Duration(milliseconds: 100),
           left: leftPos,
           top: topPos,
-          child: UnplacedTile(
-            color: tileColor,
-            borderColor: tileBorder,
-            borderWidth: dimensions.gapSize.width / 2.0,
-            height: dimensions.tileSize.height,
-            width: dimensions.tileSize.width,
-            text: "${1 << tileContext.value}",
+          child: Consumer<SettingsProvider>(
+            builder: (context, settings, _) {
+              return UnplacedTile(
+                color: settings.palette.getTileColor(tileContext.value),
+                borderWidth: dimensions.gapSize.width / 2.0,
+                height: dimensions.tileSize.height,
+                width: dimensions.tileSize.width,
+                text: "${1 << tileContext.value}",
+              );
+            },
           ),
         );
       },
