@@ -13,9 +13,8 @@ class MainMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      elevation: 0.0,
       onPressed: () => Navigator.of(context).pushNamed(routeName),
-      child: Text(buttonText, style: const TextStyle(fontSize: 16.0)),
+      child: Text(buttonText),
     );
   }
 }

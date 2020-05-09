@@ -17,7 +17,7 @@ class GameGrid extends StatelessWidget {
           return BorderedBox(
             width: dimensions.gameSize.width,
             height: dimensions.gameSize.height,
-            borderWidth: dimensions.gapSize.width / 2,
+            borderWidth: dimensions.gapSize.width * dimensions.gridSize / 3,
             child: Consumer<GridProvider>(
               builder: (context, grid, _) {
                 if (grid.gameOver) {

@@ -27,15 +27,18 @@ class LeaderboardTab extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 0.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const <Widget>[
-                  Text('Position', style: TextStyle(fontSize: 16)),
-                  Text('Score', style: TextStyle(fontSize: 16)),
+                children: <Widget>[
+                  Text(
+                    'Position',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  Text('Score', style: Theme.of(context).textTheme.headline6),
                 ],
               ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: ListView.builder(
                   itemCount: leaderboard.length,
                   itemBuilder: (context, index) {

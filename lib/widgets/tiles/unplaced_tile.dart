@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/types/tile_color.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:flutter_2048/widgets/generic/fixed_width_text.dart';
 
@@ -32,10 +33,10 @@ class UnplacedTile extends StatelessWidget {
         width: width,
         inlineSpan: TextSpan(
           text: text,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
-            color: Colors.black,
             fontWeight: FontWeight.bold,
+            color: Misc.calculateTextColor(color.backgroundColor),
           ),
         ),
       ),

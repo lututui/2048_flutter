@@ -73,7 +73,7 @@ class DummyGame extends StatelessWidget {
               return BorderedBox(
                 width: dimensions.gameSize.width,
                 height: dimensions.gameSize.height,
-                borderWidth: dimensions.gapSize.width / 2,
+                borderWidth: dimensions.gapSize.width * (index + 1.0),
                 child: Stack(
                   overflow: Overflow.visible,
                   children: tiles[index],

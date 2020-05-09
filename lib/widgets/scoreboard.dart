@@ -19,7 +19,10 @@ class Scoreboard extends StatelessWidget {
               BorderedBox(
                 borderWidth: dimensions.gapSize.width / 2,
                 padding: const EdgeInsets.all(2.0),
-                child: const Text('Score', style: TextStyle(fontSize: 20)),
+                child: Text(
+                  'Score',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
               ),
               BorderedBox(
                 borderWidth: dimensions.gapSize.width / 2,
@@ -36,7 +39,7 @@ class Scoreboard extends StatelessWidget {
             '${grid.score}',
             maxLines: 1,
             textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 20),
+            style: Theme.of(context).textTheme.headline6,
           );
         },
       ),

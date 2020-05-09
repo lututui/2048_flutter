@@ -30,10 +30,15 @@ class SizeOptions {
     size7x7
   ];
 
-  static List<Widget> getChildren() {
-    return sizes
-        .map<Widget>((size) => Text(size.description))
-        .toList(growable: false);
+  static List<Widget> getChildren(BuildContext context) {
+    return sizes.map<Widget>(
+      (size) {
+        return Text(
+          size.description,
+          style: Theme.of(context).textTheme.headline6,
+        );
+      },
+    ).toList(growable: false);
   }
 
   static int getSizeIndexBySideLength(int length) {

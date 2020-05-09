@@ -16,28 +16,36 @@ class GameOverDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      titlePadding: const EdgeInsets.all(16.0),
-      contentPadding: const EdgeInsets.all(0.0),
-      title: const Center(
-        child: Text('Game Over', style: TextStyle(fontSize: 30)),
+      titlePadding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
+      contentPadding: EdgeInsets.zero,
+      title: Center(
+        child: Text('Game Over', style: Theme.of(context).textTheme.headline4),
       ),
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            const Text('Score:', style: TextStyle(fontSize: 20)),
-            Text(
-              '$finalScore',
-              maxLines: 1,
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: Colors.black, fontSize: 20),
+            Flexible(
+              child: Text(
+                'Score:',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                '$finalScore',
+                maxLines: 1,
+                textAlign: TextAlign.right,
+                style: Theme.of(context).textTheme.headline6,
+              ),
             ),
           ],
         ),
-        Divider(
-          color: Theme.of(context).colorScheme.secondary.withAlpha(0xcc),
-          indent: 16.0,
-          endIndent: 16.0,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+          child: Divider(
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(0x33),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),

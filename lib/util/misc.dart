@@ -75,4 +75,19 @@ class Misc {
       ),
     );
   }
+
+  static final Map<Color, double> luminanceMap = {};
+
+  static Color calculateTextColor(Color backgroundColor) {
+    final double luminance = luminanceMap.putIfAbsent(
+      backgroundColor,
+      () => backgroundColor.computeLuminance(),
+    );
+
+    if ((luminance + 0.05) * (luminance + 0.05) > 0.0525) {
+      return Colors.black;
+    }
+
+    return Colors.white;
+  }
 }

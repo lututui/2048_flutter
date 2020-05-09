@@ -8,8 +8,8 @@ class PauseDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: const Center(
-        child: Text('Paused', style: TextStyle(fontSize: 30)),
+      title: Center(
+        child: Text('Paused', style: Theme.of(context).textTheme.headline4,),
       ),
       titlePadding: const EdgeInsets.all(24.0),
       backgroundColor: Theme.of(context).colorScheme.background,

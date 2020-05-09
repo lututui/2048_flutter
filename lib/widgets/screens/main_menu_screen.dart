@@ -4,6 +4,7 @@ import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/widgets/dummy_game.dart';
 import 'package:flutter_2048/widgets/generic/selector.dart';
 import 'package:flutter_2048/widgets/main_menu_button.dart';
+import 'package:provider/provider.dart' hide Selector;
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({Key key}) : super(key: key);
@@ -28,9 +29,9 @@ class MainMenuScreen extends StatelessWidget {
                       );
                     },
                     defaultOption: SizeOptions.getSizeIndexBySideLength(
-                      DimensionsProvider.getGridSize(context),
+                      context.watch<DimensionsProvider>().gridSize,
                     ),
-                    children: SizeOptions.getChildren(),
+                    children: SizeOptions.getChildren(context),
                   ),
                 ],
               ),
