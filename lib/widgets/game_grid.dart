@@ -26,7 +26,7 @@ class GameGrid extends StatelessWidget {
                       context,
                       grid.score,
                       dimensions.tileSize.width,
-                      dimensions.gridSize,
+                      grid.saveState,
                     );
                   });
                 }

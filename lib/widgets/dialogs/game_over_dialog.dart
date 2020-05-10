@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/save_manager.dart';
+import 'package:flutter_2048/save_state.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
@@ -109,7 +109,7 @@ class GameOverDialog extends StatelessWidget {
     BuildContext context,
     int score,
     double buttonSize,
-    int gridSize,
+    SaveState saveState,
   ) async {
     return showDialog<DialogResult>(
       context: context,
@@ -124,12 +124,12 @@ class GameOverDialog extends StatelessWidget {
       if (result == null || result == DialogResult.pause) return;
 
       if (result == DialogResult.reset) {
-        await SaveManager.wipeSave(gridSize);
-        Navigator.of(context).pushReplacementNamed(
-          '/game',
-          arguments: gridSize,
-        );
-        return;
+        return saveState.wipe().then((_) {
+          Navigator.of(context).pushReplacementNamed(
+            '/game',
+            arguments: saveState.gridSize,
+          );
+        });
       }
 
       Navigator.of(context).pop();

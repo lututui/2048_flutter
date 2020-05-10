@@ -29,7 +29,7 @@ class GameScreen extends StatelessWidget {
                 return WillPopScope(
                   onWillPop: () => PauseDialog.show(
                     context,
-                    grid.grid.sideLength,
+                    grid.saveState,
                   ),
                   child: GestureDetector(
                     onVerticalDragEnd: (i) => grid.onVerticalDragEnd(i),

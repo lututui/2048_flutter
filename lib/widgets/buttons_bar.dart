@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/save_manager.dart';
+import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
@@ -46,7 +46,7 @@ class ButtonsBar extends StatelessWidget {
   void _pause(BuildContext context) {
     PauseDialog.show(
       context,
-      DimensionsProvider.getGridSize(context),
+      GridProvider.of(context).saveState,
     ).then(
       (bool shouldPop) {
         if (!shouldPop) return;
@@ -57,12 +57,13 @@ class ButtonsBar extends StatelessWidget {
   }
 
   void _reset(BuildContext context) {
-    final int gridSize = DimensionsProvider.getGridSize(context);
+    final saveState = GridProvider.of(context).saveState;
 
-    SaveManager.wipeSave(
-      gridSize,
-    ).then((_) {
-      Navigator.of(context).pushReplacementNamed('/game', arguments: gridSize);
+    saveState.wipe().then((_) {
+      Navigator.of(context).pushReplacementNamed(
+        '/game',
+        arguments: saveState.gridSize,
+      );
     });
   }
 

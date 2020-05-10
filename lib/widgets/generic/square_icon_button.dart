@@ -41,7 +41,6 @@ class SquareIconButton extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1 / 1,
         child: IconButton(
-          padding: const EdgeInsets.all(8.0),
           onPressed: () => onPress(context),
           icon: LayoutBuilder(
             builder: (context, constraints) {

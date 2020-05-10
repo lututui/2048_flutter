@@ -7,14 +7,14 @@ import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/leaderboard.dart';
 import 'package:flutter_2048/providers/tile_grid.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
-import 'package:flutter_2048/save_manager.dart';
+import 'package:flutter_2048/save_state.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
 import 'package:provider/provider.dart';
 
 class GridProvider with ChangeNotifier {
-  GridProvider(this.grid);
+  GridProvider(this.grid, this.saveState);
 
   factory GridProvider.of(BuildContext context) {
     return context.read<GridProvider>();
@@ -23,6 +23,7 @@ class GridProvider with ChangeNotifier {
   final List<TileProvider> _pendingRemoval = [];
   final List<Widget> tiles = [];
   final TileGrid grid;
+  final SaveState saveState;
 
   bool _pendingSpawn = false;
   bool _gameOver = false;
@@ -30,21 +31,26 @@ class GridProvider with ChangeNotifier {
   int _score = 0;
 
   static Future<GridProvider> fromJSON(BuildContext context) async {
+    final int gridSize = DimensionsProvider.getGridSize(context);
+
     final GridProvider baseGrid = GridProvider(
-      TileGrid.withSize(DimensionsProvider.getGridSize(context)),
+      TileGrid.withSize(gridSize),
+      SaveState.grid(gridSize),
     );
 
-    final Tuple<int, List<List<int>>> loadedValues = await SaveManager.load(
-      baseGrid.grid.sideLength,
-    );
+    final Map<String, dynamic> loadedValues = await baseGrid.saveState.load();
 
-    if (loadedValues == null) return _loadFailed(baseGrid);
+    if (loadedValues == null) {
+      return _loadFailed(baseGrid);
+    }
 
-    final int score = loadedValues.a;
-    final List<List<int>> gridValues = loadedValues.b;
+    final int score = loadedValues['score'] as int;
+    final List<List<int>> gridValues = (loadedValues['grid'] as List<dynamic>)
+        .map((line) => List<int>.from(line as Iterable))
+        .toList();
 
-    for (int i = 0; i < baseGrid.grid.sideLength; i++) {
-      for (int j = 0; j < baseGrid.grid.sideLength; j++) {
+    for (int i = 0; i < gridSize; i++) {
+      for (int j = 0; j < gridSize; j++) {
         if (gridValues[i][j] == -1) continue;
 
         baseGrid.spawnAt(Tuple(i, j), value: gridValues[i][j]);
@@ -105,7 +111,7 @@ class GridProvider with ChangeNotifier {
       spawnAt(grid.getRandomSpawnableSpace());
     }
 
-    SaveManager.save(grid.sideLength, this);
+    saveState.save(toJSON());
     _pendingSpawn = false;
     notifyListeners();
 

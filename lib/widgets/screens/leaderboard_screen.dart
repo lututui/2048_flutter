@@ -5,14 +5,18 @@ import 'package:flutter_2048/widgets/leaderboard_tab.dart';
 class LeaderboardScreen extends StatelessWidget {
   LeaderboardScreen({Key key}) : super(key: key);
 
-  final List<Tab> leaderboardTabs = SizeOptions.sizes
+  final List<Tab> _tabsInTabBar = SizeOptions.sizes
       .map<Tab>((size) => Tab(text: size.description))
+      .toList();
+
+  final List<LeaderboardTab> _tabBarView = SizeOptions.sizes
+      .map((size) => LeaderboardTab(gridSize: size.sideLength))
       .toList();
 
   @override
   Widget build(BuildContext context) {
     final PreferredSizeWidget tabBar = TabBar(
-      tabs: leaderboardTabs,
+      tabs: _tabsInTabBar,
       labelColor: Theme.of(context).colorScheme.onSurface,
     );
 
@@ -39,17 +43,7 @@ class LeaderboardScreen extends StatelessWidget {
           ),
           child: appBar,
         ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: TabBarView(
-                children: SizeOptions.sizes
-                    .map((size) => LeaderboardTab(gridSize: size.sideLength))
-                    .toList(),
-              ),
-            ),
-          ],
-        ),
+        body: TabBarView(children: _tabBarView),
       ),
     );
   }

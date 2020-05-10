@@ -1,19 +1,25 @@
-import 'package:flutter_2048/save_manager.dart';
+import 'package:flutter_2048/save_state.dart';
 import 'package:flutter_2048/util/misc.dart';
 
 class Leaderboard {
-  const Leaderboard._(this._scores);
+  const Leaderboard._(this._scores, this.saveState);
 
+  final SaveState saveState;
   final List<int> _scores;
 
   static Future<Leaderboard> fromJSON(int gridSize) async {
-    final List<int> loadedData = await SaveManager.loadLeaderboard(gridSize);
+    final baseLeaderboardSave = SaveState.leaderboard(gridSize);
+    final baseScores = List<int>(Misc.leaderboardSize);
 
-    if (loadedData == null) {
-      return Leaderboard._(List(Misc.leaderboardSize));
+    final Map<String, dynamic> loadedData = await baseLeaderboardSave.load();
+
+    if (loadedData != null) {
+      for (final entry in loadedData.entries) {
+        baseScores[int.parse(entry.key)] = entry.value as int;
+      }
     }
 
-    return Leaderboard._(loadedData);
+    return Leaderboard._(baseScores, baseLeaderboardSave);
   }
 
   int operator [](int k) => _scores[k];
@@ -29,8 +35,7 @@ class Leaderboard {
       newList.insert(i, score);
       newList.removeLast();
 
-      SaveManager.saveLeaderboard(
-        gridSize,
+      saveState.save(
         newList.asMap().map((key, value) => MapEntry(key.toString(), value)),
       );
 
