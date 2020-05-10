@@ -19,6 +19,7 @@ Future<void> main() async {
 
   await Future.wait([
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]),
     SharedPreferences.getInstance().then((preferences) {
       Main.settingsProvider.darkMode = preferences.getBool('darkMode') ?? false;
       Main.settingsProvider.palette = Palette.getGamePaletteByName(

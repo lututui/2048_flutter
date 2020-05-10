@@ -47,41 +47,28 @@ class DummyGame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size predictedMaxSize = DimensionsProvider.calculateSizes(
-      MediaQuery.of(context).size,
-      SizeOptions.sizes.first.sideLength,
-    )['game']
-        .scale(factor: 0.7);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Consumer<DimensionsProvider>(
+        builder: (context, dimensions, _) {
+          final int index = SizeOptions.getSizeIndexBySideLength(
+            dimensions.gridSize,
+          );
 
-    return Container(
-      width: predictedMaxSize.width,
-      height: predictedMaxSize.height,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Consumer<DimensionsProvider>(
-            builder: (context, dimensions, _) {
-              final int index = SizeOptions.getSizeIndexBySideLength(
-                dimensions.gridSize,
-              );
+          if (tiles[index].isEmpty) {
+            spawnTiles(index, dimensions.gridSize);
+          }
 
-              if (tiles[index].isEmpty) {
-                spawnTiles(index, dimensions.gridSize);
-              }
-
-              return BorderedBox(
-                width: dimensions.gameSize.width,
-                height: dimensions.gameSize.height,
-                borderWidth: dimensions.gapSize.width * (index + 1.0),
-                child: Stack(
-                  overflow: Overflow.visible,
-                  children: tiles[index],
-                ),
-              );
-            },
-          ),
-        ),
+          return BorderedBox(
+            width: dimensions.gameSize.width,
+            height: dimensions.gameSize.height,
+            borderWidth: dimensions.gapSize.width * (index + 1.0),
+            child: Stack(
+              overflow: Overflow.visible,
+              children: tiles[index],
+            ),
+          );
+        },
       ),
     );
   }

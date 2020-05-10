@@ -9,7 +9,10 @@ class PauseDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: Center(
-        child: Text('Paused', style: Theme.of(context).textTheme.headline4,),
+        child: Text(
+          'Paused',
+          style: Theme.of(context).textTheme.headline4,
+        ),
       ),
       titlePadding: const EdgeInsets.all(24.0),
       backgroundColor: Theme.of(context).colorScheme.background,

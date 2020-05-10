@@ -12,10 +12,14 @@ class PaletteSelectionScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          const SliverAppBar(title: Text('Game palette'), pinned: true),
+          const SliverAppBar(
+            title: Text('Game palette'),
+            pinned: true,
+            primary: false,
+          ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              buildGamePalette,
+              buildGamePaletteWidget,
               childCount: Palette.gamePalettes.length,
             ),
           ),
@@ -24,11 +28,11 @@ class PaletteSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget buildGamePalette(BuildContext context, int index) {
+  Widget buildGamePaletteWidget(BuildContext context, int index) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Consumer<SettingsProvider>(
-        builder: (context, settings, _) {
+        builder: (context, settings, child) {
           final isSelected = settings.palette == Palette.gamePalettes[index];
 
           return FlatButton(
@@ -48,39 +52,40 @@ class PaletteSelectionScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16.0),
                 height: isSelected ? 150.0 : 120.0,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            Palette.gamePalettes[index].name,
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16.0),
-                        child: Row(
-                          children: Palette.gamePalettes[index].tileColors.map(
-                            (TileColor tile) {
-                              return Expanded(
-                                child: Container(color: tile.backgroundColor),
-                              );
-                            },
-                          ).toList(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: child,
               ),
             ),
           );
         },
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    Palette.gamePalettes[index].name,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ],
+              ),
+            ),
+            Flexible(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16.0),
+                child: Row(
+                  children: Palette.gamePalettes[index].tileColors.map(
+                    (TileColor tile) {
+                      return Expanded(
+                        child: Container(color: tile.backgroundColor),
+                      );
+                    },
+                  ).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

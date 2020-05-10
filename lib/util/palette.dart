@@ -74,7 +74,7 @@ class Palette {
     secondary: Color(0xff6d5959),
     secondaryVariant: Color(0xff80413e),
     surface: Color(0xff404040),
-    background: Color(0xff404040),
+    background: Color(0xff666666),
     error: Color(0xff550c18),
     onPrimary: Color(0xffe8e8e8),
     onSecondary: Color(0xffececec),

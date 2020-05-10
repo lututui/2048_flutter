@@ -11,23 +11,40 @@ class LeaderboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Leaderboard')),
-      body: DefaultTabController(
-        length: SizeOptions.sizes.length,
-        initialIndex: 1,
-        child: Column(
+    final PreferredSizeWidget tabBar = TabBar(
+      tabs: leaderboardTabs,
+      labelColor: Theme.of(context).colorScheme.onSurface,
+    );
+
+    final PreferredSizeWidget appBar = AppBar(
+      title: const Text('Leaderboard'),
+      primary: false,
+      bottom: PreferredSize(
+        preferredSize: tabBar.preferredSize,
+        child: Material(
+          color: Theme.of(context).colorScheme.surface,
+          child: tabBar,
+        ),
+      ),
+    );
+
+    return DefaultTabController(
+      length: SizeOptions.sizes.length,
+      initialIndex: 1,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size(
+            appBar.preferredSize.width,
+            appBar.preferredSize.height - MediaQuery.of(context).padding.top,
+          ),
+          child: appBar,
+        ),
+        body: Column(
           children: <Widget>[
-            TabBar(
-              tabs: leaderboardTabs,
-              labelColor: Theme.of(context).colorScheme.onSurface,
-            ),
             Expanded(
               child: TabBarView(
                 children: SizeOptions.sizes
-                    .map<Widget>(
-                      (size) => LeaderboardTab(gridSize: size.sideLength),
-                    )
+                    .map((size) => LeaderboardTab(gridSize: size.sideLength))
                     .toList(),
               ),
             ),

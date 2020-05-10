@@ -12,9 +12,12 @@ class MainMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      onPressed: () => Navigator.of(context).pushNamed(routeName),
-      child: Text(buttonText),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
+      child: RaisedButton(
+        onPressed: () => Navigator.of(context).pushNamed(routeName),
+        child: Text(buttonText),
+      ),
     );
   }
 }

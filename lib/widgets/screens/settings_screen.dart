@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/settings_provider.dart';
-import 'package:flutter_2048/widgets/switch_setting_widget.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -8,8 +7,19 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PreferredSizeWidget appBar = AppBar(
+      title: const Text('Settings'),
+      primary: false,
+    );
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: PreferredSize(
+        preferredSize: Size(
+          appBar.preferredSize.width,
+          appBar.preferredSize.height - MediaQuery.of(context).padding.top,
+        ),
+        child: appBar,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -28,38 +38,52 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Consumer<SettingsProvider>(
-              builder: (context, settings, _) {
-                return SwitchSettingWidget(
-                  text: 'Dark mode',
-                  value: settings.darkMode,
-                  onChangedCallback: (newValue) => settings.darkMode = newValue,
-                );
-              },
-            ),
-            Consumer<SettingsProvider>(
-              builder: (context, settings, _) {
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text('Game palette'),
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/palette_picker');
-                        },
-                        child: Row(
-                          children: <Widget>[
-                            Text(settings.palette.name),
-                            const Icon(Icons.keyboard_arrow_right),
-                          ],
-                        ),
-                      ),
-                    ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Dark mode',
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
-                );
-              },
+                  Consumer<SettingsProvider>(
+                    builder: (context, settings, _) {
+                      return Switch(
+                        value: settings.darkMode,
+                        onChanged: (value) => settings.darkMode = value,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Game palette',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/palette_picker');
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Consumer<SettingsProvider>(
+                          builder: (context, settings, _) {
+                            return Text(settings.palette.name);
+                          },
+                        ),
+                        const Icon(Icons.keyboard_arrow_right),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
