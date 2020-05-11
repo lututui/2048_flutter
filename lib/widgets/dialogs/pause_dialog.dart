@@ -74,10 +74,14 @@ class PauseDialog extends StatelessWidget {
     ).then(
       (result) {
         if (result != null && result == DialogResult.reset) {
-          saveState.wipe();
-          Navigator.of(context).pushReplacementNamed(
-            '/game',
-            arguments: saveState.gridSize,
+          return saveState.wipe().then(
+            (_) {
+              Navigator.of(context).pushReplacementNamed(
+                '/game',
+                arguments: saveState.gridSize,
+              );
+              return Future.value(false);
+            },
           );
         }
 

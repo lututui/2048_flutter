@@ -9,11 +9,15 @@ import 'package:flutter_2048/widgets/tiles/immovable_tile.dart';
 import 'package:provider/provider.dart';
 
 class DummyGame extends StatelessWidget {
-  DummyGame.withSizes(int sizes, {Key key})
-      : tiles = List.generate(sizes, (_) => [], growable: false),
-        super(key: key);
+  DummyGame.withSizes(int sizes, {Key key}) : super(key: key) {
+    ArgumentError.checkNotNull(sizes);
 
-  final List<List<Widget>> tiles;
+    if (DummyGame.tiles == null || sizes != DummyGame.tiles.length) {
+      DummyGame.tiles = List.generate(sizes, (_) => [], growable: false);
+    }
+  }
+
+  static List<List<Widget>> tiles;
 
   void spawnTiles(int index, int sideLength) {
     final int flatLength = sideLength * sideLength;

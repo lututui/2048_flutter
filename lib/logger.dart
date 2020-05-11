@@ -4,7 +4,6 @@ class Logger {
   Logger._();
 
   static final Map<Type, bool> _blackList = {};
-  static bool enabled = false;
 
   static void blacklist(Type t) {
     _blackList[t] = true;
@@ -18,7 +17,6 @@ class Logger {
 
   static void log<T>(String message, {Object instance}) {
     if (!kDebugMode) return;
-    if (!enabled) return;
     if (_blackList[T] ?? false) return;
 
     if (instance != null) {

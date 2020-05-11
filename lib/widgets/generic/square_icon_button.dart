@@ -12,6 +12,7 @@ class SquareIconButton extends StatelessWidget {
     this.color,
     this.borderColor,
     this.borderWidth = 3.0,
+    this.enabled = true,
     Key key,
   }) : super(key: key);
 
@@ -21,6 +22,7 @@ class SquareIconButton extends StatelessWidget {
   final IconData iconData;
   final double maxSize;
   final double borderWidth;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class SquareIconButton extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1 / 1,
         child: IconButton(
-          onPressed: () => onPress(context),
+          onPressed: enabled ? () => onPress(context) : null,
           icon: LayoutBuilder(
             builder: (context, constraints) {
               return Icon(

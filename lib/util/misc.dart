@@ -42,13 +42,13 @@ class Misc {
     return result;
   }
 
-  static ThemeData buildThemeDataFromColorScheme(
-    ColorScheme scheme, {
-    String fontFamily,
+  static ThemeData buildThemeData({
+    @required ColorScheme scheme,
+    @required String fontFamily,
   }) {
-    ThemeData theme = ThemeData.from(colorScheme: scheme);
+    final ThemeData theme = ThemeData.from(colorScheme: scheme);
 
-    theme = theme.copyWith(
+    return theme.copyWith(
       appBarTheme: theme.appBarTheme.copyWith(
         brightness: scheme.brightness,
         color: scheme.primary,
@@ -56,14 +56,10 @@ class Misc {
       buttonTheme: theme.buttonTheme.copyWith(
         buttonColor: scheme.primary,
       ),
+      textTheme: theme.textTheme.apply(fontFamily: fontFamily),
+      primaryTextTheme: theme.primaryTextTheme.apply(fontFamily: fontFamily),
+      accentTextTheme: theme.accentTextTheme.apply(fontFamily: fontFamily),
     );
-
-    if (fontFamily == null || fontFamily.isEmpty) return theme;
-
-    return theme
-      ..textTheme.apply(fontFamily: fontFamily)
-      ..accentTextTheme.apply(fontFamily: fontFamily)
-      ..primaryTextTheme.apply(fontFamily: fontFamily);
   }
 
   static CircularProgressIndicator getDefaultProgressIndicator(
@@ -89,5 +85,11 @@ class Misc {
     }
 
     return Colors.white;
+  }
+}
+
+extension ColorBrightness on Color {
+  Brightness estimateBrightness() {
+    return ThemeData.estimateBrightnessForColor(this);
   }
 }

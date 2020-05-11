@@ -15,25 +15,26 @@ class ButtonsBar extends StatelessWidget {
       builder: (context, dimensions, _) {
         return Container(
           width: dimensions.gameSize.width,
+          alignment: Alignment.center,
           child: AspectRatio(
             aspectRatio: dimensions.aspectRatio,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                SquareIconButton(
-                  onPress: _exit,
-                  iconData: DialogResult.exit.icon,
-                  maxSize: dimensions.tileSize.width,
-                ),
-                SquareIconButton(
-                  onPress: _reset,
-                  iconData: DialogResult.reset.icon,
-                  maxSize: dimensions.tileSize.width,
+                Consumer<GridProvider>(
+                  builder: (context, grid, _) {
+                    return SquareIconButton(
+                      onPress: _undo,
+                      enabled: grid.canUndo,
+                      iconData: Icons.undo,
+                      maxSize: 1/6 * dimensions.gameSize.width,
+                    );
+                  },
                 ),
                 SquareIconButton(
                   onPress: _pause,
                   iconData: DialogResult.pause.icon,
-                  maxSize: dimensions.tileSize.width,
+                  maxSize: 1/6 * dimensions.gameSize.width,
                 ),
               ],
             ),
@@ -54,6 +55,10 @@ class ButtonsBar extends StatelessWidget {
         Navigator.of(context).pop();
       },
     );
+  }
+
+  void _undo(BuildContext context) {
+    GridProvider.of(context).undo();
   }
 
   void _reset(BuildContext context) {

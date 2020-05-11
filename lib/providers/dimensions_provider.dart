@@ -60,19 +60,38 @@ class DimensionsProvider with ChangeNotifier {
       _gameSize,
     ].any((k) => k == null);
 
-    if (skipNotify) {
-      log("Won't notifty listeners ($_tileSize, $_gapSize, $_gameSize)");
-    }
+    final oldValues = <Size>[
+      if (_tileSize != null) Size.copy(_tileSize) else null,
+      if (_gapSize != null) Size.copy(_gapSize) else null,
+      if (_gameSize != null) Size.copy(_gameSize) else null,
+    ];
 
     final Map<String, Size> sizes = calculateSizes(_screenSize, _gridSize);
+    final List<String> stringBuilder = [];
 
-    _tileSize = sizes['tile'];
-    _gapSize = sizes['gap'];
-    _gameSize = sizes['game'];
+    if (sizes['tile'] != _tileSize) {
+      _tileSize = sizes['tile'];
+      stringBuilder.add('\ttileSize (from: ${oldValues[0]}, to $_tileSize)');
+    }
 
-    log('Updated values: ($_tileSize, $_gapSize, $_gameSize)');
+    if (sizes['gap'] != _gapSize) {
+      _gapSize = sizes['gap'];
+      stringBuilder.add('\tgapSize (from ${oldValues[1]}, to $_gapSize)');
+    }
+
+    if (sizes['game'] != _gameSize) {
+      _gameSize = sizes['game'];
+      stringBuilder.add('\tgameSize (from ${oldValues[2]}, to $_gameSize)');
+    }
 
     if (!skipNotify) {
+      if (stringBuilder.isEmpty) {
+        throw Exception(
+          'Something triggered updateValues, but nothing changed',
+        );
+      }
+
+      debugWarnNotify(stringBuilder);
       notifyListeners();
     }
   }
@@ -101,5 +120,9 @@ class DimensionsProvider with ChangeNotifier {
       'gap': gapSize,
       'game': gameSize,
     };
+  }
+
+  void debugWarnNotify(Iterable updatedValues) {
+    log('Triggered a notification to listeners.\n${updatedValues.join(',\n')}');
   }
 }

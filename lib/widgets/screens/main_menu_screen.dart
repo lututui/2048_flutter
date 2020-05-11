@@ -25,54 +25,59 @@ class MainMenuScreen extends StatelessWidget {
           builder: (context, constraints) {
             final double maxDummyHeight = 5 / 11 * constraints.maxHeight;
 
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      height: maxDummyHeight,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: DummyGame.withSizes(SizeOptions.sizes.length),
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: maxDummyHeight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: DummyGame.withSizes(SizeOptions.sizes.length),
+                        ),
                       ),
-                    ),
-                    Selector(
-                      onSelectChange: (int selected) {
-                        DimensionsProvider.setGridSize(
-                          context,
-                          SizeOptions.sizes[selected].sideLength,
-                        );
-                      },
-                      defaultOption: SizeOptions.getSizeIndexBySideLength(
-                        Provider.of<DimensionsProvider>(
-                          context,
-                          listen: false,
-                        ).gridSize,
+                      Selector(
+                        onSelectChange: (int selected) {
+                          DimensionsProvider.setGridSize(
+                            context,
+                            SizeOptions.sizes[selected].sideLength,
+                          );
+                        },
+                        defaultOption: SizeOptions.getSizeIndexBySideLength(
+                          Provider.of<DimensionsProvider>(
+                            context,
+                            listen: false,
+                          ).gridSize,
+                        ),
+                        children: SizeOptions.getChildren(context),
                       ),
-                      children: SizeOptions.getChildren(context),
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const <Widget>[
-                    MainMenuButton(
-                      routeName: '/game',
-                      buttonText: 'Play',
-                    ),
-                    MainMenuButton(
-                      routeName: '/leaderboard',
-                      buttonText: 'Leaderboard',
-                    ),
-                    MainMenuButton(
-                      routeName: '/settings',
-                      buttonText: 'Settings',
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: const <Widget>[
+                      MainMenuButton(
+                        routeName: '/game',
+                        buttonText: 'Play',
+                      ),
+                      MainMenuButton(
+                        routeName: '/leaderboard',
+                        buttonText: 'Leaderboard',
+                      ),
+                      MainMenuButton(
+                        routeName: '/settings',
+                        buttonText: 'Settings',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             );
           },
         ),

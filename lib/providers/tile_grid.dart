@@ -1,10 +1,15 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/util/misc.dart';
+import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
+import 'package:provider/provider.dart';
 
 class TileGrid {
-  TileGrid.withSize(int gridSize)
+  TileGrid(this._grid, this._free);
+
+  TileGrid.empty(int gridSize)
       : assert(gridSize != null && gridSize > 0),
         _grid = List.generate(
           gridSize,
@@ -16,6 +21,51 @@ class TileGrid {
           (i) => Tuple(i ~/ gridSize, i % gridSize),
           growable: true,
         ).toSet();
+
+  TileGrid clone() {
+    final gridSize = sideLength;
+
+    final copyGrid = List.generate(
+      gridSize,
+      (_) => List<TileProvider>(gridSize),
+      growable: false,
+    );
+
+    for (int i = 0; i < gridSize; i++) {
+      for (int j = 0; j < gridSize; j++) {
+        copyGrid[i][j] = _grid[i][j]?.clone();
+      }
+    }
+
+    return TileGrid(
+      copyGrid,
+      Set<Tuple<int, int>>.from(_free),
+    );
+  }
+
+  void restore(TileGrid from, {List<Widget> tiles}) {
+    assert(sideLength == from.sideLength);
+
+    for (int i = 0; i < sideLength; i++) {
+      for (int j = 0; j < sideLength; j++) {
+        set(i, j, from._grid[i][j]);
+      }
+    }
+
+    if (tiles == null) return;
+
+    tiles.clear();
+
+    for (final entry in getEntries()) {
+      tiles.add(
+        ChangeNotifierProvider.value(
+          key: ObjectKey(entry),
+          value: entry,
+          child: const MovableTile(),
+        ),
+      );
+    }
+  }
 
   final List<List<TileProvider>> _grid;
   final Set<Tuple<int, int>> _free;
@@ -60,6 +110,10 @@ class TileGrid {
     bool allowReplace = true,
   }) {
     set(t.a, t.b, p, allowReplace: allowReplace);
+  }
+
+  void clearAtTuple(Tuple<int, int> t) {
+    set(t.a, t.b, null);
   }
 
   /*
@@ -115,5 +169,19 @@ class TileGrid {
 
   void log(String message) {
     Logger.log<TileGrid>(message, instance: this);
+  }
+
+  List<TileProvider> getEntries() {
+    final List<TileProvider> result = [];
+
+    for (final line in _grid) {
+      for (final p in line) {
+        if (p == null) continue;
+
+        result.add(p);
+      }
+    }
+
+    return result;
   }
 }

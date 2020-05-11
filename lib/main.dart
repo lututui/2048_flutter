@@ -45,12 +45,12 @@ class Main extends StatelessWidget {
         builder: (context, settings, _) {
           return MaterialApp(
             themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
-            theme: Misc.buildThemeDataFromColorScheme(
-              Palette.lightTheme,
+            theme: Misc.buildThemeData(
+              scheme: Palette.lightTheme,
               fontFamily: Fonts.righteousFamily,
             ),
-            darkTheme: Misc.buildThemeDataFromColorScheme(
-              Palette.darkTheme,
+            darkTheme: Misc.buildThemeData(
+              scheme: Palette.darkTheme,
               fontFamily: Fonts.righteousFamily,
             ),
             debugShowCheckedModeBanner: false,

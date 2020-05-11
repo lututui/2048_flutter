@@ -64,4 +64,8 @@ class TileProvider with ChangeNotifier {
   void log(String message) {
     Logger.log<TileProvider>(message, instance: this);
   }
+
+  TileProvider clone() {
+    return TileProvider(Tuple.copy(_gridPos), value: _value);
+  }
 }

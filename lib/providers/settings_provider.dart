@@ -9,18 +9,30 @@ class SettingsProvider with ChangeNotifier {
   bool get darkMode => _darkMode;
 
   set darkMode(bool value) {
+    ArgumentError.checkNotNull(value, 'darkMode');
+
     if (value == _darkMode) return;
-    _darkMode = value;
-    SharedPreferences.getInstance().then(
-      (preferences) => preferences.setBool('darkMode', _darkMode),
-    );
-    notifyListeners();
+
+    if (_darkMode != null) {
+      _darkMode = value;
+
+      SharedPreferences.getInstance().then(
+        (preferences) => preferences.setBool('darkMode', _darkMode),
+      );
+
+      notifyListeners();
+    } else {
+      _darkMode = value;
+    }
   }
 
   GamePalette get palette => _palette;
 
   set palette(GamePalette value) {
+    ArgumentError.checkNotNull(value, 'palette');
+
     if (value == _palette) return;
+
     _palette = value;
     SharedPreferences.getInstance().then(
       (preferences) => preferences.setString(

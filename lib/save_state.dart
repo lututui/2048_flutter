@@ -38,11 +38,13 @@ class SaveState {
 
     if (path == null) return null;
 
-    final File f = File('$path/${prefix}_$gridSize.json');
+    final String filePath = '$path/${prefix}_$gridSize.json';
+    final bool exists = !mustExist ||
+        await FileSystemEntity.type(filePath) != FileSystemEntityType.notFound;
 
-    if (!mustExist) return f;
-
-    if (await f.exists()) return f;
+    if (exists) {
+      return File(filePath);
+    }
 
     return null;
   }
