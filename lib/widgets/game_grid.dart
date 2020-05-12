@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/providers/settings_provider.dart';
 import 'package:flutter_2048/widgets/dialogs/game_over_dialog.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,8 @@ class GameGrid extends StatelessWidget {
             width: dimensions.gameSize.width,
             height: dimensions.gameSize.height,
             borderWidth: dimensions.gapSize.width * dimensions.gridSize / 3,
-            child: Consumer<GridProvider>(
-              builder: (context, grid, _) {
+            child: Consumer2<GridProvider, SettingsProvider>(
+              builder: (context, grid, settings, _) {
                 if (grid.gameOver) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     GameOverDialog.show(
@@ -28,6 +29,10 @@ class GameGrid extends StatelessWidget {
                       dimensions.tileSize.width,
                       grid.saveState,
                     );
+
+                    if (settings.autoReset) {
+                      grid.saveState.wipe();
+                    }
                   });
                 }
 

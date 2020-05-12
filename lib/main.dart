@@ -21,10 +21,12 @@ Future<void> main() async {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]),
     SharedPreferences.getInstance().then((preferences) {
-      Main.settingsProvider.darkMode = preferences.getBool('darkMode') ?? false;
-      Main.settingsProvider.palette = Palette.getGamePaletteByName(
-        preferences.getString('palette'),
-      );
+      Main.settingsProvider
+        ..darkMode = preferences.getBool('darkMode') ?? false
+        ..palette = Palette.getGamePaletteByName(
+          preferences.getString('palette'),
+        )
+        ..autoReset = preferences.getBool('autoReset') ?? true;
     }),
   ]);
 

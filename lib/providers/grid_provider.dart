@@ -86,7 +86,7 @@ class GridProvider with ChangeNotifier {
 
   bool get gameOver => _gameOver;
 
-  bool get canUndo => !gameOver && _previousState != null;
+  bool get canUndo => !_gameOver && _previousState != null;
 
   /*
   Setters
@@ -131,11 +131,11 @@ class GridProvider with ChangeNotifier {
 
     if (_grid.spawnableSpaces > 0) return;
 
-    gameOver = _grid.testGameOver();
+    _gameOver = _grid.testGameOver();
   }
 
   void onVerticalDragEnd(DragEndDetails details) {
-    if (gameOver) return;
+    if (_gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dy < 0
         ? SwipeGestureType.up
@@ -145,7 +145,7 @@ class GridProvider with ChangeNotifier {
   }
 
   void onHorizontalDragEnd(DragEndDetails details) {
-    if (gameOver) return;
+    if (_gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dx < 0
         ? SwipeGestureType.left

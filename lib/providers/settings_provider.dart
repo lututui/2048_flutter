@@ -5,6 +5,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsProvider with ChangeNotifier {
   GamePalette _palette = GamePalette.classic;
   bool _darkMode;
+  bool _autoReset = true;
+
+  void _savePreference(String name, dynamic value) {
+    SharedPreferences.getInstance().then((preferences) {
+      if (value is bool) {
+        preferences.setBool(name, value);
+      } else if (value is String) {
+        preferences.setString(name, value);
+      } else if (value is int) {
+        preferences.setInt(name, value);
+      } else if (value is double) {
+        preferences.setDouble(name, value);
+      } else if (value is List<String>) {
+        preferences.setStringList(name, value);
+      } else {
+        throw Exception('${value.runtimeType} may not be saved directly');
+      }
+    });
+  }
 
   bool get darkMode => _darkMode;
 
@@ -16,10 +35,7 @@ class SettingsProvider with ChangeNotifier {
     if (_darkMode != null) {
       _darkMode = value;
 
-      SharedPreferences.getInstance().then(
-        (preferences) => preferences.setBool('darkMode', _darkMode),
-      );
-
+      _savePreference('darkMode', _darkMode);
       notifyListeners();
     } else {
       _darkMode = value;
@@ -34,12 +50,21 @@ class SettingsProvider with ChangeNotifier {
     if (value == _palette) return;
 
     _palette = value;
-    SharedPreferences.getInstance().then(
-      (preferences) => preferences.setString(
-        'palette',
-        _palette.name.toLowerCase(),
-      ),
-    );
+
+    _savePreference('palette', _palette.name.toLowerCase());
+    notifyListeners();
+  }
+
+  bool get autoReset => _autoReset;
+
+  set autoReset(bool value) {
+    ArgumentError.checkNotNull(value, 'auto reset');
+
+    if (value == _autoReset) return;
+
+    _autoReset = value;
+
+    _savePreference('autoReset', _autoReset);
     notifyListeners();
   }
 }

@@ -27,14 +27,14 @@ class ButtonsBar extends StatelessWidget {
                       onPress: _undo,
                       enabled: grid.canUndo,
                       iconData: Icons.undo,
-                      maxSize: 1/6 * dimensions.gameSize.width,
+                      maxSize: 1 / 6 * dimensions.gameSize.width,
                     );
                   },
                 ),
                 SquareIconButton(
                   onPress: _pause,
                   iconData: DialogResult.pause.icon,
-                  maxSize: 1/6 * dimensions.gameSize.width,
+                  maxSize: 1 / 6 * dimensions.gameSize.width,
                 ),
               ],
             ),
@@ -59,20 +59,5 @@ class ButtonsBar extends StatelessWidget {
 
   void _undo(BuildContext context) {
     GridProvider.of(context).undo();
-  }
-
-  void _reset(BuildContext context) {
-    final saveState = GridProvider.of(context).saveState;
-
-    saveState.wipe().then((_) {
-      Navigator.of(context).pushReplacementNamed(
-        '/game',
-        arguments: saveState.gridSize,
-      );
-    });
-  }
-
-  void _exit(BuildContext context) {
-    Navigator.of(context).pop();
   }
 }
