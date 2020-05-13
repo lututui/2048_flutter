@@ -1,8 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_2048/types/game_palette.dart';
+import 'package:flutter_2048/util/palette.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsProvider with ChangeNotifier {
+  SettingsProvider.load(SharedPreferences preferences) {
+    _palette = Palette.getGamePaletteByName(preferences.getString('palette'));
+    _darkMode = preferences.getBool('darkMode') ?? false;
+    _autoReset = preferences.getBool('autoReset') ?? true;
+  }
+
   GamePalette _palette = GamePalette.classic;
   bool _darkMode;
   bool _autoReset = true;
@@ -23,6 +31,10 @@ class SettingsProvider with ChangeNotifier {
         throw Exception('${value.runtimeType} may not be saved directly');
       }
     });
+  }
+
+  ChangeNotifierProvider<SettingsProvider> get changeNotifierProvider {
+    return ChangeNotifierProvider.value(value: this);
   }
 
   bool get darkMode => _darkMode;

@@ -55,6 +55,7 @@ class DummyGame extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Consumer<DimensionsProvider>(
         builder: (context, dimensions, _) {
+          final double gameSize = dimensions.getGameSize(context);
           final int index = SizeOptions.getSizeIndexBySideLength(
             dimensions.gridSize,
           );
@@ -64,9 +65,9 @@ class DummyGame extends StatelessWidget {
           }
 
           return BorderedBox(
-            width: dimensions.gameSize.width,
-            height: dimensions.gameSize.height,
-            borderWidth: dimensions.gapSize.width * (index + 1.0),
+            width: gameSize,
+            height: gameSize,
+            borderWidth: dimensions.getGapSize(context) * (index + 1.0),
             child: Stack(
               overflow: Overflow.visible,
               children: tiles[index],

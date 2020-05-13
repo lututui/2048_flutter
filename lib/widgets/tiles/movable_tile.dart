@@ -13,14 +13,15 @@ class MovableTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<DimensionsProvider, TileProvider>(
       builder: (context, dimensions, tileContext, _) {
-        final double leftPos =
-            tileContext.gridPos.b * dimensions.gapSize.width +
-                tileContext.gridPos.b * dimensions.tileSize.width +
-                dimensions.gapSize.width;
-        final double topPos =
-            tileContext.gridPos.a * dimensions.gapSize.height +
-                tileContext.gridPos.a * dimensions.tileSize.height +
-                dimensions.gapSize.height;
+        final double gapSize = dimensions.getGapSize(context);
+        final double tileSize = dimensions.getTileSize(context);
+
+        final double leftPos = tileContext.gridPos.b * gapSize +
+            tileContext.gridPos.b * tileSize +
+            gapSize;
+        final double topPos = tileContext.gridPos.a * gapSize +
+            tileContext.gridPos.a * tileSize +
+            gapSize;
 
         return AnimatedPositioned(
           onEnd: () {
@@ -36,9 +37,9 @@ class MovableTile extends StatelessWidget {
             builder: (context, settings, _) {
               return UnplacedTile(
                 color: settings.palette.getTileColor(tileContext.value),
-                borderWidth: dimensions.gapSize.width / 2.0,
-                height: dimensions.tileSize.height,
-                width: dimensions.tileSize.width,
+                borderWidth: gapSize / 2.0,
+                height: tileSize,
+                width: tileSize,
                 text: '${1 << tileContext.value}',
               );
             },

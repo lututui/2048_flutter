@@ -13,11 +13,13 @@ class ButtonsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DimensionsProvider>(
       builder: (context, dimensions, _) {
+        final double gameSize = dimensions.getGameSize(context);
+
         return Container(
-          width: dimensions.gameSize.width,
+          width: gameSize,
           alignment: Alignment.center,
           child: AspectRatio(
-            aspectRatio: dimensions.aspectRatio,
+            aspectRatio: dimensions.getAspectRatio(context),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -27,14 +29,14 @@ class ButtonsBar extends StatelessWidget {
                       onPress: _undo,
                       enabled: grid.canUndo,
                       iconData: Icons.undo,
-                      maxSize: 1 / 6 * dimensions.gameSize.width,
+                      maxSize: 1 / 6 * gameSize,
                     );
                   },
                 ),
                 SquareIconButton(
                   onPress: _pause,
                   iconData: DialogResult.pause.icon,
-                  maxSize: 1 / 6 * dimensions.gameSize.width,
+                  maxSize: 1 / 6 * gameSize,
                 ),
               ],
             ),

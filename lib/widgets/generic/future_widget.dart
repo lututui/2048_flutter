@@ -10,8 +10,8 @@ class FutureWidget<T> extends StatelessWidget {
   FutureWidget({
     @required this.computation,
     @required this.loadingChild,
-    @required this.onError,
     @required this.builder,
+    this.onError,
     this.errorChild,
     Key key,
   }) : super(key: key);
@@ -20,8 +20,8 @@ class FutureWidget<T> extends StatelessWidget {
   final AsyncWidgetBuilder<T> builder;
   final ComputationCallback<T> computation;
   final OnErrorCallback onError;
-  final Widget loadingChild;
-  final Widget errorChild;
+  final WidgetBuilder loadingChild;
+  final WidgetBuilder errorChild;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +29,17 @@ class FutureWidget<T> extends StatelessWidget {
       future: _memoizer.runOnce(computation),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return loadingChild;
+          return loadingChild(context);
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
-          onError(snapshot.error);
+          if (onError == null) {
+            throw snapshot.error;
+          } else {
+            onError.call(snapshot.error);
+          }
 
-          return errorChild ?? ErrorWidget(snapshot.error);
+          return errorChild?.call(context) ?? ErrorWidget(snapshot.error);
         }
 
         return builder(context, snapshot);

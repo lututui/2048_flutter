@@ -11,13 +11,15 @@ class Scoreboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DimensionsProvider>(
       builder: (context, dimensions, scoreText) {
+        final double gapSize = dimensions.getGapSize(context);
+
         return Container(
-          width: dimensions.gameSize.width + dimensions.gapSize.width,
+          width: dimensions.getGameSize(context) + gapSize,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               BorderedBox(
-                borderWidth: dimensions.gapSize.width / 2,
+                borderWidth: gapSize / 2,
                 padding: const EdgeInsets.all(2.0),
                 child: Text(
                   'Score',
@@ -25,7 +27,7 @@ class Scoreboard extends StatelessWidget {
                 ),
               ),
               BorderedBox(
-                borderWidth: dimensions.gapSize.width / 2,
+                borderWidth: gapSize / 2,
                 padding: const EdgeInsets.all(2.0),
                 child: scoreText,
               ),

@@ -24,10 +24,11 @@ class MainMenuScreen extends StatelessWidget {
         body: LayoutBuilder(
           builder: (context, constraints) {
             final double maxDummyHeight = 5 / 11 * constraints.maxHeight;
+            final MediaQueryData mediaQuery = MediaQuery.of(context);
 
             return Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).padding.bottom,
+                bottom: mediaQuery.padding.bottom,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

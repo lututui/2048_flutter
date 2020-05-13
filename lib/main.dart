@@ -3,9 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/settings_provider.dart';
 import 'package:flutter_2048/route/main_menu_route_builder.dart';
-import 'package:flutter_2048/types/fonts.dart';
 import 'package:flutter_2048/util/misc.dart';
-import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/screens/game_screen.dart';
 import 'package:flutter_2048/widgets/screens/leaderboard_screen.dart';
 import 'package:flutter_2048/widgets/screens/main_menu_screen.dart';
@@ -17,78 +16,85 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Future.wait([
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]),
-    SharedPreferences.getInstance().then((preferences) {
-      Main.settingsProvider
-        ..darkMode = preferences.getBool('darkMode') ?? false
-        ..palette = Palette.getGamePaletteByName(
-          preferences.getString('palette'),
-        )
-        ..autoReset = preferences.getBool('autoReset') ?? true;
-    }),
-  ]);
+  await Future.wait(
+    [
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
+      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]),
+    ],
+  );
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return MaterialApp(
       home: Scaffold(
-        body: Container(
-          alignment: Alignment.center,
-          color: Colors.redAccent.shade700,
-          child: ListView(
-            children: <Widget>[
-              Text(
-                details.exceptionAsString(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                ),
-              ),
-            ],
+        body: Center(
+          child: SingleChildScrollView(
+            child: Text(
+              details.exceptionAsString(),
+              textAlign: TextAlign.justify,
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
         ),
       ),
     );
   };
 
-  runApp(const Main());
+  runApp(const Loader());
 }
 
-class Main extends StatelessWidget {
-  const Main({Key key}) : super(key: key);
-
-  static final DimensionsProvider dimensionsProvider = DimensionsProvider();
-  static final SettingsProvider settingsProvider = SettingsProvider();
+class Loader extends StatelessWidget {
+  const Loader({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: settingsProvider,
+    return FutureWidget<SharedPreferences>(
+      computation: () => SharedPreferences.getInstance(),
+      loadingChild: (context) {
+        return MaterialApp(
+          theme: Misc.themes[Brightness.light],
+          darkTheme: Misc.themes[Brightness.dark],
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            body: Center(child: Misc.getDefaultProgressIndicator(context)),
+          ),
+        );
+      },
+      builder: (context, snapshot) => Main(
+        settings: SettingsProvider.load(snapshot.data),
+        dimensions: DimensionsProvider(),
+      ),
+    );
+  }
+}
+
+class Main extends StatelessWidget {
+  const Main({
+    @required this.settings,
+    @required this.dimensions,
+    Key key,
+  }) : super(key: key);
+
+  final DimensionsProvider dimensions;
+  final SettingsProvider settings;
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        dimensions.changeNotifierProvider,
+        settings.changeNotifierProvider,
+      ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) {
           return MaterialApp(
             themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
-            theme: Misc.buildThemeData(
-              scheme: Palette.lightTheme,
-              fontFamily: Fonts.righteousFamily,
-            ),
-            darkTheme: Misc.buildThemeData(
-              scheme: Palette.darkTheme,
-              fontFamily: Fonts.righteousFamily,
-            ),
+            theme: Misc.themes[Brightness.light],
+            darkTheme: Misc.themes[Brightness.dark],
             debugShowCheckedModeBanner: false,
+            home: const MainMenuScreen(),
             onGenerateRoute: (settings) {
-              if (settings.name == '/') {
-                return MainMenuRouteBuilder(
-                  dimensionsProvider: dimensionsProvider,
-                  pageBuilder: (context) => const MainMenuScreen(),
-                );
-              }
-
               if (settings.name == '/game') {
                 return MainMenuRouteBuilder(
-                  dimensionsProvider: dimensionsProvider,
                   pageBuilder: (context) => const GameScreen(),
                 );
               }

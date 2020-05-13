@@ -19,12 +19,11 @@ class ImmovableTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DimensionsProvider>(
       builder: (context, dimensions, child) {
-        final double xPos =
-            gridPos.b * (dimensions.gapSize.width + dimensions.tileSize.width) +
-                dimensions.gapSize.width;
-        final double yPos = gridPos.a *
-                (dimensions.gapSize.height + dimensions.tileSize.height) +
-            dimensions.gapSize.height;
+        final double gapSize = dimensions.getGapSize(context);
+        final double tileSize = dimensions.getTileSize(context);
+
+        final double xPos = gridPos.b * (gapSize + tileSize) + gapSize;
+        final double yPos = gridPos.a * (gapSize + tileSize) + gapSize;
 
         return Positioned(
           left: xPos,
@@ -33,9 +32,9 @@ class ImmovableTile extends StatelessWidget {
             builder: (context, settings, _) {
               return UnplacedTile(
                 color: settings.palette.getTileColor(value),
-                borderWidth: dimensions.gapSize.width / 2.0,
-                height: dimensions.tileSize.height,
-                width: dimensions.tileSize.width,
+                borderWidth: gapSize / 2.0,
+                height: tileSize,
+                width: tileSize,
                 text: '${1 << value}',
               );
             },

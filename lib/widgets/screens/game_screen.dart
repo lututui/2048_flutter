@@ -16,10 +16,12 @@ class GameScreen extends StatelessWidget {
     return Scaffold(
       body: FutureWidget<GridProvider>(
         computation: () => GridProvider.fromJSON(context),
-        loadingChild: Container(
-          alignment: Alignment.center,
-          child: Misc.getDefaultProgressIndicator(context),
-        ),
+        loadingChild: (context) {
+          return Container(
+            alignment: Alignment.center,
+            child: Misc.getDefaultProgressIndicator(context),
+          );
+        },
         onError: (error) => throw Exception('Something went wrong: $error'),
         builder: (context, snapshot) {
           return ChangeNotifierProvider<GridProvider>.value(

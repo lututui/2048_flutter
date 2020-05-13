@@ -5,42 +5,63 @@ import 'package:flutter_2048/logger.dart';
 import 'package:provider/provider.dart';
 
 class DimensionsProvider with ChangeNotifier {
-  DimensionsProvider() : _gridSize = _defaultGridSize;
+  DimensionsProvider();
 
   static const int _defaultGridSize = 4;
 
   Size _screenSize;
-  Size _tileSize;
-  Size _gapSize;
-  Size _gameSize;
-
+  double _tileSize;
+  double _gapSize;
+  double _gameSize;
   int _gridSize;
 
   static int getGridSize(BuildContext context) {
     return context.read<DimensionsProvider>().gridSize;
   }
 
-  static void setGridSize(BuildContext context, int newSize) {
-    context.read<DimensionsProvider>().gridSize = newSize;
+  static int setGridSize(BuildContext context, int newSize) {
+    return context.read<DimensionsProvider>().gridSize = newSize;
+  }
+
+  ChangeNotifierProvider<DimensionsProvider> get changeNotifierProvider {
+    return ChangeNotifierProvider.value(value: this);
   }
 
   void log(String message) {
     Logger.log<DimensionsProvider>(message);
   }
 
-  double get aspectRatio {
-    return _gameSize.width / (_tileSize.height + _gridSize * _gapSize.width);
+  double getAspectRatio(BuildContext context) {
+    updateScreenSize(MediaQuery.of(context).size);
+
+    return _gameSize / (_tileSize + _gridSize * _gapSize);
   }
 
-  Size get gapSize => _gapSize;
+  double getGapSize(BuildContext context) {
+    updateScreenSize(MediaQuery.of(context).size);
 
-  Size get gameSize => _gameSize;
+    return _gapSize;
+  }
 
-  Size get screenSize => _screenSize;
+  double getGameSize(BuildContext context) {
+    updateScreenSize(MediaQuery.of(context).size);
 
-  Size get tileSize => _tileSize;
+    return _gameSize;
+  }
 
-  int get gridSize => _gridSize;
+  double getTileSize(BuildContext context) {
+    updateScreenSize(MediaQuery.of(context).size);
+
+    return _tileSize;
+  }
+
+  Size getScreenSize(BuildContext context) {
+    updateScreenSize(MediaQuery.of(context).size);
+
+    return _screenSize;
+  }
+
+  int get gridSize => _gridSize ??= _defaultGridSize;
 
   set gridSize(int value) {
     _gridSize = value;
@@ -50,73 +71,83 @@ class DimensionsProvider with ChangeNotifier {
     if (_screenSize != null) {
       log('Updating other sizes');
       _updateSizes();
-    }
-  }
-
-  void _updateSizes() {
-    final int nullCount = [
-      _tileSize,
-      _gapSize,
-      _gameSize,
-    ].where((k) => k == null).length;
-
-    final oldValues = <Size>[
-      if (_tileSize != null) Size.copy(_tileSize) else null,
-      if (_gapSize != null) Size.copy(_gapSize) else null,
-      if (_gameSize != null) Size.copy(_gameSize) else null,
-    ];
-
-    final Map<String, Size> sizes = calculateSizes(_screenSize, _gridSize);
-    final List<String> stringBuilder = [];
-
-    if (sizes['tile'] != _tileSize) {
-      _tileSize = sizes['tile'];
-      stringBuilder.add('\ttileSize (from: ${oldValues[0]}, to $_tileSize)');
-    }
-
-    if (sizes['gap'] != _gapSize) {
-      _gapSize = sizes['gap'];
-      stringBuilder.add('\tgapSize (from ${oldValues[1]}, to $_gapSize)');
-    }
-
-    if (sizes['game'] != _gameSize) {
-      _gameSize = sizes['game'];
-      stringBuilder.add('\tgameSize (from ${oldValues[2]}, to $_gameSize)');
-    }
-
-    if (nullCount > 0) {
-      debugWarnNotify(stringBuilder);
+    } else {
       notifyListeners();
     }
   }
 
-  void updateScreenSize(BuildContext context) {
-    final Size newSize = MediaQuery.of(context).size;
+  void _updateSizes() {
+    final double newTileSize =
+        min(_screenSize.width, _screenSize.height) / (gridSize + 2);
+    final double newGapSize = newTileSize / (2.0 * gridSize);
+    final double newGameSize =
+        gridSize * (newTileSize + newGapSize) + newGapSize;
 
-    if (_screenSize == newSize) return;
+    final List<String> stringBuilder = [];
 
-    _screenSize = newSize;
+    bool willNotify = false;
 
-    _updateSizes();
+    if (newTileSize != _tileSize) {
+      if (_tileSize != null) {
+        stringBuilder.add(
+          _valueChangedString(_tileSize, newTileSize, 'tileSize'),
+        );
+        willNotify = true;
+      }
+
+      _tileSize = newTileSize;
+    }
+
+    if (newGapSize != _gapSize) {
+      if (_gapSize != null) {
+        stringBuilder.add(
+          _valueChangedString(_gapSize, newGapSize, 'gapSize'),
+        );
+        willNotify = true;
+      }
+
+      _gapSize = newGapSize;
+    }
+
+    if (newGameSize != _gameSize) {
+      if (_gameSize != null) {
+        stringBuilder.add(
+          _valueChangedString(_gameSize, newGameSize, 'gameSize'),
+        );
+        willNotify = true;
+      }
+
+      _gameSize = newGameSize;
+    }
+
+    if (willNotify) {
+      log(
+        'Triggered a notification to listeners.\n'
+        '${stringBuilder.join(',\n')}',
+      );
+
+      notifyListeners();
+    }
   }
 
-  static Map<String, Size> calculateSizes(Size screenSize, int gridSize) {
-    final Size tileSize = Size.square(
-      min(screenSize.width, screenSize.height) / (gridSize + 2),
-    );
-    final Size gapSize = tileSize / (2.0 * gridSize);
-    final Size gameSize = Size.square(
-      gridSize * (tileSize.width + gapSize.width) + gapSize.width,
-    );
+  bool updateScreenSize(Size newSize) {
+    if (_screenSize != newSize || _gameSize == null) {
+      _screenSize = newSize;
+      _updateSizes();
 
-    return <String, Size>{
-      'tile': tileSize,
-      'gap': gapSize,
-      'game': gameSize,
-    };
+      return true;
+    }
+
+    return false;
   }
 
-  void debugWarnNotify(Iterable updatedValues) {
-    log('Triggered a notification to listeners.\n${updatedValues.join(',\n')}');
+  static String _valueChangedString(
+    double oldValue,
+    double newValue,
+    String name,
+  ) {
+    return '\t'
+        '$name (from ${oldValue.toStringAsFixed(2)}, '
+        'to ${newValue.toStringAsFixed(2)})';
   }
 }

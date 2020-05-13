@@ -15,10 +15,13 @@ class GameGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Consumer<DimensionsProvider>(
         builder: (context, dimensions, _) {
+          final double gameSize = dimensions.getGameSize(context);
+
           return BorderedBox(
-            width: dimensions.gameSize.width,
-            height: dimensions.gameSize.height,
-            borderWidth: dimensions.gapSize.width * dimensions.gridSize / 3,
+            width: gameSize,
+            height: gameSize,
+            borderWidth:
+                dimensions.getGapSize(context) * dimensions.gridSize / 3,
             child: Consumer2<GridProvider, SettingsProvider>(
               builder: (context, grid, settings, _) {
                 if (grid.gameOver) {
@@ -26,7 +29,7 @@ class GameGrid extends StatelessWidget {
                     GameOverDialog.show(
                       context,
                       grid.score,
-                      dimensions.tileSize.width,
+                      dimensions.getTileSize(context),
                       grid.saveState,
                     );
 
