@@ -54,11 +54,11 @@ class DimensionsProvider with ChangeNotifier {
   }
 
   void _updateSizes() {
-    final bool skipNotify = [
+    final int nullCount = [
       _tileSize,
       _gapSize,
       _gameSize,
-    ].any((k) => k == null);
+    ].where((k) => k == null).length;
 
     final oldValues = <Size>[
       if (_tileSize != null) Size.copy(_tileSize) else null,
@@ -84,13 +84,7 @@ class DimensionsProvider with ChangeNotifier {
       stringBuilder.add('\tgameSize (from ${oldValues[2]}, to $_gameSize)');
     }
 
-    if (!skipNotify) {
-      if (stringBuilder.isEmpty) {
-        throw Exception(
-          'Something triggered updateValues, but nothing changed',
-        );
-      }
-
+    if (nullCount > 0) {
       debugWarnNotify(stringBuilder);
       notifyListeners();
     }

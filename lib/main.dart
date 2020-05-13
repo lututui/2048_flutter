@@ -30,6 +30,28 @@ Future<void> main() async {
     }),
   ]);
 
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(
+          alignment: Alignment.center,
+          color: Colors.redAccent.shade700,
+          child: ListView(
+            children: <Widget>[
+              Text(
+                details.exceptionAsString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  };
+
   runApp(const Main());
 }
 
