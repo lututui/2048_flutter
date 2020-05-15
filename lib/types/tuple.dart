@@ -3,7 +3,7 @@ import 'dart:ui';
 abstract class Tuple<T, E> {
   factory Tuple(T a, E b) => _ImmutableTuple(a, b);
 
-  Tuple._();
+  const Tuple._();
 
   factory Tuple.mutable(T a, E b) => _MutableTuple(a, b);
 
@@ -51,7 +51,7 @@ class _MutableTuple<T, E> extends Tuple<T, E> {
 }
 
 class _ImmutableTuple<T, E> extends Tuple<T, E> {
-  _ImmutableTuple(this.a, this.b) : super._();
+  const _ImmutableTuple(this.a, this.b) : super._();
 
   factory _ImmutableTuple.copy(Tuple<T, E> other) {
     return _ImmutableTuple<T, E>(other.a, other.b);

@@ -1,11 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/types/fonts.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/util/palette.dart';
+import 'package:flutter_2048/widgets/tile_loading_indicator.dart';
+
 
 class Misc {
   Misc._();
@@ -52,13 +53,23 @@ class Misc {
     );
   }
 
-  static CircularProgressIndicator getDefaultProgressIndicator(
-    BuildContext context,
-  ) {
-    return CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(
-        Theme.of(context).colorScheme.secondary,
+  static Widget buildLoadingWidget(BuildContext context) {
+    return LayoutBuilder(
+      builder: (_, constraints) => TileLoadingIndicator.fromBoxConstraints(
+        constraints,
       ),
+    );
+  }
+
+  static Widget buildDefaultMaterialApp(
+    BuildContext context, {
+    WidgetBuilder childBuilder,
+  }) {
+    return MaterialApp(
+      theme: themes[Brightness.light],
+      darkTheme: themes[Brightness.dark],
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(body: childBuilder?.call(context) ?? Container()),
     );
   }
 }

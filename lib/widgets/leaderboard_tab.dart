@@ -13,13 +13,7 @@ class LeaderboardTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureWidget<Leaderboard>(
       computation: () => Leaderboard.fromJSON(gridSize),
-      loadingChild: (context) {
-        return Container(
-          alignment: Alignment.center,
-          child: Misc.getDefaultProgressIndicator(context),
-        );
-      },
-      onError: (error) => throw Exception('Something went wrong: $error'),
+      loadingChild: Misc.buildLoadingWidget,
       builder: (context, snapshot) {
         final Leaderboard leaderboard = snapshot.data;
 
