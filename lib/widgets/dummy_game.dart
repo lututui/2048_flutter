@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
-import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/util/misc.dart';
@@ -56,7 +55,7 @@ class DummyGame extends StatelessWidget {
       child: Consumer<DimensionsProvider>(
         builder: (context, dimensions, _) {
           final double gameSize = dimensions.getGameSize(context);
-          final int index = SizeOptions.getSizeIndexBySideLength(
+          final int index = SizeOptions.getIndexBySideLength(
             dimensions.gridSize,
           );
 

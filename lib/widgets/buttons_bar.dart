@@ -23,6 +23,11 @@ class ButtonsBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
+                SquareIconButton(
+                  onPress: _back,
+                  iconData: DialogResult.exit.icon,
+                  maxSize: 1 / 6 * gameSize,
+                ),
                 Consumer<GridProvider>(
                   builder: (context, grid, _) {
                     return SquareIconButton(
@@ -57,6 +62,10 @@ class ButtonsBar extends StatelessWidget {
         Navigator.of(context).pop();
       },
     );
+  }
+
+  void _back(BuildContext context) {
+    Navigator.of(context).pop();
   }
 
   void _undo(BuildContext context) {

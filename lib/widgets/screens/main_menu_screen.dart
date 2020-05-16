@@ -50,13 +50,13 @@ class MainMenuScreen extends StatelessWidget {
                             SizeOptions.sizes[selected].sideLength,
                           );
                         },
-                        defaultOption: SizeOptions.getSizeIndexBySideLength(
+                        defaultOption: SizeOptions.getIndexBySideLength(
                           Provider.of<DimensionsProvider>(
                             context,
                             listen: false,
                           ).gridSize,
                         ),
-                        children: SizeOptions.getChildren(context),
+                        children: SizeOptions.buildChildren(context),
                       ),
                     ],
                   ),

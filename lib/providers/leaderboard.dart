@@ -9,7 +9,7 @@ class Leaderboard {
 
   static Future<Leaderboard> fromJSON(int gridSize) async {
     final baseLeaderboardSave = SaveState.leaderboard(gridSize);
-    final baseScores = List<int>(Misc.leaderboardSize);
+    final baseScores = List<int>(Misc.kLeaderboardSize);
 
     final Map<String, dynamic> loadedData = await baseLeaderboardSave.load();
 
@@ -27,7 +27,7 @@ class Leaderboard {
   int get length => _scores.length;
 
   int insert(int score, int gridSize) {
-    for (int i = 0; i < Misc.leaderboardSize; i++) {
+    for (int i = 0; i < Misc.kLeaderboardSize; i++) {
       if ((_scores[i] ?? -1) >= score) continue;
 
       final List<int> newList = List.of(_scores);

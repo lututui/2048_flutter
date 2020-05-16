@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/types/tuple.dart';
-import 'package:flutter_2048/util/misc.dart';
 import 'package:provider/provider.dart';
 
 class TileProvider with ChangeNotifier {
-  TileProvider(
-    this._gridPos, {
-    int value,
-  }) : _value = value ?? Misc.pickSpawnValue();
+  TileProvider(this._gridPos, this._value);
 
   factory TileProvider.of(BuildContext context) {
     return context.read<TileProvider>();
@@ -66,6 +62,6 @@ class TileProvider with ChangeNotifier {
   }
 
   TileProvider clone() {
-    return TileProvider(Tuple.copy(_gridPos), value: _value);
+    return TileProvider(Tuple.copy(_gridPos), _value);
   }
 }

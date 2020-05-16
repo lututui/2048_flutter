@@ -8,6 +8,7 @@ import 'package:flutter_2048/providers/leaderboard.dart';
 import 'package:flutter_2048/providers/tile_grid.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/save_state.dart';
+import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
@@ -333,7 +334,10 @@ class GridProvider with ChangeNotifier {
   void spawnAt(Tuple<int, int> pos, {int value}) {
     _grid.setAtTuple(
       pos,
-      TileProvider(pos, value: value),
+      TileProvider(
+        pos,
+        value ?? SizeOptions.nextSpawnValueBySideLength(_grid.sideLength),
+      ),
       allowReplace: false,
     );
 
