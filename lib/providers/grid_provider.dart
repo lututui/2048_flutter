@@ -103,7 +103,7 @@ class GridProvider with ChangeNotifier {
   }
 
   set gameOver(bool gameOver) {
-    if (gameOver == gameOver) return;
+    if (this.gameOver == gameOver) return;
 
     Leaderboard.fromJSON(_grid.sideLength).then(
       (l) => l.insert(_score, _grid.sideLength),
@@ -319,6 +319,9 @@ class GridProvider with ChangeNotifier {
         );
       }
 
+      log('Every tile is done moving');
+      log('Spaces remaining: ${_grid.freeSpaces}');
+
       spawn();
     }
   }
@@ -337,6 +340,8 @@ class GridProvider with ChangeNotifier {
   }
 
   void spawnAt(Tuple<int, int> pos, {int value}) {
+    log('Spawning tile at $pos');
+
     _grid.setAtTuple(
       pos,
       TileProvider(
@@ -353,6 +358,8 @@ class GridProvider with ChangeNotifier {
         child: const MovableTile(),
       ),
     );
+
+    log('Spaces remaining: ${_grid.freeSpaces}');
   }
 
   void log(String message) {

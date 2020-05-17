@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/widgets/generic/animated_text.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:provider/provider.dart';
 
@@ -37,14 +38,57 @@ class Scoreboard extends StatelessWidget {
       },
       child: Consumer<GridProvider>(
         builder: (context, grid, _) {
-          return Text(
-            '${grid.score}',
+          return AnimatedText(
+            //key: ObjectKey(grid),
+            text: '${grid.score}',
             maxLines: 1,
             textAlign: TextAlign.right,
-            style: Theme.of(context).textTheme.headline6,
+            textStyle: Theme.of(context).textTheme.headline6,
+            tweenBuilder: ({String begin, String end}) => _ScoreTween(
+              begin: begin,
+              end: end,
+            ),
           );
         },
       ),
     );
   }
+}
+
+class _ScoreTween extends Tween<String> {
+  _ScoreTween({String begin, String end})
+      : _internalTween = IntTween(
+          begin: (begin == null) ? null : int.parse(begin),
+          end: (end == null) ? null : int.parse(end),
+        ),
+        super(begin: begin, end: end);
+
+  final IntTween _internalTween;
+
+  @override
+  set begin(String newBegin) {
+    final int newIntBegin = int.parse(newBegin);
+
+    if (newBegin != null) {
+      assert(newIntBegin != null);
+    }
+
+    _internalTween.begin = newIntBegin;
+    super.begin = newBegin;
+  }
+
+  @override
+  set end(String newEnd) {
+    final int newIntEnd = int.parse(newEnd);
+
+    if (newEnd != null) {
+      assert(newIntEnd != null);
+    }
+
+    _internalTween.end = newIntEnd;
+    super.end = newEnd;
+  }
+
+  @override
+  String lerp(double t) => _internalTween.lerp(t).toString();
 }
