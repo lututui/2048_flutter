@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
@@ -24,10 +25,7 @@ class GameScreen extends StatelessWidget {
             child: Consumer<GridProvider>(
               builder: (context, grid, _) {
                 return WillPopScope(
-                  onWillPop: () => PauseDialog.show(
-                    context,
-                    grid.saveState,
-                  ),
+                  onWillPop: () => _pause(context),
                   child: GestureDetector(
                     onVerticalDragEnd: (i) => grid.onVerticalDragEnd(i),
                     onHorizontalDragEnd: (i) => grid.onHorizontalDragEnd(i),
@@ -50,5 +48,28 @@ class GameScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<bool> _pause(BuildContext context) {
+    return PauseDialog.show(
+      context,
+      (_) => const PauseDialog(),
+    ).then((result) {
+      Future<bool> returnValue;
+
+      if (result == null || result == DialogResult.pause) {
+        returnValue = Future.value(false);
+      } else if (result == DialogResult.exit) {
+        returnValue = Future.value(true);
+      } else if (result == DialogResult.reset) {
+        GridProvider.of(context)
+            .saveState
+            .wipe()
+            .then((_) => Navigator.of(context).pushReplacementNamed('/game'));
+        returnValue = Future.value(false);
+      }
+
+      return returnValue;
+    });
   }
 }

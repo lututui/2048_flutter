@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/save_state.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 
 class PauseDialog extends StatelessWidget {
@@ -67,26 +66,10 @@ class PauseDialog extends StatelessWidget {
     Navigator.of(context).pop(DialogResult.exit);
   }
 
-  static Future<bool> show(BuildContext context, SaveState saveState) {
-    return showDialog<DialogResult>(
-      context: context,
-      builder: (_) => const PauseDialog(),
-    ).then(
-      (result) {
-        if (result != null && result == DialogResult.reset) {
-          return saveState.wipe().then(
-            (_) {
-              Navigator.of(context).pushReplacementNamed(
-                '/game',
-                arguments: saveState.gridSize,
-              );
-              return Future.value(false);
-            },
-          );
-        }
-
-        return Future.value(result == DialogResult.exit);
-      },
-    );
+  static Future<DialogResult> show(
+    BuildContext context,
+    WidgetBuilder builder,
+  ) {
+    return showDialog<DialogResult>(context: context, builder: builder);
   }
 }

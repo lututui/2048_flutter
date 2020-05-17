@@ -22,8 +22,8 @@ class TileGrid {
           growable: true,
         ).toSet();
 
-  TileGrid clone() {
-    final gridSize = sideLength;
+  factory TileGrid.clone(TileGrid other) {
+    final gridSize = other.sideLength;
 
     final copyGrid = List.generate(
       gridSize,
@@ -33,30 +33,43 @@ class TileGrid {
 
     for (int i = 0; i < gridSize; i++) {
       for (int j = 0; j < gridSize; j++) {
-        copyGrid[i][j] = _grid[i][j]?.clone();
+        copyGrid[i][j] = other._grid[i][j]?.clone();
       }
     }
 
     return TileGrid(
       copyGrid,
-      Set<Tuple<int, int>>.from(_free),
+      Set<Tuple<int, int>>.from(other._free),
     );
   }
+
+  final List<List<TileProvider>> _grid;
+  final Set<Tuple<int, int>> _free;
 
   void restore(TileGrid from, {List<Widget> tiles}) {
     assert(sideLength == from.sideLength);
 
+    final Set<Tuple<int, int>> newFree = {};
+
     for (int i = 0; i < sideLength; i++) {
       for (int j = 0; j < sideLength; j++) {
-        set(i, j, from._grid[i][j]);
+        _grid[i][j] = from._grid[i][j];
+
+        if (_grid[i][j] == null) {
+          newFree.add(Tuple(i, j));
+        }
       }
     }
+
+    _free
+      ..clear()
+      ..addAll(newFree);
 
     if (tiles == null) return;
 
     tiles.clear();
 
-    for (final entry in getEntries()) {
+    for (final entry in nonNullEntries) {
       tiles.add(
         ChangeNotifierProvider.value(
           key: ObjectKey(entry),
@@ -67,23 +80,32 @@ class TileGrid {
     }
   }
 
-  final List<List<TileProvider>> _grid;
-  final Set<Tuple<int, int>> _free;
-
   int get sideLength => _grid.length;
 
   int get flattenLength => _grid.length * _grid.length;
 
-  List<Tuple<int, int>> get spawnableSpacesList => List.unmodifiable(_free);
+  int get freeSpaces => _free.length;
 
-  int get spawnableSpaces => _free.length;
+  List<TileProvider> get nonNullEntries {
+    final List<TileProvider> result = [];
+
+    for (final line in _grid) {
+      for (final p in line) {
+        if (p == null) continue;
+
+        result.add(p);
+      }
+    }
+
+    return result;
+  }
 
   TileProvider get(int i, int j) => _grid[i][j];
 
   TileProvider getByTuple(Tuple<int, int> t) => _grid[t.a][t.b];
 
   Tuple<int, int> getRandomSpawnableSpace() {
-    return spawnableSpacesList[Misc.rand.nextInt(_free.length)];
+    return List.of(_free)[Misc.rand.nextInt(_free.length)];
   }
 
   void set(int i, int j, TileProvider p, {bool allowReplace = true}) {
@@ -116,10 +138,6 @@ class TileGrid {
     set(t.a, t.b, null);
   }
 
-  /*
-  Exporters
-   */
-
   Map<String, dynamic> toJSON() {
     return {
       'grid': _grid
@@ -127,10 +145,6 @@ class TileGrid {
           .toList(),
     };
   }
-
-  /*
-  Logic
-   */
 
   bool testGameOver() {
     for (int i = 0; i < sideLength; i++) {
@@ -169,19 +183,5 @@ class TileGrid {
 
   void log(String message) {
     Logger.log<TileGrid>(message, instance: this);
-  }
-
-  List<TileProvider> getEntries() {
-    final List<TileProvider> result = [];
-
-    for (final line in _grid) {
-      for (final p in line) {
-        if (p == null) continue;
-
-        result.add(p);
-      }
-    }
-
-    return result;
   }
 }

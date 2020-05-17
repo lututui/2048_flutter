@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
@@ -33,6 +32,8 @@ class GridProvider with ChangeNotifier {
   final List<TileProvider> _pendingRemoval = [];
   final List<Widget> _tiles = [];
   final TileGrid _grid;
+
+  bool shownGameOver = false;
 
   bool _pendingSpawn = false;
   bool _gameOver = false;
@@ -68,7 +69,7 @@ class GridProvider with ChangeNotifier {
       }
     }
 
-    if (baseGrid._grid.spawnableSpaces <= 0) {
+    if (baseGrid._grid.freeSpaces <= 0) {
       baseGrid._gameOver = baseGrid._grid.testGameOver();
     }
 
@@ -87,7 +88,7 @@ class GridProvider with ChangeNotifier {
 
   bool get gameOver => _gameOver;
 
-  bool get canUndo => !_gameOver && _previousState != null;
+  bool get canUndo => !gameOver && _previousState != null;
 
   /*
   Setters
@@ -97,10 +98,12 @@ class GridProvider with ChangeNotifier {
     if (_score == value) return;
     _score = value;
     notifyListeners();
+
+    log('New score: $_score');
   }
 
   set gameOver(bool gameOver) {
-    if (_gameOver == gameOver) return;
+    if (gameOver == gameOver) return;
 
     Leaderboard.fromJSON(_grid.sideLength).then(
       (l) => l.insert(_score, _grid.sideLength),
@@ -108,6 +111,8 @@ class GridProvider with ChangeNotifier {
 
     _gameOver = gameOver;
     notifyListeners();
+
+    log('Game over!');
   }
 
   /*
@@ -115,10 +120,10 @@ class GridProvider with ChangeNotifier {
    */
 
   void spawn({int amount = 1}) {
-    if (_grid.spawnableSpaces < amount) {
+    if (_grid.freeSpaces < amount) {
       throw Exception(
         'Tried to spawn $amount but only '
-        '${_grid.spawnableSpaces} spaces are available',
+        '${_grid.freeSpaces} spaces are available',
       );
     }
 
@@ -130,13 +135,13 @@ class GridProvider with ChangeNotifier {
     _pendingSpawn = false;
     notifyListeners();
 
-    if (_grid.spawnableSpaces > 0) return;
+    if (_grid.freeSpaces > 0) return;
 
-    _gameOver = _grid.testGameOver();
+    gameOver = _grid.testGameOver();
   }
 
   void onVerticalDragEnd(DragEndDetails details) {
-    if (_gameOver) return;
+    if (gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dy < 0
         ? SwipeGestureType.up
@@ -146,7 +151,7 @@ class GridProvider with ChangeNotifier {
   }
 
   void onHorizontalDragEnd(DragEndDetails details) {
-    if (_gameOver) return;
+    if (gameOver) return;
 
     final SwipeGestureType type = details.velocity.pixelsPerSecond.dx < 0
         ? SwipeGestureType.left
@@ -158,7 +163,7 @@ class GridProvider with ChangeNotifier {
   void swipe(SwipeGestureType type) {
     if (_pendingSpawn || _moving > 0) return;
 
-    final GameState gameStateBackup = GameState(_grid.clone(), _score);
+    final GameState gameStateBackup = GameState(TileGrid.clone(_grid), _score);
     final int gridSize = _grid.sideLength;
 
     int somethingMoved = 0;
@@ -356,6 +361,8 @@ class GridProvider with ChangeNotifier {
 
   void undo() {
     if (!canUndo) return;
+
+    log('Undo requested');
 
     _grid.restore(_previousState.grid, tiles: _tiles);
     notifyListeners();

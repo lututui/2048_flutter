@@ -44,7 +44,7 @@ class MainApp extends StatelessWidget {
 
               if (settings.name == '/leaderboard') {
                 return MainMenuRouteBuilder(
-                  pageBuilder: (context) => LeaderboardScreen(),
+                  pageBuilder: (context) => const LeaderboardScreen(),
                 );
               }
 

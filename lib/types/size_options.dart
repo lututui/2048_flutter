@@ -42,7 +42,7 @@ class SizeOptions {
   static const List<SizeOptions> sizes = [size3x3, size4x4, size5x5, size7x7];
 
   static final Map<int, int> _indexBySideLength = {
-    for (var sizeOption in sizes)
+    for (final sizeOption in sizes)
       sizeOption.sideLength: sizes.indexOf(sizeOption)
   };
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/save_state.dart';
+import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
@@ -105,34 +105,18 @@ class GameOverDialog extends StatelessWidget {
     Navigator.of(context).pop(DialogResult.exit);
   }
 
-  static Future<void> show(
+  static Future<DialogResult> show(
     BuildContext context,
-    int score,
-    double buttonSize,
-    SaveState saveState,
-  ) async {
+    WidgetBuilder builder,
+  ) {
     return showDialog<DialogResult>(
       context: context,
       barrierDismissible: true,
-      builder: (c) {
-        return GameOverDialog(
-          finalScore: score,
-          maxButtonSize: buttonSize,
-        );
-      },
-    ).then((result) async {
-      if (result == null || result == DialogResult.pause) return;
+      builder: builder,
+    ).then((value) => value ?? DialogResult.exit);
+  }
 
-      if (result == DialogResult.reset) {
-        return saveState.wipe().then((_) {
-          Navigator.of(context).pushReplacementNamed(
-            '/game',
-            arguments: saveState.gridSize,
-          );
-        });
-      }
-
-      Navigator.of(context).pop();
-    });
+  static void log(String message) {
+    Logger.log<GameOverDialog>(message);
   }
 }

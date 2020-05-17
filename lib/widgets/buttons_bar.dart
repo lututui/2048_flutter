@@ -54,14 +54,19 @@ class ButtonsBar extends StatelessWidget {
   void _pause(BuildContext context) {
     PauseDialog.show(
       context,
-      GridProvider.of(context).saveState,
-    ).then(
-      (bool shouldPop) {
-        if (!shouldPop) return;
+      (_) => const PauseDialog(),
+    ).then((result) {
+      if (result == null || result == DialogResult.pause) return;
 
+      if (result == DialogResult.exit) {
         Navigator.of(context).pop();
-      },
-    );
+      } else if (result == DialogResult.reset) {
+        GridProvider.of(context)
+            .saveState
+            .wipe()
+            .then((_) => Navigator.of(context).pushReplacementNamed('/game'));
+      }
+    });
   }
 
   void _back(BuildContext context) {

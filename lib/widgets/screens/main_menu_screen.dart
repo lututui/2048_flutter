@@ -31,7 +31,7 @@ class MainMenuScreen extends StatelessWidget {
                 bottom: mediaQuery.padding.bottom,
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,

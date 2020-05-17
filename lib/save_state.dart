@@ -23,6 +23,12 @@ class SaveState {
   final int gridSize;
   final int version;
 
+
+  @override
+  String toString() {
+    return 'SaveState($prefix, version: $version, size: $gridSize)';
+  }
+
   static Future<Directory> get dir async => getApplicationDocumentsDirectory();
 
   Future<File> save(Map<String, dynamic> data) async {

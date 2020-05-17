@@ -3,15 +3,17 @@ import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/widgets/leaderboard_tab.dart';
 
 class LeaderboardScreen extends StatelessWidget {
-  LeaderboardScreen({Key key}) : super(key: key);
+  const LeaderboardScreen({Key key}) : super(key: key);
 
-  final List<Tab> _tabsInTabBar = SizeOptions.sizes
-      .map<Tab>((size) => Tab(text: size.description))
-      .toList();
+  static final List<Tab> _tabsInTabBar = [
+    for (final sizeOption in SizeOptions.sizes)
+      Tab(text: sizeOption.description)
+  ];
 
-  final List<LeaderboardTab> _tabBarView = SizeOptions.sizes
-      .map((size) => LeaderboardTab(gridSize: size.sideLength))
-      .toList();
+  static final List<LeaderboardTab> _tabBarView = [
+    for (final sizeOption in SizeOptions.sizes)
+      LeaderboardTab(gridSize: sizeOption.sideLength)
+  ];
 
   @override
   Widget build(BuildContext context) {
