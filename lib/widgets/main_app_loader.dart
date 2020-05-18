@@ -4,6 +4,7 @@ import 'package:flutter_2048/providers/settings_provider.dart';
 import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/main_app.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainAppLoader extends StatelessWidget {
@@ -19,9 +20,18 @@ class MainAppLoader extends StatelessWidget {
           childBuilder: Misc.buildDefaultMaterialApp,
         );
       },
-      builder: (context, snapshot) => MainApp(
-        settings: SettingsProvider.load(snapshot.data),
-        dimensions: DimensionsProvider(),
+      builder: (context, snapshot) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => SettingsProvider.load(snapshot.data),
+            lazy: false,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => DimensionsProvider(),
+            lazy: false,
+          ),
+        ],
+        child: const MainApp(),
       ),
     );
   }

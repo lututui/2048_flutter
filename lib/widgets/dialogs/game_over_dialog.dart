@@ -113,7 +113,7 @@ class GameOverDialog extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       builder: builder,
-    ).then((value) => value ?? DialogResult.exit);
+    ).then((value) => value ?? DialogResult.pause);
   }
 
   static void log(String message) {

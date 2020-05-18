@@ -33,10 +33,6 @@ class SettingsProvider with ChangeNotifier {
     });
   }
 
-  ChangeNotifierProvider<SettingsProvider> get changeNotifierProvider {
-    return ChangeNotifierProvider.value(value: this);
-  }
-
   bool get darkMode => _darkMode;
 
   set darkMode(bool value) {

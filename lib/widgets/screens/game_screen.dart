@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
+import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/buttons_bar.dart';
 import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
@@ -27,8 +28,16 @@ class GameScreen extends StatelessWidget {
                 return WillPopScope(
                   onWillPop: () => _pause(context),
                   child: GestureDetector(
-                    onVerticalDragEnd: (i) => grid.onVerticalDragEnd(i),
-                    onHorizontalDragEnd: (i) => grid.onHorizontalDragEnd(i),
+                    onVerticalDragEnd: (details) => grid.swipe(
+                      details.velocity.pixelsPerSecond.dy < 0
+                          ? SwipeGestureType.up
+                          : SwipeGestureType.down,
+                    ),
+                    onHorizontalDragEnd: (details) => grid.swipe(
+                      details.velocity.pixelsPerSecond.dx < 0
+                          ? SwipeGestureType.left
+                          : SwipeGestureType.right,
+                    ),
                     behavior: HitTestBehavior.opaque,
                     child: Center(
                       child: Column(

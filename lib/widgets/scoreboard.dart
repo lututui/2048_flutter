@@ -39,7 +39,7 @@ class Scoreboard extends StatelessWidget {
       child: Consumer<GridProvider>(
         builder: (context, grid, _) {
           return AnimatedText(
-            //key: ObjectKey(grid),
+            key: ObjectKey(grid),
             text: '${grid.score}',
             maxLines: 1,
             textAlign: TextAlign.right,

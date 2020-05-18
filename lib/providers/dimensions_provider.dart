@@ -23,10 +23,6 @@ class DimensionsProvider with ChangeNotifier {
     return context.read<DimensionsProvider>().gridSize = newSize;
   }
 
-  ChangeNotifierProvider<DimensionsProvider> get changeNotifierProvider {
-    return ChangeNotifierProvider.value(value: this);
-  }
-
   void log(String message) {
     Logger.log<DimensionsProvider>(message);
   }

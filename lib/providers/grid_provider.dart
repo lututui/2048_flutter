@@ -78,10 +78,6 @@ class GridProvider with ChangeNotifier {
     return baseGrid;
   }
 
-  /*
-  Getters
-   */
-
   List<Widget> get tiles => _tiles;
 
   int get score => _score;
@@ -89,10 +85,6 @@ class GridProvider with ChangeNotifier {
   bool get gameOver => _gameOver;
 
   bool get canUndo => !gameOver && _previousState != null;
-
-  /*
-  Setters
-   */
 
   set score(int value) {
     if (_score == value) return;
@@ -115,10 +107,6 @@ class GridProvider with ChangeNotifier {
     log('Game over!');
   }
 
-  /*
-  Logic
-   */
-
   void spawn({int amount = 1}) {
     if (_grid.freeSpaces < amount) {
       throw Exception(
@@ -140,28 +128,8 @@ class GridProvider with ChangeNotifier {
     gameOver = _grid.testGameOver();
   }
 
-  void onVerticalDragEnd(DragEndDetails details) {
-    if (gameOver) return;
-
-    final SwipeGestureType type = details.velocity.pixelsPerSecond.dy < 0
-        ? SwipeGestureType.up
-        : SwipeGestureType.down;
-
-    swipe(type);
-  }
-
-  void onHorizontalDragEnd(DragEndDetails details) {
-    if (gameOver) return;
-
-    final SwipeGestureType type = details.velocity.pixelsPerSecond.dx < 0
-        ? SwipeGestureType.left
-        : SwipeGestureType.right;
-
-    swipe(type);
-  }
-
   void swipe(SwipeGestureType type) {
-    if (_pendingSpawn || _moving > 0) return;
+    if (gameOver || _pendingSpawn || _moving > 0) return;
 
     final GameState gameStateBackup = GameState(TileGrid.clone(_grid), _score);
     final int gridSize = _grid.sideLength;
@@ -188,53 +156,25 @@ class GridProvider with ChangeNotifier {
           continue;
         }
 
-        final Tuple<int, int> destination =
-            type.isVertical ? Tuple(newIndex, i) : Tuple(i, newIndex);
+        final TileProvider mergeTo = _grid.getByTuple(previous);
 
-        if (_grid.getByTuple(previous).value == tile.value) {
-          final Tuple<int, int> oldPosA = Tuple.copy(previous);
-          final Tuple<int, int> oldPosB = Tuple.copy(tile.gridPos);
-
-          scoreAdd += 1 << (tile.value + 1);
-
-          log('Merging ${_grid.getByTuple(previous)} and $tile');
-
-          _grid.getByTuple(previous).gridPos = destination;
-          tile.gridPos = destination;
-
-          log('Marking ${_grid.getByTuple(previous)} to update value');
-          _grid.getByTuple(previous).pendingValueUpdate = true;
-
-          log('Marking $tile for deletion');
-          _pendingRemoval.add(tile);
-
-          _grid.setAtTuple(
-            destination,
-            _grid.getByTuple(previous),
+        if (mergeTo.value == tile.value) {
+          final mergeResult = _grid.swipeWithMerge(
+            i,
+            newIndex,
+            type,
+            mergeTo,
+            tile,
+            _pendingRemoval,
           );
 
-          if (oldPosA != destination) {
-            somethingMoved++;
-            _grid.clearAtTuple(oldPosA);
-          }
-
-          if (oldPosB != destination) {
-            somethingMoved++;
-            _grid.clearAtTuple(oldPosB);
-          }
+          somethingMoved += mergeResult.a;
+          scoreAdd += mergeResult.b;
 
           previous = null;
         } else {
-          if (previous != destination) {
+          if (_grid.swipeWithoutMerge(i, newIndex, type, previous)) {
             somethingMoved++;
-
-            _grid.setAtTuple(
-              destination,
-              _grid.getByTuple(previous),
-            );
-
-            _grid.getByTuple(destination).gridPos = destination;
-            _grid.clearAtTuple(previous);
           }
 
           previous = Tuple(idx1, idx2);
@@ -243,21 +183,9 @@ class GridProvider with ChangeNotifier {
         newIndex += type.towardsOrigin ? 1 : -1;
       }
 
-      if (previous != null) {
-        final Tuple<int, int> destination =
-            type.isVertical ? Tuple(newIndex, i) : Tuple(i, newIndex);
-
-        if (previous != destination) {
-          somethingMoved++;
-
-          _grid.setAtTuple(
-            destination,
-            _grid.getByTuple(previous),
-          );
-
-          _grid.getByTuple(destination).gridPos = destination;
-          _grid.clearAtTuple(previous);
-        }
+      if (previous != null &&
+          _grid.swipeWithoutMerge(i, newIndex, type, previous)) {
+        somethingMoved++;
       }
     }
 
@@ -281,8 +209,10 @@ class GridProvider with ChangeNotifier {
 
     _moving--;
 
+    log('$tp finished moving');
+
     if (_pendingRemoval.remove(tp)) {
-      final List<TileProvider> matchingTiles = _tiles
+      final matchingTiles = _tiles
           .map((provider) => (provider.key as ObjectKey).value as TileProvider)
           .where((other) => other == tp || other.gridPos == tp.gridPos)
           .toList();

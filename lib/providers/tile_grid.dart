@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
+import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
@@ -179,6 +180,69 @@ class TileGrid {
     }
 
     return true;
+  }
+
+  bool swipeWithoutMerge(
+    int i,
+    int j,
+    SwipeGestureType type,
+    Tuple<int, int> origin,
+  ) {
+    final destination = type.isVertical ? Tuple(j, i) : Tuple(i, j);
+
+    if (origin != destination) {
+      setAtTuple(destination, getByTuple(origin));
+
+      getByTuple(destination).gridPos = destination;
+      clearAtTuple(origin);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  Tuple<int, int> swipeWithMerge(
+    int i,
+    int j,
+    SwipeGestureType type,
+    TileProvider mergeTo,
+    TileProvider toBeMerged,
+    List<TileProvider> toBeRemoved,
+  ) {
+    final destination = type.isVertical ? Tuple(j, i) : Tuple(i, j);
+    final Tuple<int, int> oldPosA = Tuple.copy(mergeTo.gridPos);
+    final Tuple<int, int> oldPosB = Tuple.copy(toBeMerged.gridPos);
+    final int scoreAdd = 1 << (toBeMerged.value + 1);
+
+    log('Merging $mergeTo and $toBeMerged');
+
+    mergeTo.gridPos = destination;
+    toBeMerged.gridPos = destination;
+
+    log('Marking $mergeTo to update value');
+    mergeTo.pendingValueUpdate = true;
+
+    log('Marking $toBeMerged for deletion');
+    toBeRemoved.add(toBeMerged);
+
+    setAtTuple(destination, mergeTo);
+
+    int tilesMoved = 0;
+
+    if (oldPosA != destination) {
+      tilesMoved++;
+      clearAtTuple(oldPosA);
+    }
+
+    if (oldPosB != destination) {
+      tilesMoved++;
+      clearAtTuple(oldPosB);
+    }
+
+    assert(tilesMoved >= 1);
+
+    return Tuple(tilesMoved, scoreAdd);
   }
 
   void log(String message) {
