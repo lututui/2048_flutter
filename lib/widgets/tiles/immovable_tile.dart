@@ -31,10 +31,10 @@ class ImmovableTile extends StatelessWidget {
           child: Consumer<SettingsProvider>(
             builder: (context, settings, _) {
               return UnplacedTile(
+                animate: false,
                 color: settings.palette.getTileColor(value),
-                borderWidth: gapSize / 2.0,
-                height: tileSize,
-                width: tileSize,
+                borderSize: gapSize / 2.0,
+                size: tileSize,
                 text: '${1 << value}',
               );
             },

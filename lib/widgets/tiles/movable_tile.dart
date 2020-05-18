@@ -37,9 +37,8 @@ class MovableTile extends StatelessWidget {
             builder: (context, settings, _) {
               return UnplacedTile(
                 color: settings.palette.getTileColor(tileContext.value),
-                borderWidth: gapSize / 2.0,
-                height: tileSize,
-                width: tileSize,
+                borderSize: gapSize / 2.0,
+                size: tileSize,
                 text: '${1 << tileContext.value}',
               );
             },

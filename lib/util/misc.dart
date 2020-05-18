@@ -58,4 +58,49 @@ class Misc {
       home: Scaffold(body: childBuilder?.call(context) ?? Container()),
     );
   }
+
+  static Future<T> showDialog<T>({
+    @required BuildContext context,
+    @required WidgetBuilder builder,
+    bool barrierDismissible = true,
+    bool useRootNavigator = true,
+    Duration duration = const Duration(milliseconds: 300),
+    RouteSettings routeSettings,
+  }) {
+    assert(debugCheckHasMaterialLocalizations(context));
+
+    return showGeneralDialog(
+      context: context,
+      pageBuilder: (_, __, ___) {
+        return SafeArea(
+          child: Builder(
+            builder: (context) {
+              final themeData = Theme.of(context, shadowThemeOnly: true);
+
+              if (themeData == null) {
+                return Builder(builder: builder);
+              }
+
+              return Theme(data: themeData, child: Builder(builder: builder));
+            },
+          ),
+        );
+      },
+      barrierDismissible: barrierDismissible ?? true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: duration ?? const Duration(milliseconds: 300),
+      transitionBuilder: (context, inAnimation, _, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: inAnimation,
+            curve: Curves.easeOut,
+          ),
+          child: child,
+        );
+      },
+      useRootNavigator: useRootNavigator ?? true,
+      routeSettings: routeSettings,
+    );
+  }
 }

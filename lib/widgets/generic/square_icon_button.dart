@@ -9,6 +9,7 @@ class SquareIconButton extends StatelessWidget {
     @required this.onPress,
     @required this.iconData,
     @required this.maxSize,
+    this.padding = const EdgeInsets.all(8.0),
     this.color,
     this.borderColor,
     this.borderWidth = 3.0,
@@ -23,34 +24,36 @@ class SquareIconButton extends StatelessWidget {
   final double maxSize;
   final double borderWidth;
   final bool enabled;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
-    final Color backgroundColor =
-        color ?? Theme.of(context).colorScheme.primary;
-    final Color borderColor =
-        this.borderColor ?? Theme.of(context).colorScheme.primaryVariant;
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = color ?? colorScheme.primary;
+    final borderColor = this.borderColor ?? colorScheme.primaryVariant;
 
-    return Container(
-      width: maxSize,
-      height: maxSize,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        border: Border.fromBorderSide(
-          BorderSide(color: borderColor, width: borderWidth),
+    return Padding(
+      padding: padding,
+      child: Container(
+        constraints: BoxConstraints.loose(Size.square(maxSize)),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border.fromBorderSide(
+            BorderSide(color: borderColor, width: borderWidth),
+          ),
         ),
-      ),
-      child: AspectRatio(
-        aspectRatio: 1 / 1,
-        child: IconButton(
-          onPressed: enabled ? () => onPress(context) : null,
-          icon: LayoutBuilder(
-            builder: (context, constraints) {
-              return Icon(
-                iconData,
-                size: min(constraints.maxHeight, constraints.maxWidth),
-              );
-            },
+        child: AspectRatio(
+          aspectRatio: 1 / 1,
+          child: IconButton(
+            onPressed: enabled ? () => onPress(context) : null,
+            icon: LayoutBuilder(
+              builder: (context, constraints) {
+                return Icon(
+                  iconData,
+                  size: min(constraints.maxHeight, constraints.maxWidth),
+                );
+              },
+            ),
           ),
         ),
       ),

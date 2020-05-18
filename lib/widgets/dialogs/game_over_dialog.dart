@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
+import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
 class GameOverDialog extends StatelessWidget {
@@ -15,11 +16,13 @@ class GameOverDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+
     return SimpleDialog(
       titlePadding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 24.0),
       contentPadding: EdgeInsets.zero,
       title: Center(
-        child: Text('Game Over', style: Theme.of(context).textTheme.headline4),
+        child: Text('Game Over', style: themeData.textTheme.headline4),
       ),
       children: <Widget>[
         Row(
@@ -28,7 +31,7 @@ class GameOverDialog extends StatelessWidget {
             Flexible(
               child: Text(
                 'Score:',
-                style: Theme.of(context).textTheme.headline6,
+                style: themeData.textTheme.headline6,
               ),
             ),
             Expanded(
@@ -36,7 +39,7 @@ class GameOverDialog extends StatelessWidget {
                 '$finalScore',
                 maxLines: 1,
                 textAlign: TextAlign.right,
-                style: Theme.of(context).textTheme.headline6,
+                style: themeData.textTheme.headline6,
               ),
             ),
           ],
@@ -44,7 +47,7 @@ class GameOverDialog extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
           child: Divider(
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(0x33),
+            color: themeData.colorScheme.onSurface.withAlpha(0x33),
           ),
         ),
         Padding(
@@ -58,29 +61,20 @@ class GameOverDialog extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SquareIconButton(
-                          maxSize: maxButtonSize,
-                          iconData: DialogResult.exit.icon,
-                          onPress: _exit,
-                        ),
+                      SquareIconButton(
+                        maxSize: maxButtonSize,
+                        iconData: DialogResult.exit.icon,
+                        onPress: _exit,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SquareIconButton(
-                          maxSize: maxButtonSize,
-                          iconData: DialogResult.reset.icon,
-                          onPress: _reset,
-                        ),
+                      SquareIconButton(
+                        maxSize: maxButtonSize,
+                        iconData: DialogResult.reset.icon,
+                        onPress: _reset,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SquareIconButton(
-                          maxSize: maxButtonSize,
-                          iconData: DialogResult.pause.icon,
-                          onPress: _resume,
-                        ),
+                      SquareIconButton(
+                        maxSize: maxButtonSize,
+                        iconData: DialogResult.pause.icon,
+                        onPress: _resume,
                       ),
                     ],
                   ),
@@ -109,11 +103,11 @@ class GameOverDialog extends StatelessWidget {
     BuildContext context,
     WidgetBuilder builder,
   ) {
-    return showDialog<DialogResult>(
-      context: context,
-      barrierDismissible: true,
-      builder: builder,
-    ).then((value) => value ?? DialogResult.pause);
+    return Future.delayed(
+      const Duration(seconds: 1),
+      () => Misc.showDialog<DialogResult>(context: context, builder: builder)
+          .then((value) => value ?? DialogResult.pause),
+    );
   }
 
   static void log(String message) {

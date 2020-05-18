@@ -65,11 +65,4 @@ class PauseDialog extends StatelessWidget {
   void _exit(BuildContext context) {
     Navigator.of(context).pop(DialogResult.exit);
   }
-
-  static Future<DialogResult> show(
-    BuildContext context,
-    WidgetBuilder builder,
-  ) {
-    return showDialog<DialogResult>(context: context, builder: builder);
-  }
 }

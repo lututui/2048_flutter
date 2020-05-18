@@ -5,7 +5,13 @@ import 'package:flutter_2048/logger.dart';
 import 'package:provider/provider.dart';
 
 class DimensionsProvider with ChangeNotifier {
-  DimensionsProvider();
+  factory DimensionsProvider() {
+    return _instance ??= DimensionsProvider._();
+  }
+
+  DimensionsProvider._();
+
+  static DimensionsProvider _instance;
 
   static const int _defaultGridSize = 4;
 
@@ -25,12 +31,6 @@ class DimensionsProvider with ChangeNotifier {
 
   void log(String message) {
     Logger.log<DimensionsProvider>(message);
-  }
-
-  double getAspectRatio(BuildContext context) {
-    updateScreenSize(MediaQuery.of(context).size);
-
-    return _gameSize / (_tileSize + _gridSize * _gapSize);
   }
 
   double getGapSize(BuildContext context) {

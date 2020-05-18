@@ -1,21 +1,41 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_2048/types/game_palette.dart';
 import 'package:flutter_2048/util/palette.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsProvider with ChangeNotifier {
-  SettingsProvider.load(SharedPreferences preferences) {
-    _palette = Palette.getGamePaletteByName(preferences.getString('palette'));
-    _darkMode = preferences.getBool('darkMode') ?? false;
-    _autoReset = preferences.getBool('autoReset') ?? true;
+  SettingsProvider._(this._palette, this._darkMode, this._autoReset);
+
+  factory SettingsProvider.load(SharedPreferences preferences) {
+    final loadedPalette = Palette.getGamePaletteByName(
+      preferences.getString('palette'),
+    );
+    final loadedDarkMode = preferences.getBool('darkMode') ?? false;
+    final loadedAutoReset = preferences.getBool('autoReset') ?? true;
+
+    if (_instance == null) {
+      return _instance ??= SettingsProvider._(
+        loadedPalette,
+        loadedDarkMode,
+        loadedAutoReset,
+      );
+    }
+
+    _instance.palette = loadedPalette;
+    _instance.darkMode = loadedDarkMode;
+    _instance.autoReset = loadedAutoReset;
+
+    return _instance;
   }
+
+  static SettingsProvider _instance;
 
   GamePalette _palette = GamePalette.classic;
   bool _darkMode;
   bool _autoReset = true;
 
-  void _savePreference(String name, dynamic value) {
+  static void _savePreference(String name, dynamic value) {
     SharedPreferences.getInstance().then((preferences) {
       if (value is bool) {
         preferences.setBool(name, value);

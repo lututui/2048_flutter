@@ -20,19 +20,19 @@ class MainAppLoader extends StatelessWidget {
           childBuilder: Misc.buildDefaultMaterialApp,
         );
       },
-      builder: (context, snapshot) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) => SettingsProvider.load(snapshot.data),
-            lazy: false,
-          ),
-          ChangeNotifierProvider(
-            create: (_) => DimensionsProvider(),
-            lazy: false,
-          ),
-        ],
-        child: const MainApp(),
-      ),
+      builder: (context, snapshot) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider<SettingsProvider>.value(
+              value: SettingsProvider.load(snapshot.data),
+            ),
+            ChangeNotifierProvider<DimensionsProvider>.value(
+              value: DimensionsProvider(),
+            ),
+          ],
+          child: const MainApp(),
+        );
+      },
     );
   }
 }

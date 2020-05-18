@@ -145,10 +145,10 @@ class _LoadingAnimationState extends State<_LoadingAnimation>
         return Transform.rotate(angle: _animation.value, child: child);
       },
       child: UnplacedTile(
+        animate: false,
         color: widget.tileColor,
-        borderWidth: widget.constraint / 16,
-        height: widget.constraint,
-        width: widget.constraint,
+        borderSize: widget.constraint / 16,
+        size: widget.constraint,
         text: '2048',
       ),
     );

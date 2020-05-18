@@ -60,9 +60,9 @@ class GameScreen extends StatelessWidget {
   }
 
   Future<bool> _pause(BuildContext context) {
-    return PauseDialog.show(
-      context,
-      (_) => const PauseDialog(),
+    return Misc.showDialog<DialogResult>(
+      context: context,
+      builder: (_) => const PauseDialog(),
     ).then((result) {
       Future<bool> returnValue;
 
