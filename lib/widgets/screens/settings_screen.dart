@@ -3,7 +3,9 @@ import 'package:flutter_2048/providers/settings_provider.dart';
 import 'package:flutter_2048/widgets/generic/theme_switch.dart';
 import 'package:provider/provider.dart';
 
+/// User preferences screen widget
 class SettingsScreen extends StatelessWidget {
+  /// Creates a new settings screen widget
   const SettingsScreen({Key key}) : super(key: key);
 
   @override

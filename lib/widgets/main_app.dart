@@ -9,7 +9,9 @@ import 'package:flutter_2048/widgets/screens/palette_selection_screen.dart';
 import 'package:flutter_2048/widgets/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 
+/// The main app widget, loaded by [MainAppLoader]
 class MainApp extends StatelessWidget {
+  /// Creates a new app widget
   const MainApp({Key key}) : super(key: key);
 
   @override

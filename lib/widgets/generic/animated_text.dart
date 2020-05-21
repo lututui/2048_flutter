@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// A widget that implicitly animates between two texts
 class AnimatedText extends StatefulWidget {
+  /// Creates a new animated text widget
+  ///
+  /// [tweenBuilder] is a function that returns a tween to animate [text]
   const AnimatedText({
     @required this.text,
     @required this.tweenBuilder,
@@ -22,23 +26,55 @@ class AnimatedText extends StatefulWidget {
     Key key,
   }) : super(key: key);
 
+  /// Function to build the tween between two texts
   final Tween<String> Function({String begin, String end}) tweenBuilder;
+
+  /// Animation duration
   final Duration duration;
+
+  /// Animation end callback
   final VoidCallback onEnd;
+
+  /// Animation curve
   final Curve curve;
 
+  /// See [Text.data]
   final String text;
+
+  /// See [Text.style]
   final TextStyle textStyle;
+
+  /// See [Text.strutStyle]
   final StrutStyle strutStyle;
+
+  /// See [Text.textAlign]
   final TextAlign textAlign;
+
+  /// See [Text.textDirection]
   final TextDirection textDirection;
+
+  /// See [Text.locale]
   final Locale locale;
+
+  /// See [Text.softWrap]
   final bool softWrap;
+
+  /// See [Text.overflow]
   final TextOverflow overflow;
+
+  /// See [Text.textScaleFactor]
   final double textScaleFactor;
+
+  /// See [Text.maxLines]
   final int maxLines;
+
+  /// See [Text.semanticsLabel]
   final String semanticsLabel;
+
+  /// See [Text.textWidthBasis]
   final TextWidthBasis textWidthBasis;
+
+  /// See [Text.textHeightBehavior]
   final TextHeightBehavior textHeightBehavior;
 
   @override
@@ -72,7 +108,7 @@ class _AnimatedTextState extends State<AnimatedText>
       curve: widget.curve,
       duration: widget.duration,
       onEnd: widget.onEnd,
-      builder: (context, value, child) {
+      builder: (context, value, _) {
         return Text(
           value,
           style: widget.textStyle,

@@ -2,14 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
-import 'package:provider/provider.dart';
 
-class DimensionsProvider with ChangeNotifier {
-  factory DimensionsProvider() {
-    return _instance ??= DimensionsProvider._();
+/// Calculates and provides the dimensions for the main game screen
+class DimensionsProvider with ChangeNotifier, WidgetsBindingObserver {
+  /// Provides the singleton instance for this provider
+  factory DimensionsProvider() => _instance ??= DimensionsProvider._();
+
+  DimensionsProvider._() {
+    WidgetsBinding.instance.addObserver(this);
+
+    _updateScreenSize();
   }
-
-  DimensionsProvider._();
 
   static DimensionsProvider _instance;
 
@@ -21,56 +24,37 @@ class DimensionsProvider with ChangeNotifier {
   double _gameSize;
   int _gridSize;
 
-  static int getGridSize(BuildContext context) {
-    return context.read<DimensionsProvider>().gridSize;
-  }
-
-  static int setGridSize(BuildContext context, int newSize) {
-    return context.read<DimensionsProvider>().gridSize = newSize;
-  }
-
-  void log(String message) {
+  void _log(String message) {
     Logger.log<DimensionsProvider>(message);
   }
 
-  double getGapSize(BuildContext context) {
-    updateScreenSize(MediaQuery.of(context).size);
+  /// The space between two tiles
+  double get gapSize => _gapSize;
 
-    return _gapSize;
-  }
+  /// The space taken by the game
+  double get gameSize => _gameSize;
 
-  double getGameSize(BuildContext context) {
-    updateScreenSize(MediaQuery.of(context).size);
+  /// The space taken by a game tile
+  double get tileSize => _tileSize;
 
-    return _gameSize;
-  }
-
-  double getTileSize(BuildContext context) {
-    updateScreenSize(MediaQuery.of(context).size);
-
-    return _tileSize;
-  }
-
-  Size getScreenSize(BuildContext context) {
-    updateScreenSize(MediaQuery.of(context).size);
-
-    return _screenSize;
-  }
-
+  /// The current grid size
   int get gridSize => _gridSize ??= _defaultGridSize;
 
   set gridSize(int value) {
     _gridSize = value;
 
-    log('Changed gridSize to $_gridSize');
+    _log('Changed gridSize to $_gridSize');
 
     if (_screenSize != null) {
-      log('Updating other sizes');
+      _log('Updating other sizes');
       _updateSizes();
     } else {
       notifyListeners();
     }
   }
+
+  @override
+  void didChangeMetrics() => _updateScreenSize;
 
   void _updateSizes() {
     final double newTileSize =
@@ -117,7 +101,7 @@ class DimensionsProvider with ChangeNotifier {
     }
 
     if (willNotify) {
-      log(
+      _log(
         'Triggered a notification to listeners.\n'
         '${stringBuilder.join(',\n')}',
       );
@@ -126,7 +110,10 @@ class DimensionsProvider with ChangeNotifier {
     }
   }
 
-  bool updateScreenSize(Size newSize) {
+  bool _updateScreenSize() {
+    final newSize = WidgetsBinding.instance.window.physicalSize /
+        WidgetsBinding.instance.window.devicePixelRatio;
+
     if (_screenSize != newSize || _gameSize == null) {
       _screenSize = newSize;
       _updateSizes();

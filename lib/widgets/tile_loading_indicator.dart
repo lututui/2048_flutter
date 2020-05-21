@@ -4,13 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/types/tile_color.dart';
 import 'package:flutter_2048/widgets/tiles/unplaced_tile.dart';
 
+/// A rotating tile widget that indicates loading
 class TileLoadingIndicator extends StatelessWidget {
+  /// Creates a new tile loading indicator widget
   const TileLoadingIndicator({
     @required this.constraint,
     this.customController,
     Key key,
   }) : super(key: key);
 
+  /// Creates a new tile loading indicator widget using a [BoxConstraints] to
+  /// set [constraint]
+  ///
+  /// [constraints] is usually provided by a [LayoutBuilder]
   factory TileLoadingIndicator.fromBoxConstraints(
     BoxConstraints constraints, [
     ProxyAnimation customController,
@@ -29,7 +35,13 @@ class TileLoadingIndicator extends StatelessWidget {
     );
   }
 
+  /// The space this widget is allowed to take
+  ///
+  /// This constraint is tight
   final double constraint;
+
+  /// An optional [ProxyAnimation] to be used as a custom controller to animate
+  /// the rotating tile
   final ProxyAnimation customController;
 
   @override

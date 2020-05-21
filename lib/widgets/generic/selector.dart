@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 typedef SelectCallback = void Function(int);
 
+/// A widget that shows one of its children at a time, between two buttons to
+/// cycle between the shown child
 class Selector extends StatefulWidget {
+  /// Creates a new selector widget
   const Selector({
     @required this.children,
     this.onSelectChange,
@@ -11,8 +14,13 @@ class Selector extends StatefulWidget {
   })  : assert(children != null),
         super(key: key);
 
+  /// The children to select from
   final List<Widget> children;
+
+  /// Callback function called when the selected child changes
   final SelectCallback onSelectChange;
+
+  /// The index of the default selected child
   final int defaultOption;
 
   @override

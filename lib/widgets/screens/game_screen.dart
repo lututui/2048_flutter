@@ -10,7 +10,11 @@ import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/scoreboard.dart';
 import 'package:provider/provider.dart';
 
+/// The main game screen widget
+///
+/// Combines [Scoreboard], [GameGrid] and [ButtonsBar]
 class GameScreen extends StatelessWidget {
+  /// Creates a new game screen
   const GameScreen({Key key}) : super(key: key);
 
   @override
@@ -60,19 +64,19 @@ class GameScreen extends StatelessWidget {
   }
 
   Future<bool> _pause(BuildContext context) {
-    return Misc.showDialog<DialogResult>(
+    return Misc.showDialog<DialogOption>(
       context: context,
       builder: (_) => const PauseDialog(),
     ).then((result) {
       Future<bool> returnValue;
 
-      if (result == null || result == DialogResult.pause) {
+      if (result == null || result == DialogOption.pause) {
         returnValue = Future.value(false);
-      } else if (result == DialogResult.exit) {
+      } else if (result == DialogOption.exit) {
         returnValue = Future.value(true);
-      } else if (result == DialogResult.reset) {
+      } else if (result == DialogOption.reset) {
         GridProvider.of(context)
-            .saveState
+            .savedDataManager
             .wipe()
             .then((_) => Navigator.of(context).pushReplacementNamed('/game'));
         returnValue = Future.value(false);

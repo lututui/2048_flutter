@@ -2,7 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+/// A widget that creates a border around its [child] animated with
+/// two [Gradient]s
 class AnimatedGradientBorder extends StatefulWidget {
+  /// Creates a new animated gradient border widget
   const AnimatedGradientBorder({
     @required this.child,
     @required this.gradientStart,
@@ -15,13 +18,28 @@ class AnimatedGradientBorder extends StatefulWidget {
     Key key,
   }) : super(key: key);
 
+  /// This widget's child
   final Widget child;
+
+  /// The initial gradient
   final Gradient gradientStart;
+
+  /// The final gradient
   final Gradient gradientEnd;
+
+  /// Tight width constraint
   final double width;
+
+  /// Tight height constraint
   final double height;
+
+  /// Animated border width
   final double borderWidth;
+
+  /// Animation duration
   final Duration duration;
+
+  /// Radius to round borders
   final BorderRadiusGeometry borderRadius;
 
   @override

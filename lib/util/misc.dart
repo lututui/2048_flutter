@@ -7,12 +7,17 @@ import 'package:flutter_2048/widgets/tile_loading_indicator.dart';
 
 export 'package:flutter_2048/types/extensions.dart';
 
+/// Miscellaneous functions and values that didn't fit anywhere else
 class Misc {
   Misc._();
 
+  /// How many entries are in a [Leaderboard]
   static const int kLeaderboardSize = 10;
 
+  /// The instance of [Random] shared by the app
   static final Random rand = Random();
+
+  /// [ThemeData] used by the app depending on the [Brightness]
   static final Map<Brightness, ThemeData> themes = {
     Brightness.dark: _buildThemeData(Palette.darkTheme),
     Brightness.light: _buildThemeData(Palette.lightTheme),
@@ -39,6 +44,7 @@ class Misc {
     );
   }
 
+  /// Builds the loading indicator used by the app
   static Widget buildLoadingWidget(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) => TileLoadingIndicator.fromBoxConstraints(
@@ -47,6 +53,7 @@ class Misc {
     );
   }
 
+  /// Wraps the widget built by [childBuilder] with a [MaterialApp]
   static Widget buildDefaultMaterialApp(
     BuildContext context, {
     WidgetBuilder childBuilder,
@@ -59,6 +66,7 @@ class Misc {
     );
   }
 
+  /// Modified implementation of showDialog
   static Future<T> showDialog<T>({
     @required BuildContext context,
     @required WidgetBuilder builder,

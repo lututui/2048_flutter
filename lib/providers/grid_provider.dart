@@ -6,33 +6,32 @@ import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/leaderboard.dart';
 import 'package:flutter_2048/providers/tile_grid.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
-import 'package:flutter_2048/save_state.dart';
+import 'package:flutter_2048/saved_data_manager.dart';
 import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
 import 'package:provider/provider.dart';
 
-class GameState {
-  GameState(this.grid, this.score);
-
-  final TileGrid grid;
-  final int score;
-}
-
+/// Contains the main logic running the game
 class GridProvider with ChangeNotifier {
-  GridProvider(this._grid, this.saveState);
+  GridProvider._(this._grid, this.savedDataManager);
 
+  /// Retrieves the nearest [GridProvider] in the widget tree
+  ///
+  /// See [Provider.of] with `listen: false` for more info
   factory GridProvider.of(BuildContext context) {
     return context.read<GridProvider>();
   }
 
-  final SaveState saveState;
+  /// The instance of [SavedDataManager] for this game
+  final SavedDataManager savedDataManager;
 
   final List<TileProvider> _pendingRemoval = [];
   final List<Widget> _tiles = [];
   final TileGrid _grid;
 
+  /// Whether or not the game over dialog has been shown
   bool shownGameOver = false;
 
   bool _pendingSpawn = false;
@@ -40,17 +39,25 @@ class GridProvider with ChangeNotifier {
   int _moving = 0;
   int _score = 0;
 
-  GameState _previousState;
+  _GameState _previousState;
 
+  /// Loads a game from persistent storage using [savedDataManager]
+  ///
+  /// Returns a future that when completed contains either the loaded data
+  /// wrapped in a [GridProvider] or a new instance of [GridProvider] if there
+  /// was no saved game or any other problem during loading
   static Future<GridProvider> fromJSON(BuildContext context) async {
-    final int gridSize = DimensionsProvider.getGridSize(context);
+    final int gridSize = Provider.of<DimensionsProvider>(
+      context,
+      listen: false,
+    ).gridSize;
 
-    final GridProvider baseGrid = GridProvider(
+    final GridProvider baseGrid = GridProvider._(
       TileGrid.empty(gridSize),
-      SaveState.grid(gridSize),
+      SavedDataManager.grid(gridSize),
     );
 
-    final Map<String, dynamic> loadedValues = await baseGrid.saveState.load();
+    final loadedValues = await baseGrid.savedDataManager.load();
 
     if (loadedValues == null) {
       return _loadFailed(baseGrid);
@@ -65,7 +72,7 @@ class GridProvider with ChangeNotifier {
       for (int j = 0; j < gridSize; j++) {
         if (gridValues[i][j] == -1) continue;
 
-        baseGrid.spawnAt(Tuple(i, j), value: gridValues[i][j]);
+        baseGrid._spawnAt(Tuple(i, j), value: gridValues[i][j]);
       }
     }
 
@@ -78,12 +85,16 @@ class GridProvider with ChangeNotifier {
     return baseGrid;
   }
 
+  /// The Widgets for this game
   List<Widget> get tiles => _tiles;
 
+  /// The current score
   int get score => _score;
 
+  /// If this game is over or not
   bool get gameOver => _gameOver;
 
+  /// If this game can go back a state
   bool get canUndo => !gameOver && _previousState != null;
 
   set score(int value) {
@@ -91,7 +102,7 @@ class GridProvider with ChangeNotifier {
     _score = value;
     notifyListeners();
 
-    log('New score: $_score');
+    _log('New score: $_score');
   }
 
   set gameOver(bool gameOver) {
@@ -104,10 +115,10 @@ class GridProvider with ChangeNotifier {
     _gameOver = gameOver;
     notifyListeners();
 
-    log('Game over!');
+    _log('Game over!');
   }
 
-  void spawn({int amount = 1}) {
+  void _spawn({int amount = 1}) {
     if (_grid.freeSpaces < amount) {
       throw Exception(
         'Tried to spawn $amount but only '
@@ -116,10 +127,10 @@ class GridProvider with ChangeNotifier {
     }
 
     for (int i = 0; i < amount; i++) {
-      spawnAt(_grid.getRandomSpawnableSpace());
+      _spawnAt(_grid.getRandomSpawnableSpace());
     }
 
-    saveState.save(toJSON());
+    savedDataManager.save(_toJSON());
     _pendingSpawn = false;
     notifyListeners();
 
@@ -128,16 +139,23 @@ class GridProvider with ChangeNotifier {
     gameOver = _grid.testGameOver();
   }
 
+  /// Handles the swipe gesture
+  ///
+  /// A swipe gesture is defined by [SwipeGestureType]. This method moves and
+  /// merges the game tiles accordingly
   void swipe(SwipeGestureType type) {
     if (gameOver || _pendingSpawn || _moving > 0) return;
 
-    final GameState gameStateBackup = GameState(TileGrid.clone(_grid), _score);
+    final _GameState gameStateBackup = _GameState(
+      TileGrid.clone(_grid),
+      _score,
+    );
     final int gridSize = _grid.sideLength;
 
     int somethingMoved = 0;
     int scoreAdd = 0;
 
-    log('Swipe ${type.directionString}');
+    _log('Swipe $type');
 
     for (int i = 0; i < gridSize; i++) {
       int newIndex = type.towardsOrigin ? 0 : gridSize - 1;
@@ -199,22 +217,25 @@ class GridProvider with ChangeNotifier {
     score += scoreAdd;
   }
 
-  void onMoveEnd(TileProvider tp) {
+  /// Callback method used by a tile to tell the GridProvider it's done moving
+  ///
+  /// Removes the given [TileProvider] from [_pendingRemoval]
+  void onMoveEnd(TileProvider tile) {
     if (_moving <= 0) {
       throw Exception(
-        'Received message that tile $tp finished moving '
+        'Received message that tile $tile finished moving '
         'but no tiles should be moving',
       );
     }
 
     _moving--;
 
-    log('$tp finished moving');
+    _log('$tile finished moving');
 
-    if (_pendingRemoval.remove(tp)) {
+    if (_pendingRemoval.remove(tile)) {
       final matchingTiles = _tiles
           .map((provider) => (provider.key as ObjectKey).value as TileProvider)
-          .where((other) => other == tp || other.gridPos == tp.gridPos)
+          .where((other) => other == tile || other.gridPos == tile.gridPos)
           .toList();
 
       if (matchingTiles.isEmpty || matchingTiles.length > 2) {
@@ -225,17 +246,17 @@ class GridProvider with ChangeNotifier {
         if (t.moving) continue;
         if (t.pendingValueUpdate) t.updateValue();
 
-        if (t != tp) continue;
+        if (t != tile) continue;
 
         final List<ChangeNotifierProvider> toRemove = List.from(
           _tiles.where((p) => (p.key as ObjectKey).value == t),
         );
 
         if (toRemove.length != 1 || !_tiles.remove(toRemove.first)) {
-          throw Exception('Failed to remove $tp from moving list');
+          throw Exception('Failed to remove $tile from moving list');
         }
 
-        log('Removed ${(toRemove.first.key as ObjectKey).value}');
+        _log('Removed ${(toRemove.first.key as ObjectKey).value}');
       }
 
       notifyListeners();
@@ -249,14 +270,14 @@ class GridProvider with ChangeNotifier {
         );
       }
 
-      log('Every tile is done moving');
-      log('Spaces remaining: ${_grid.freeSpaces}');
+      _log('Every tile is done moving');
+      _log('Spaces remaining: ${_grid.freeSpaces}');
 
-      spawn();
+      _spawn();
     }
   }
 
-  Map<String, dynamic> toJSON() {
+  Map<String, dynamic> _toJSON() {
     return {
       ..._grid.toJSON(),
       'score': _score,
@@ -264,13 +285,13 @@ class GridProvider with ChangeNotifier {
   }
 
   static Future<GridProvider> _loadFailed(GridProvider baseGrid) async {
-    baseGrid.spawn(amount: 3);
+    baseGrid._spawn(amount: 3);
 
     return Future.value(baseGrid);
   }
 
-  void spawnAt(Tuple<int, int> pos, {int value}) {
-    log('Spawning tile at $pos');
+  void _spawnAt(Tuple<int, int> pos, {int value}) {
+    _log('Spawning tile at $pos');
 
     _grid.setAtTuple(
       pos,
@@ -289,17 +310,18 @@ class GridProvider with ChangeNotifier {
       ),
     );
 
-    log('Spaces remaining: ${_grid.freeSpaces}');
+    _log('Spaces remaining: ${_grid.freeSpaces}');
   }
 
-  void log(String message) {
+  void _log(String message) {
     Logger.log<GridProvider>(message);
   }
 
+  /// Restores the current grid to its previous state
   void undo() {
     if (!canUndo) return;
 
-    log('Undo requested');
+    _log('Undo requested');
 
     _grid.restore(_previousState.grid, tiles: _tiles);
     notifyListeners();
@@ -310,4 +332,11 @@ class GridProvider with ChangeNotifier {
 
     notifyListeners();
   }
+}
+
+class _GameState {
+  const _GameState(this.grid, this.score);
+
+  final TileGrid grid;
+  final int score;
 }

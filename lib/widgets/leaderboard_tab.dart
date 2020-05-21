@@ -4,15 +4,17 @@ import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/generic/future_widget.dart';
 import 'package:flutter_2048/widgets/leaderboard_card.dart';
 
+/// A widget to be shown with [TabBarView] in [LeaderboardScreen]
 class LeaderboardTab extends StatelessWidget {
-  const LeaderboardTab({Key key, this.gridSize}) : super(key: key);
+  /// Creates a new leaderboard tab for the given grid size
+  const LeaderboardTab(this._gridSize, {Key key}) : super(key: key);
 
-  final int gridSize;
+  final int _gridSize;
 
   @override
   Widget build(BuildContext context) {
     return FutureWidget<Leaderboard>(
-      computation: () => Leaderboard.fromJSON(gridSize),
+      computation: () => Leaderboard.fromJSON(_gridSize),
       loadingChild: Misc.buildLoadingWidget,
       builder: (context, snapshot) {
         final Leaderboard leaderboard = snapshot.data;

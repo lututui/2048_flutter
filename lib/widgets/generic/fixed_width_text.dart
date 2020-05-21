@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// A text widget that layouts [inlineSpan] with fixed width
 class FixedWidthText extends StatelessWidget {
+  /// Creates a new fixed width text widget
+  ///
+  /// [width] should be equal to or larger than the width of the
+  /// unconstrained [inlineSpan]
   FixedWidthText({
     @required InlineSpan inlineSpan,
     @required num width,
@@ -12,7 +17,7 @@ class FixedWidthText extends StatelessWidget {
     ArgumentError.checkNotNull(inlineSpan, 'inlineSpan');
     ArgumentError.checkNotNull(width, 'width');
 
-    textPainter
+    _textPainter
       ..textDirection = textDirection ?? TextDirection.ltr
       ..textAlign = textAlign ?? TextAlign.center
       ..maxLines = maxLines ?? 1
@@ -20,11 +25,11 @@ class FixedWidthText extends StatelessWidget {
       ..layout(minWidth: width.toDouble(), maxWidth: width.toDouble());
   }
 
-  final TextPainter textPainter = TextPainter();
+  final TextPainter _textPainter = TextPainter();
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: _FixedWidthTextPainter(textPainter));
+    return CustomPaint(painter: _FixedWidthTextPainter(_textPainter));
   }
 }
 

@@ -4,7 +4,9 @@ import 'package:flutter_2048/types/tile_color.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:provider/provider.dart';
 
+/// The [GamePalette] selection screen widget
 class PaletteSelectionScreen extends StatelessWidget {
+  /// Creates a new selection screen widget
   const PaletteSelectionScreen({Key key}) : super(key: key);
 
   @override
@@ -19,7 +21,7 @@ class PaletteSelectionScreen extends StatelessWidget {
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              buildGamePaletteWidget,
+              _buildGamePaletteWidget,
               childCount: Palette.gamePalettes.length,
             ),
           ),
@@ -28,7 +30,7 @@ class PaletteSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget buildGamePaletteWidget(BuildContext context, int index) {
+  Widget _buildGamePaletteWidget(BuildContext context, int index) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Consumer<SettingsProvider>(

@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/providers/dimensions_provider.dart';
 import 'package:flutter_2048/providers/grid_provider.dart';
+import 'package:flutter_2048/widgets/game_grid.dart';
 import 'package:flutter_2048/widgets/generic/animated_text.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:provider/provider.dart';
 
+/// A widget that shows the current game score above [GameGrid]
 class Scoreboard extends StatelessWidget {
+  /// Creates a new scoreboard widget
   const Scoreboard({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Consumer<DimensionsProvider>(
       builder: (context, dimensions, scoreText) {
-        final double gapSize = dimensions.getGapSize(context);
+        final double gapSize = dimensions.gapSize;
+        final double gameSize = dimensions.gameSize;
 
         return Container(
-          width: dimensions.getGameSize(context) + gapSize,
+          width: gameSize + gapSize,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

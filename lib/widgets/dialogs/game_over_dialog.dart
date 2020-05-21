@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_2048/logger.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 import 'package:flutter_2048/util/misc.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 
+/// A widget to be shown as a dialog when [GridProvider.gameOver] turns true
 class GameOverDialog extends StatelessWidget {
+  /// Creates a new game over dialog widget
+  ///
+  /// The final score and button size have to be provided since looking up
+  /// ancestors in a dialog is unsafe
   const GameOverDialog({
     @required this.finalScore,
     @required this.maxButtonSize,
     Key key,
   }) : super(key: key);
 
+  /// The final game score
+  ///
+  /// Matches [GridProvider.score] at the moment this widget is instantiated
   final int finalScore;
+
+  /// The max size each of the buttons in this dialog can take
   final double maxButtonSize;
 
   @override
@@ -63,17 +72,17 @@ class GameOverDialog extends StatelessWidget {
                     children: <Widget>[
                       SquareIconButton(
                         maxSize: maxButtonSize,
-                        iconData: DialogResult.exit.icon,
+                        iconData: DialogOption.exit.icon,
                         onPress: _exit,
                       ),
                       SquareIconButton(
                         maxSize: maxButtonSize,
-                        iconData: DialogResult.reset.icon,
+                        iconData: DialogOption.reset.icon,
                         onPress: _reset,
                       ),
                       SquareIconButton(
                         maxSize: maxButtonSize,
-                        iconData: DialogResult.pause.icon,
+                        iconData: DialogOption.pause.icon,
                         onPress: _resume,
                       ),
                     ],
@@ -88,29 +97,26 @@ class GameOverDialog extends StatelessWidget {
   }
 
   void _resume(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.pause);
+    Navigator.of(context).pop(DialogOption.pause);
   }
 
   void _reset(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.reset);
+    Navigator.of(context).pop(DialogOption.reset);
   }
 
   void _exit(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.exit);
+    Navigator.of(context).pop(DialogOption.exit);
   }
 
-  static Future<DialogResult> show(
+  /// Shorthand method to show this widget
+  static Future<DialogOption> show(
     BuildContext context,
     WidgetBuilder builder,
   ) {
     return Future.delayed(
       const Duration(seconds: 1),
-      () => Misc.showDialog<DialogResult>(context: context, builder: builder)
-          .then((value) => value ?? DialogResult.pause),
+      () => Misc.showDialog<DialogOption>(context: context, builder: builder)
+          .then((value) => value ?? DialogOption.pause),
     );
-  }
-
-  static void log(String message) {
-    Logger.log<GameOverDialog>(message);
   }
 }

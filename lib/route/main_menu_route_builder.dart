@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/widgets/tile_loading_indicator.dart';
 
+/// The main [PageRouteBuilder] for this app
 class MainMenuRouteBuilder extends PageRouteBuilder {
+  /// Creates a route to the widget built by [pageBuilder]
   MainMenuRouteBuilder({
     @required WidgetBuilder pageBuilder,
   }) : super(

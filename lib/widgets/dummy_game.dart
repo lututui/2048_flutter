@@ -7,22 +7,24 @@ import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:flutter_2048/widgets/tiles/immovable_tile.dart';
 import 'package:provider/provider.dart';
 
+/// A decorative widget that mimics [GameGrid] but without logic
 class DummyGame extends StatelessWidget {
+  /// Creates a dummy game with [SizeOptions.sizes]
   DummyGame.withSizes(int sizes, {Key key}) : super(key: key) {
     ArgumentError.checkNotNull(sizes);
 
-    if (DummyGame.tiles == null || sizes != DummyGame.tiles.length) {
-      DummyGame.tiles = List.generate(sizes, (_) => [], growable: false);
+    if (DummyGame._tiles == null || sizes != DummyGame._tiles.length) {
+      DummyGame._tiles = List.generate(sizes, (_) => [], growable: false);
     }
   }
 
-  static List<List<Widget>> tiles;
+  static List<List<Widget>> _tiles;
 
-  void spawnTiles(int index, int sideLength) {
+  void _spawnTiles(int index, int sideLength) {
     final int flatLength = sideLength * sideLength;
     final int spawnAmount = Misc.rand.nextIntRanged(
-      min: sideLength - 1,
-      max: flatLength - sideLength,
+      sideLength - 1,
+      flatLength - sideLength,
     );
 
     final List<Tuple<int, int>> spawningPosList = List.generate(
@@ -42,7 +44,7 @@ class DummyGame extends StatelessWidget {
         value: value,
       );
 
-      tiles[index].add(newTile);
+      _tiles[index].add(newTile);
 
       assert(!spawningPosList.contains(pickedSpawnedPos));
     }
@@ -54,22 +56,22 @@ class DummyGame extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Consumer<DimensionsProvider>(
         builder: (context, dimensions, _) {
-          final double gameSize = dimensions.getGameSize(context);
+          final double gameSize = dimensions.gameSize;
           final int index = SizeOptions.getIndexBySideLength(
             dimensions.gridSize,
           );
 
-          if (tiles[index].isEmpty) {
-            spawnTiles(index, dimensions.gridSize);
+          if (_tiles[index].isEmpty) {
+            _spawnTiles(index, dimensions.gridSize);
           }
 
           return BorderedBox(
             width: gameSize,
             height: gameSize,
-            borderWidth: dimensions.getGapSize(context) * (index + 1.0),
+            borderWidth: dimensions.gapSize * (index + 1.0),
             child: Stack(
               overflow: Overflow.visible,
-              children: tiles[index],
+              children: _tiles[index],
             ),
           );
         },

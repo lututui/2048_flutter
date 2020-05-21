@@ -7,7 +7,10 @@ import 'package:flutter_2048/widgets/main_app.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A widget that shows a loading indicator while running
+/// [SharedPreferences.getInstance] and, when done, shows [MainApp]
 class MainAppLoader extends StatelessWidget {
+  /// Creates a new loader widget
   const MainAppLoader({Key key}) : super(key: key);
 
   @override

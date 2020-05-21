@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/types/dialog_result.dart';
 
+/// A widget to be shown as a dialog when the back button is pressed
+/// in [GameScreen] or the pause button is pressed in [ButtonsBar]
 class PauseDialog extends StatelessWidget {
+  /// Creates a new pause dialog widget
   const PauseDialog({Key key}) : super(key: key);
 
   @override
@@ -22,7 +25,7 @@ class PauseDialog extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Icon(DialogResult.pause.icon),
+              Icon(DialogOption.pause.icon),
               const Text('Resume'),
             ],
           ),
@@ -32,7 +35,7 @@ class PauseDialog extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Icon(DialogResult.reset.icon),
+              Icon(DialogOption.reset.icon),
               const Text('Reset'),
             ],
           ),
@@ -44,7 +47,7 @@ class PauseDialog extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Icon(DialogResult.exit.icon),
+                Icon(DialogOption.exit.icon),
                 const Text('Exit'),
               ],
             ),
@@ -55,14 +58,14 @@ class PauseDialog extends StatelessWidget {
   }
 
   void _resume(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.pause);
+    Navigator.of(context).pop(DialogOption.pause);
   }
 
   void _reset(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.reset);
+    Navigator.of(context).pop(DialogOption.reset);
   }
 
   void _exit(BuildContext context) {
-    Navigator.of(context).pop(DialogResult.exit);
+    Navigator.of(context).pop(DialogOption.exit);
   }
 }

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 typedef OnPressCallback = void Function(BuildContext);
 
+/// An [IconButton] which forces its shape to be square
 class SquareIconButton extends StatelessWidget {
+  /// Creates a new square icon button
   const SquareIconButton({
     @required this.onPress,
     @required this.iconData,
@@ -17,13 +19,30 @@ class SquareIconButton extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
+  /// The button background color
   final Color color;
+
+  /// The border color of the button
   final Color borderColor;
+
+  /// Callback function called when the button is pressed
   final OnPressCallback onPress;
+
+  /// The icon to be shown
   final IconData iconData;
+
+  /// The max size of this button
+  ///
+  /// This constraint is loose
   final double maxSize;
+
+  /// The width to draw [borderColor]
   final double borderWidth;
+
+  /// Whether this button can be activated
   final bool enabled;
+
+  /// Padding to place around the button
   final EdgeInsetsGeometry padding;
 
   @override

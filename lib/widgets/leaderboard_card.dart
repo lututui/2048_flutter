@@ -3,7 +3,9 @@ import 'package:flutter_2048/types/extensions.dart';
 import 'package:flutter_2048/util/palette.dart';
 import 'package:flutter_2048/widgets/generic/animated_gradient_border.dart';
 
+/// A [Card]-like widget used in [LeaderboardScreen]
 class LeaderboardCard extends StatelessWidget {
+  /// Creates a new leaderboard card
   factory LeaderboardCard({
     @required int position,
     int score,
@@ -27,25 +29,30 @@ class LeaderboardCard extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
+  /// The position of this card in the leaderboard
   final String position;
+
+  /// The score obtained
   final String score;
+
+  /// Whether this score is the highest score
   final bool highScore;
 
-  TextStyle get textStyle => TextStyle(fontSize: highScore ? 25.0 : 15.0);
+  TextStyle get _textStyle => TextStyle(fontSize: highScore ? 25.0 : 15.0);
 
-  EdgeInsets get outerPadding => EdgeInsets.all(highScore ? 8.0 : 4.0);
+  EdgeInsets get _outerPadding => EdgeInsets.all(highScore ? 8.0 : 4.0);
 
-  EdgeInsets get innerPadding => EdgeInsets.all(highScore ? 16.0 : 8.0);
+  EdgeInsets get _innerPadding => EdgeInsets.all(highScore ? 16.0 : 8.0);
 
-  Radius get borderRadius => Radius.circular(highScore ? 16.0 : 8.0);
+  Radius get _borderRadius => Radius.circular(highScore ? 16.0 : 8.0);
 
-  double get heightRatio => highScore ? 1.4 / 5 : 0.8 / 5;
+  double get _heightRatio => highScore ? 1.4 / 5 : 0.8 / 5;
 
-  Widget buildCardContainer({BoxConstraints constraints, Widget child}) {
+  Widget _buildCardContainer({BoxConstraints constraints, Widget child}) {
     if (highScore) {
       return AnimatedGradientBorder(
         width: constraints.averageWidth,
-        height: heightRatio * constraints.averageWidth,
+        height: _heightRatio * constraints.averageWidth,
         borderWidth: 10.0,
         borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         gradientStart: Palette.goldenGradient,
@@ -56,7 +63,7 @@ class LeaderboardCard extends StatelessWidget {
 
     return SizedBox(
       width: constraints.averageWidth,
-      height: heightRatio * constraints.averageWidth,
+      height: _heightRatio * constraints.averageWidth,
       child: child,
     );
   }
@@ -64,22 +71,22 @@ class LeaderboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: outerPadding,
+      padding: _outerPadding,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return buildCardContainer(
+          return _buildCardContainer(
             constraints: constraints,
             child: Container(
-              padding: innerPadding,
+              padding: _innerPadding,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.all(borderRadius),
+                borderRadius: BorderRadius.all(_borderRadius),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(position, style: textStyle),
-                  Text(score, style: textStyle),
+                  Text(position, style: _textStyle),
+                  Text(score, style: _textStyle),
                 ],
               ),
             ),

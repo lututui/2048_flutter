@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/util/colors.dart';
 
+/// A [Switch] that follows the [ThemeData] in its context, adjusting the theme
+/// to follow WCAG for contrast
 class ThemeSwitch extends StatelessWidget {
+  /// Creates a new switch
   const ThemeSwitch({
     @required this.value,
     @required this.onChanged,
     Key key,
   }) : super(key: key);
 
+  /// Whether the switch is on
+  ///
+  /// See [Switch.value]
   final bool value;
+
+  /// Callback function called when [value] changes
+  ///
+  /// See [Switch.onChanged]
   final void Function(bool) onChanged;
 
   @override
@@ -17,7 +27,7 @@ class ThemeSwitch extends StatelessWidget {
 
     final bool isDark = themeData.brightness == Brightness.dark;
 
-    final Color activeColor = ColorsUtil.getActiveColor(
+    final Color activeColor = ColorsUtil.adjustColor(
       themeData.toggleableActiveColor,
       themeData.scaffoldBackgroundColor,
     );

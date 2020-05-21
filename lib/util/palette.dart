@@ -3,27 +3,34 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/types/game_palette.dart';
 
+/// The collection of colors used by this app
 class Palette {
   Palette._();
 
+  /// All [GamePalette]s available
   static const List<GamePalette> gamePalettes = [
     GamePalette.classic,
     GamePalette.dracula,
   ];
 
+  /// Returns the [GamePalette] with the given name
+  ///
+  /// If no palette is found, returns null
   static GamePalette getGamePaletteByName(String name) {
-    final Map<String, GamePalette> namePaletteMap = Map.fromIterable(
-      Palette.gamePalettes,
-      key: (element) => (element as GamePalette).name.toLowerCase(),
-    );
+    if (name == null) return null;
 
-    if (namePaletteMap.containsKey(name)) {
-      return namePaletteMap[name];
+    final lowerCaseName = name.toLowerCase();
+
+    for (final gamePalette in gamePalettes) {
+      if (gamePalette.name.toLowerCase() == lowerCaseName) {
+        return gamePalette;
+      }
     }
 
-    return GamePalette.classic;
+    return null;
   }
 
+  /// A [LinearGradient] of silver shades
   static const Gradient silverGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -38,6 +45,7 @@ class Palette {
     stops: <double>[0, 0.20, 0.40, 0.60, 0.80, 1],
   );
 
+  /// A [LinearGradient] of golden shades
   static const Gradient goldenGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -52,6 +60,7 @@ class Palette {
     stops: <double>[0, 0.20, 0.40, 0.60, 0.80, 1],
   );
 
+  /// The [ColorScheme] used to build the [ThemeData] with light brightness
   static const ColorScheme lightTheme = ColorScheme(
     primary: Color(0xfff6f5d8),
     primaryVariant: Color(0xffc3c2a7),
@@ -68,6 +77,7 @@ class Palette {
     brightness: Brightness.light,
   );
 
+  /// The [ColorScheme] used to build the [ThemeData] with dark brightness
   static const ColorScheme darkTheme = ColorScheme(
     primary: Color(0xff395756),
     primaryVariant: Color(0xff002715),

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-enum DialogResult { pause, reset, exit }
+/// A option shown in a dialog
+class DialogOption {
+  DialogOption._(this.icon);
 
-extension DialogResultIcons on DialogResult {
-  IconData get icon {
-    switch (this) {
-      case DialogResult.pause:
-        return Icons.pause;
-      case DialogResult.reset:
-        return Icons.settings_backup_restore;
-      case DialogResult.exit:
-        return Icons.keyboard_backspace;
-    }
+  /// An icon associated with this [DialogOption]
+  final IconData icon;
 
-    return Icons.error;
-  }
+  /// Pause/Unpause option
+  static DialogOption pause = DialogOption._(Icons.pause);
+
+  /// Reset option
+  static DialogOption reset = DialogOption._(Icons.settings_backup_restore);
+
+  /// Exit/Back option
+  static DialogOption exit = DialogOption._(Icons.keyboard_backspace);
 }

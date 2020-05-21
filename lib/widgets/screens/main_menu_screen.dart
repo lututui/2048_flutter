@@ -7,7 +7,11 @@ import 'package:flutter_2048/widgets/generic/selector.dart';
 import 'package:flutter_2048/widgets/main_menu_button.dart';
 import 'package:provider/provider.dart' hide Selector;
 
+/// The main menu screen widget
+///
+/// This is the app home
 class MainMenuScreen extends StatelessWidget {
+  /// Creates a new main menu widget
   const MainMenuScreen({Key key}) : super(key: key);
 
   @override
@@ -45,10 +49,10 @@ class MainMenuScreen extends StatelessWidget {
                       ),
                       Selector(
                         onSelectChange: (int selected) {
-                          DimensionsProvider.setGridSize(
+                          Provider.of<DimensionsProvider>(
                             context,
-                            SizeOptions.sizes[selected].sideLength,
-                          );
+                            listen: false,
+                          ).gridSize = SizeOptions.sizes[selected].sideLength;
                         },
                         defaultOption: SizeOptions.getIndexBySideLength(
                           Provider.of<DimensionsProvider>(

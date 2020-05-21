@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 typedef OnErrorCallback = void Function(Object);
 typedef ComputationCallback<T> = FutureOr<T> Function();
 
+/// A nicer wrapper for [FutureBuilder]
 class FutureWidget<T> extends StatelessWidget {
+  /// Creates a new future widget
   FutureWidget({
     @required this.computation,
     @required this.loadingChild,
@@ -18,10 +20,24 @@ class FutureWidget<T> extends StatelessWidget {
   }) : super(key: key);
 
   final AsyncMemoizer<T> _memoizer = AsyncMemoizer();
+
+  /// The widget to build when [computation] completes successfully
   final AsyncWidgetBuilder<T> builder;
+
+  /// The async computation to be run
   final ComputationCallback<T> computation;
+
+  /// Called when [computation] completes with an error
   final OnErrorCallback onError;
+
+  /// The widget to build while [computation] is running
   final WidgetBuilder loadingChild;
+
+  /// The widget to build when [computation] completes with an error
+  ///
+  /// Only called if [onError] is non-null
+  /// If [onError] is non-null and this is null, [ErrorWidget] will be used to
+  /// display the error
   final WidgetBuilder errorChild;
 
   @override

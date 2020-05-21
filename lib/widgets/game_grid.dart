@@ -7,7 +7,9 @@ import 'package:flutter_2048/widgets/dialogs/game_over_dialog.dart';
 import 'package:flutter_2048/widgets/generic/bordered_box.dart';
 import 'package:provider/provider.dart';
 
+/// The main game widget, controlled by [GridProvider]
 class GameGrid extends StatelessWidget {
+  /// Creates a new game widget
   const GameGrid({Key key}) : super(key: key);
 
   @override
@@ -16,9 +18,9 @@ class GameGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Consumer<DimensionsProvider>(
         builder: (context, dimensions, _) {
-          final double gameSize = dimensions.getGameSize(context);
-          final double gapSize = dimensions.getGapSize(context);
-          final double tileSize = dimensions.getTileSize(context);
+          final double gameSize = dimensions.gameSize;
+          final double gapSize = dimensions.gapSize;
+          final double tileSize = dimensions.tileSize;
 
           return BorderedBox(
             width: gameSize,
@@ -61,21 +63,21 @@ class GameGrid extends StatelessWidget {
         maxButtonSize: tileSize,
       ),
     ).then((result) {
-      if (result == null || result == DialogResult.pause) {
+      if (result == null || result == DialogOption.pause) {
         if (settings.autoReset) {
-          gridState.saveState.wipe();
+          gridState.savedDataManager.wipe();
         }
 
         return;
       }
 
-      if (result == DialogResult.exit) {
+      if (result == DialogOption.exit) {
         if (settings.autoReset) {
-          gridState.saveState.wipe();
+          gridState.savedDataManager.wipe();
         }
         Navigator.of(context).pop();
-      } else if (result == DialogResult.reset) {
-        gridState.saveState
+      } else if (result == DialogOption.reset) {
+        gridState.savedDataManager
             .wipe()
             .then((_) => Navigator.of(context).pushReplacementNamed('/game'));
       }

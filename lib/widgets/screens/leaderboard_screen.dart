@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/widgets/leaderboard_tab.dart';
 
+/// The leaderboard screen widget
 class LeaderboardScreen extends StatelessWidget {
+  /// Creates a new leaderboard screen widget
   const LeaderboardScreen({Key key}) : super(key: key);
 
   static final List<Tab> _tabsInTabBar = [
@@ -12,7 +14,7 @@ class LeaderboardScreen extends StatelessWidget {
 
   static final List<LeaderboardTab> _tabBarView = [
     for (final sizeOption in SizeOptions.sizes)
-      LeaderboardTab(gridSize: sizeOption.sideLength)
+      LeaderboardTab(sizeOption.sideLength)
   ];
 
   @override

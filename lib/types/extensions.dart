@@ -1,11 +1,11 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
-import 'package:meta/meta.dart';
 
+/// Extensions used by [Misc.rand]
 extension RandomExtension on Random {
-  int nextIntRanged({@required int max, int min = 0}) {
+  /// Picks an integer between [min] (inclusive) and [max] (exclusive)
+  int nextIntRanged(int min, int max) {
     ArgumentError.checkNotNull(min, 'min');
     ArgumentError.checkNotNull(max, 'max');
 
@@ -18,6 +18,9 @@ extension RandomExtension on Random {
     return min + nextInt(max - min);
   }
 
+  /// Picks a value [T] in a list of options
+  ///
+  /// If [remove] is true, removes the picked value from [options]
   T pick<T>(List<T> options, {bool remove = false}) {
     final int picked = nextInt(options.length);
 
@@ -26,6 +29,13 @@ extension RandomExtension on Random {
     return options[picked];
   }
 
+  /// Picks a value [T] in a map of options
+  ///
+  /// An entry in [options] should have a key of type [T] (an option to be
+  /// picked) and a value of type int (the weight of that option). The greater
+  /// the weight, the more likely that option will be picked.
+  ///
+  /// [weightSum] should be the sum of all [options.values]
   T pickWithWeight<T>(Map<T, int> options, int weightSum) {
     final entries = options.entries.toList();
 
@@ -40,42 +50,8 @@ extension RandomExtension on Random {
   }
 }
 
-extension NumListExtension on List<num> {
-  num takeAverage() {
-    if (isEmpty) {
-      throw Exception('Cannot take average of empty list');
-    }
-
-    return reduce((value, element) => value += element) / length;
-  }
-}
-
-extension SizeExtension on Size {
-  Size scale({double factor, double widthFactor, double heightFactor}) {
-    if (factor == null && widthFactor == null && heightFactor == null) {
-      return null;
-    }
-
-    double width = this.width;
-    double height = this.height;
-
-    if (widthFactor != null) {
-      width *= widthFactor;
-    }
-
-    if (heightFactor != null) {
-      height *= heightFactor;
-    }
-
-    if (factor != null) {
-      width *= factor;
-      height *= factor;
-    }
-
-    return Size(width, height);
-  }
-}
-
+/// Extension used by some widgets to size themselves
 extension BoxConstraintsExtension on BoxConstraints {
+  /// The average between [minWidth] and [maxWidth]
   double get averageWidth => 0.5 * (minWidth + maxWidth);
 }

@@ -7,14 +7,18 @@ import 'package:flutter_2048/widgets/dialogs/pause_dialog.dart';
 import 'package:flutter_2048/widgets/generic/square_icon_button.dart';
 import 'package:provider/provider.dart';
 
+/// A group of [SquareIconButton]s displayed below [GameGrid]
+///
+/// The buttons are sized according to [DimensionsProvider.gameSize]
 class ButtonsBar extends StatelessWidget {
+  /// Creates a new ButtonsBar widget
   const ButtonsBar({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Consumer<DimensionsProvider>(
       builder: (context, dimensions, _) {
-        final double gameSize = dimensions.getGameSize(context);
+        final double gameSize = dimensions.gameSize;
         final double maxButtonSize = gameSize / 4;
 
         return Container(
@@ -25,7 +29,7 @@ class ButtonsBar extends StatelessWidget {
             children: <Widget>[
               SquareIconButton(
                 onPress: _back,
-                iconData: DialogResult.exit.icon,
+                iconData: DialogOption.exit.icon,
                 maxSize: maxButtonSize,
                 padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
               ),
@@ -41,7 +45,7 @@ class ButtonsBar extends StatelessWidget {
               ),
               SquareIconButton(
                 onPress: _pause,
-                iconData: DialogResult.pause.icon,
+                iconData: DialogOption.pause.icon,
                 maxSize: maxButtonSize,
                 padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
               ),
@@ -53,17 +57,17 @@ class ButtonsBar extends StatelessWidget {
   }
 
   void _pause(BuildContext context) {
-    Misc.showDialog<DialogResult>(
+    Misc.showDialog<DialogOption>(
       context: context,
       builder: (_) => const PauseDialog(),
     ).then((result) {
-      if (result == null || result == DialogResult.pause) return;
+      if (result == null || result == DialogOption.pause) return;
 
-      if (result == DialogResult.exit) {
+      if (result == DialogOption.exit) {
         Navigator.of(context).pop();
-      } else if (result == DialogResult.reset) {
+      } else if (result == DialogOption.reset) {
         GridProvider.of(context)
-            .saveState
+            .savedDataManager
             .wipe()
             .then((_) => Navigator.of(context).pushReplacementNamed('/game'));
       }

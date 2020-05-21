@@ -12,3 +12,7 @@ linter:
     use_key_in_widget_constructors: true
     sort_pub_dependencies: true
     directives_ordering: true
+    public_member_api_docs: true
+    slash_for_doc_comments: true
+    avoid_relative_lib_imports: true
+    unawaited_futures: true

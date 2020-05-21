@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// A shorthand for a [Container] with a colored [Border]
 class BorderedBox extends StatelessWidget {
+  /// Creates a new bordered box
   const BorderedBox({
     Key key,
     this.child,
@@ -16,22 +18,38 @@ class BorderedBox extends StatelessWidget {
         _width = width,
         super(key: key);
 
+  /// This widget's child
   final Widget child;
+
+  /// Padding to place around [child]
   final EdgeInsets padding;
+
+  /// The background color for this container
   final Color backgroundColor;
+
+  /// The border color for this container
   final Color borderColor;
+
+  /// The width to paint the [borderColor]
   final double borderWidth;
-  final double _height;
-  final double _width;
+
+  /// How [child] should be aligned
   final AlignmentGeometry alignment;
+
+  /// Whether [height] and [width] should be inflated by [borderWidth]
   final bool rectifySize;
 
+  final double _height;
+  final double _width;
+
+  /// The tight height constraint for this container
   double get height {
     if (_height == null || !rectifySize) return _height;
 
     return _height + 2 * borderWidth;
   }
 
+  /// The tight width constraint for this container
   double get width {
     if (_width == null || !rectifySize) return _width;
 

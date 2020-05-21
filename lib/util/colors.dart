@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_2048/logger.dart';
 
+/// Color-related utility functions
 class ColorsUtil {
   ColorsUtil._();
 
   static final Map<Color, double> _luminanceMap = {};
   static final Map<Color, Brightness> _brightnessMap = {};
 
+  /// Darkens a color by a factor between 0 and 1
   static Color darkenColor(Color original, {double factor = 0.80}) {
     assert(factor > 0 && factor < 1);
 
@@ -26,6 +28,7 @@ class ColorsUtil {
     return result;
   }
 
+  /// Lighten color by a factor between 0 and 1
   static Color lightenColor(Color original, {double factor = 0.80}) {
     assert(factor > 0 && factor < 1);
 
@@ -43,16 +46,19 @@ class ColorsUtil {
     return result;
   }
 
+  /// Computes the luminance value for the given color
+  ///
+  /// The luminance value is cached
   static double getLuminance(Color color) {
     return _luminanceMap.putIfAbsent(color, () => color.computeLuminance());
   }
 
+  /// Sorts a list of colors by their luminance
   static void sortByLuminance(List<Color> original) {
-    original.sort((a, b) {
-      return getLuminance(a).compareTo(getLuminance(b));
-    });
+    original.sort((a, b) => getLuminance(a).compareTo(getLuminance(b)));
   }
 
+  /// Gets the contrast ratio between two colors
   static double contrastRatio(Color foreground, Color background) {
     final colors = [foreground, background];
 
@@ -61,6 +67,9 @@ class ColorsUtil {
     return (getLuminance(colors[1]) + 0.05) / (getLuminance(colors[0]) + 0.05);
   }
 
+  /// Gets the [Brightness] value of a color
+  ///
+  /// The brightness value is cached
   static Brightness getBrightness(Color color) {
     return _brightnessMap.putIfAbsent(color, () {
       final double luminance = getLuminance(color);
@@ -73,10 +82,12 @@ class ColorsUtil {
     });
   }
 
+  /// If this color is considered [Brightness.dark]
   static bool isDark(Color color) {
     return getBrightness(color) == Brightness.dark;
   }
 
+  /// Which color should be used by text rendered on top of [backgroundColor]
   static Color calculateTextColor(Color backgroundColor) {
     if (isDark(backgroundColor)) {
       return Colors.white;
@@ -85,7 +96,8 @@ class ColorsUtil {
     return Colors.black;
   }
 
-  static Color getActiveColor(Color original, Color background) {
+  /// Adjusts [original] to meet WCAG minimum contrast (AA level)
+  static Color adjustColor(Color original, Color background) {
     final bool meetsRequirement = contrastRatio(original, background) >= 4.5;
 
     if (meetsRequirement) {

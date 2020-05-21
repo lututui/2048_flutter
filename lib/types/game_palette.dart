@@ -2,17 +2,25 @@ import 'dart:ui';
 
 import 'package:flutter_2048/types/tile_color.dart';
 
+/// A collection of [TileColor]s
 class GamePalette {
-  const GamePalette(this.name, this.tileColors);
+  const GamePalette._(this.name, this.tileColors);
 
+  /// The proper list of colors
+  ///
+  /// The higher the index, the higher the associated value
   final List<TileColor> tileColors;
+
+  /// The name of this palette
   final String name;
 
+  /// Gets a tile color for the tile with value [v]
   TileColor getTileColor(int v) {
     return tileColors[v % tileColors.length];
   }
 
-  static const GamePalette classic = GamePalette(
+  /// The default palette
+  static const GamePalette classic = GamePalette._(
     'Classic',
     <TileColor>[
       TileColor(Color(0xff928779), Color(0xff766c60)),
@@ -28,7 +36,10 @@ class GamePalette {
     ],
   );
 
-  static const GamePalette dracula = GamePalette(
+  /// A palette inspired by the Dracula Theme
+  ///
+  /// https://draculatheme.com/
+  static const GamePalette dracula = GamePalette._(
     'Dracula',
     <TileColor>[
       TileColor(Color(0xffff5555), Color(0xffff1111)),
