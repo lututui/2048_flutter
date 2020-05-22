@@ -62,16 +62,12 @@ class SizeOptions {
       sizeOption.sideLength: sizes.indexOf(sizeOption)
   };
 
-  /// All [SizeOptions.description] wrapped in [Text]
-  static List<Widget> buildChildren(BuildContext context) {
-    return sizes.map<Widget>(
-      (size) {
-        return Text(
-          size.description,
-          style: Theme.of(context).textTheme.headline6,
-        );
-      },
-    ).toList(growable: false);
+  /// Creates a widget with the description of the [index]-th size option
+  static Widget buildDescription(BuildContext context, int index) {
+    return Text(
+      sizes[index].description,
+      style: Theme.of(context).textTheme.headline6,
+    );
   }
 
   /// The index of the [SizeOptions] with given side length

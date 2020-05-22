@@ -110,18 +110,14 @@ class DimensionsProvider with ChangeNotifier, WidgetsBindingObserver {
     }
   }
 
-  bool _updateScreenSize() {
+  void _updateScreenSize() {
     final newSize = WidgetsBinding.instance.window.physicalSize /
         WidgetsBinding.instance.window.devicePixelRatio;
 
     if (_screenSize != newSize || _gameSize == null) {
       _screenSize = newSize;
       _updateSizes();
-
-      return true;
     }
-
-    return false;
   }
 
   static String _valueChangedString(
@@ -129,8 +125,7 @@ class DimensionsProvider with ChangeNotifier, WidgetsBindingObserver {
     double newValue,
     String name,
   ) {
-    return '\t'
-        '$name (from ${oldValue.toStringAsFixed(2)}, '
+    return '\t$name (from ${oldValue.toStringAsFixed(2)}, '
         'to ${newValue.toStringAsFixed(2)})';
   }
 }

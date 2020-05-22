@@ -16,3 +16,5 @@ linter:
     slash_for_doc_comments: true
     avoid_relative_lib_imports: true
     unawaited_futures: true
+    use_raw_strings: true
+    use_string_buffers: true

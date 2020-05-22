@@ -47,20 +47,16 @@ class MainMenuScreen extends StatelessWidget {
                           child: DummyGame.withSizes(SizeOptions.sizes.length),
                         ),
                       ),
-                      Selector(
-                        onSelectChange: (int selected) {
+                      Selector.builder(
+                        onChange: (int selected) {
                           Provider.of<DimensionsProvider>(
                             context,
                             listen: false,
                           ).gridSize = SizeOptions.sizes[selected].sideLength;
                         },
-                        defaultOption: SizeOptions.getIndexBySideLength(
-                          Provider.of<DimensionsProvider>(
-                            context,
-                            listen: false,
-                          ).gridSize,
-                        ),
-                        children: SizeOptions.buildChildren(context),
+                        defaultOption: 1,
+                        builder: SizeOptions.buildDescription,
+                        size: SizeOptions.sizes.length,
                       ),
                     ],
                   ),
