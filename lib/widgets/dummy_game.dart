@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 /// A decorative widget that mimics [GameGrid] but without logic
 class DummyGame extends StatelessWidget {
-  /// Creates a dummy game with [SizeOptions.sizes]
+  /// Creates a dummy game with [SizeOption.sizes]
   DummyGame.withSizes(int sizes, {Key key}) : super(key: key) {
     ArgumentError.checkNotNull(sizes);
 
@@ -57,12 +57,10 @@ class DummyGame extends StatelessWidget {
       child: Consumer<DimensionsProvider>(
         builder: (context, dimensions, _) {
           final double gameSize = dimensions.gameSize;
-          final int index = SizeOptions.getIndexBySideLength(
-            dimensions.gridSize,
-          );
+          final int index = dimensions.selectedSizeOption.index;
 
           if (_tiles[index].isEmpty) {
-            _spawnTiles(index, dimensions.gridSize);
+            _spawnTiles(index, dimensions.selectedSizeOption.sideLength);
           }
 
           return BorderedBox(

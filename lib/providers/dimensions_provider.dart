@@ -2,27 +2,31 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/logger.dart';
+import 'package:flutter_2048/types/size_options.dart';
 
 /// Calculates and provides the dimensions for the main game screen
 class DimensionsProvider with ChangeNotifier, WidgetsBindingObserver {
   /// Provides the singleton instance for this provider
-  factory DimensionsProvider() => _instance ??= DimensionsProvider._();
+  factory DimensionsProvider() => instance ??= DimensionsProvider._();
 
   DimensionsProvider._() {
     WidgetsBinding.instance.addObserver(this);
 
+    _selectedSizeOption = kDefaultSizeOption;
+
     _updateScreenSize();
   }
 
-  static DimensionsProvider _instance;
-
-  static const int _defaultGridSize = 4;
+  /// The singleton instance
+  ///
+  /// Use only where you must not listen to change notifications
+  static DimensionsProvider instance;
 
   Size _screenSize;
   double _tileSize;
   double _gapSize;
   double _gameSize;
-  int _gridSize;
+  SizeOption _selectedSizeOption;
 
   void _log(String message) {
     Logger.log<DimensionsProvider>(message);
@@ -38,12 +42,15 @@ class DimensionsProvider with ChangeNotifier, WidgetsBindingObserver {
   double get tileSize => _tileSize;
 
   /// The current grid size
-  int get gridSize => _gridSize ??= _defaultGridSize;
+  SizeOption get selectedSizeOption => _selectedSizeOption;
 
-  set gridSize(int value) {
-    _gridSize = value;
+  /// Setter for [selectedSizeOption]
+  void selectSizeOption(int index) {
+    if (index == _selectedSizeOption.index) return;
 
-    _log('Changed gridSize to $_gridSize');
+    _selectedSizeOption = SizeOption.withIndex(index);
+
+    _log('Changed gridSize to $_selectedSizeOption');
 
     if (_screenSize != null) {
       _log('Updating other sizes');
@@ -57,11 +64,13 @@ class DimensionsProvider with ChangeNotifier, WidgetsBindingObserver {
   void didChangeMetrics() => _updateScreenSize;
 
   void _updateSizes() {
-    final double newTileSize =
-        min(_screenSize.width, _screenSize.height) / (gridSize + 2);
-    final double newGapSize = newTileSize / (2.0 * gridSize);
+    final double newTileSize = min(_screenSize.width, _screenSize.height) /
+        (_selectedSizeOption.sideLength + 2);
+    final double newGapSize =
+        newTileSize / (2.0 * _selectedSizeOption.sideLength);
     final double newGameSize =
-        gridSize * (newTileSize + newGapSize) + newGapSize;
+        _selectedSizeOption.sideLength * (newTileSize + newGapSize) +
+            newGapSize;
 
     final List<String> stringBuilder = [];
 

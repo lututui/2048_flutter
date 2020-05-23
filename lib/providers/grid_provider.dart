@@ -7,7 +7,6 @@ import 'package:flutter_2048/providers/leaderboard.dart';
 import 'package:flutter_2048/providers/tile_grid.dart';
 import 'package:flutter_2048/providers/tile_provider.dart';
 import 'package:flutter_2048/saved_data_manager.dart';
-import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/types/swipe_gesture_type.dart';
 import 'package:flutter_2048/types/tuple.dart';
 import 'package:flutter_2048/widgets/tiles/movable_tile.dart';
@@ -24,23 +23,6 @@ class GridProvider with ChangeNotifier {
     return context.read<GridProvider>();
   }
 
-  /// The instance of [SavedDataManager] for this game
-  final SavedDataManager savedDataManager;
-
-  final List<TileProvider> _pendingRemoval = [];
-  final List<Widget> _tiles = [];
-  final TileGrid _grid;
-
-  /// Whether or not the game over dialog has been shown
-  bool shownGameOver = false;
-
-  bool _pendingSpawn = false;
-  bool _gameOver = false;
-  int _moving = 0;
-  int _score = 0;
-
-  _GameState _previousState;
-
   /// Loads a game from persistent storage using [savedDataManager]
   ///
   /// Returns a future that when completed contains either the loaded data
@@ -50,7 +32,7 @@ class GridProvider with ChangeNotifier {
     final int gridSize = Provider.of<DimensionsProvider>(
       context,
       listen: false,
-    ).gridSize;
+    ).selectedSizeOption.sideLength;
 
     final GridProvider baseGrid = GridProvider._(
       TileGrid.empty(gridSize),
@@ -72,7 +54,7 @@ class GridProvider with ChangeNotifier {
       for (int j = 0; j < gridSize; j++) {
         if (gridValues[i][j] == -1) continue;
 
-        baseGrid._spawnAt(Tuple(i, j), value: gridValues[i][j]);
+        baseGrid._spawnAt(Tuple(i, j), gridValues[i][j]);
       }
     }
 
@@ -84,6 +66,23 @@ class GridProvider with ChangeNotifier {
 
     return baseGrid;
   }
+
+  /// The instance of [SavedDataManager] for this game
+  final SavedDataManager savedDataManager;
+
+  final List<TileProvider> _pendingRemoval = [];
+  final List<Widget> _tiles = [];
+  final TileGrid _grid;
+
+  /// Whether or not the game over dialog has been shown
+  bool shownGameOver = false;
+
+  bool _pendingSpawn = false;
+  bool _gameOver = false;
+  int _moving = 0;
+  int _score = 0;
+
+  _GameState _previousState;
 
   /// The Widgets for this game
   List<Widget> get tiles => _tiles;
@@ -126,8 +125,13 @@ class GridProvider with ChangeNotifier {
       );
     }
 
+    final sizeOption = DimensionsProvider.instance.selectedSizeOption;
+
     for (int i = 0; i < amount; i++) {
-      _spawnAt(_grid.getRandomSpawnableSpace());
+      _spawnAt(
+        _grid.getRandomSpawnableSpace(),
+        sizeOption.nextSpawnValue(),
+      );
     }
 
     savedDataManager.save(_toJSON());
@@ -290,17 +294,10 @@ class GridProvider with ChangeNotifier {
     return Future.value(baseGrid);
   }
 
-  void _spawnAt(Tuple<int, int> pos, {int value}) {
-    _log('Spawning tile at $pos');
+  void _spawnAt(Tuple<int, int> pos, int value) {
+    _log('Spawning tile at $pos with value $value');
 
-    _grid.setAtTuple(
-      pos,
-      TileProvider(
-        pos,
-        value ?? SizeOptions.nextSpawnValueBySideLength(_grid.sideLength),
-      ),
-      allowReplace: false,
-    );
+    _grid.setAtTuple(pos, TileProvider(pos, value), allowReplace: false);
 
     _tiles.add(
       ChangeNotifierProvider.value(

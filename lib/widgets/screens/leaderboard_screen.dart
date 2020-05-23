@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_2048/types/size_options.dart';
-import 'package:flutter_2048/widgets/leaderboard_tab.dart';
 
 /// The leaderboard screen widget
 class LeaderboardScreen extends StatelessWidget {
   /// Creates a new leaderboard screen widget
   const LeaderboardScreen({Key key}) : super(key: key);
 
-  static final List<Tab> _tabsInTabBar = [
-    for (final sizeOption in SizeOptions.sizes)
-      Tab(text: sizeOption.description)
-  ];
-
-  static final List<LeaderboardTab> _tabBarView = [
-    for (final sizeOption in SizeOptions.sizes)
-      LeaderboardTab(sizeOption.sideLength)
-  ];
-
   @override
   Widget build(BuildContext context) {
     final PreferredSizeWidget tabBar = TabBar(
-      tabs: _tabsInTabBar,
+      tabs: SizeOption.tabs,
       labelColor: Theme.of(context).colorScheme.onSurface,
     );
 
@@ -37,7 +26,7 @@ class LeaderboardScreen extends StatelessWidget {
     );
 
     return DefaultTabController(
-      length: SizeOptions.sizes.length,
+      length: SizeOption.amount,
       initialIndex: 1,
       child: Scaffold(
         appBar: PreferredSize(
@@ -47,7 +36,7 @@ class LeaderboardScreen extends StatelessWidget {
           ),
           child: appBar,
         ),
-        body: TabBarView(children: _tabBarView),
+        body: TabBarView(children: SizeOption.tabViews),
       ),
     );
   }

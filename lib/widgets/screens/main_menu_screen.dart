@@ -5,7 +5,6 @@ import 'package:flutter_2048/types/size_options.dart';
 import 'package:flutter_2048/widgets/dummy_game.dart';
 import 'package:flutter_2048/widgets/generic/selector.dart';
 import 'package:flutter_2048/widgets/main_menu_button.dart';
-import 'package:provider/provider.dart' hide Selector;
 
 /// The main menu screen widget
 ///
@@ -27,12 +26,9 @@ class MainMenuScreen extends StatelessWidget {
       child: Scaffold(
         body: LayoutBuilder(
           builder: (context, constraints) {
-            final double maxDummyHeight = 5 / 11 * constraints.maxHeight;
-            final MediaQueryData mediaQuery = MediaQuery.of(context);
-
             return Padding(
               padding: EdgeInsets.only(
-                bottom: mediaQuery.padding.bottom,
+                bottom: MediaQuery.of(context).padding.bottom,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -41,22 +37,17 @@ class MainMenuScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        height: maxDummyHeight,
+                        height: 5 / 11 * constraints.maxHeight,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
-                          child: DummyGame.withSizes(SizeOptions.sizes.length),
+                          child: DummyGame.withSizes(SizeOption.amount),
                         ),
                       ),
                       Selector.builder(
-                        onChange: (int selected) {
-                          Provider.of<DimensionsProvider>(
-                            context,
-                            listen: false,
-                          ).gridSize = SizeOptions.sizes[selected].sideLength;
-                        },
+                        onChange: DimensionsProvider.instance.selectSizeOption,
                         defaultOption: 1,
-                        builder: SizeOptions.buildDescription,
-                        size: SizeOptions.sizes.length,
+                        builder: SizeOption.buildDescription,
+                        size: SizeOption.amount,
                       ),
                     ],
                   ),

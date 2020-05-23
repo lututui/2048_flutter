@@ -128,7 +128,7 @@ class _SelectorState extends State<Selector> {
               setState(() {
                 if (_selected == 0) {
                   assert(widget.wrapAround);
-                  _selected = widget.children.length - 1;
+                  _selected = widget.size - 1;
                 } else {
                   _selected--;
                 }
