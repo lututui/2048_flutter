@@ -2,7 +2,7 @@ name: flutter_2048
 description: 2048 game using flutter
 repository: https://github.com/lututui/2048_flutter
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
